@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1045 &1
+EditorBuildSettings:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Scenes:
+  - enabled: 0
+    path: Assets/ViveSR/Scenes/Eye/EyeSample.unity
+    guid: 442215360aef07847ac6dc9a96f5c584
+  - enabled: 1
+    path: Assets/VRscene.unity
+    guid: 25c3694fa26df3c47894819b0baa533f
+  m_configObjects:
+    Unity.XR.Oculus.Settings: {fileID: 11400000, guid: 1c4a31d5e71919f4eb5873282793d28f, type: 2}
+    Unity.XR.OpenVR.Settings: {fileID: 11400000, guid: a3efcf42e0e6db74587efcf9d243dfe6, type: 2}
+    com.unity.adaptiveperformance.loader_settings: {fileID: 11400000, guid: c8a036aaf366abd4eaa3f7b5385ba422, type: 2}
+    com.unity.adaptiveperformance.simulator.provider_settings: {fileID: 11400000, guid: 26ce4755510d1414783b8176938aa5f4, type: 2}
+    com.unity.input.settings: {fileID: 11400000, guid: 743829f2b81a6224ab115a2f2be809e2, type: 2}
+    com.unity.xr.management.loader_settings: {fileID: 11400000, guid: 570128a634c9bc84c9cab3ecdc3bf8dd, type: 2}
+    com.unity.xr.openxr.settings4: {fileID: 11400000, guid: 9468cd88086b59f48be1154fd5a1f50f, type: 2}

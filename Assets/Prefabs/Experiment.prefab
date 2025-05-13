@@ -1,0 +1,159 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &3714170261904855467
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3714170261904855465}
+  - component: {fileID: 3714170261904855466}
+  - component: {fileID: 3714170261904855464}
+  - component: {fileID: 3714170261904855127}
+  m_Layer: 0
+  m_Name: Experiment
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3714170261904855465
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3714170261904855467}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3714170261904855466
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3714170261904855467}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 01d545f533be6c4448bcc2b2e25fe131, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  expid: VR7practice
+  blocks: 10
+  trials: 40
+  participant_id: 9
+  jitterTimeMin: 1
+  jitterTimeMax: 1
+  gazeDirectionCombined: {x: 0, y: 0, z: 0}
+  centerEyePos: {x: 0, y: 0, z: 0}
+  conditionSequence: []
+  locSequence: []
+  fixationtarget: {fileID: 0}
+  txtobj: {fileID: 6169136711002117105, guid: 3ea8e552b62abd542a4bafe393c00af2, type: 3}
+  timer: {fileID: 7568745206634407426, guid: d676fcd8d6dc61f45a2d8b57dbb9c2e2, type: 3}
+  outline: {fileID: 4800000, guid: 931fe80d9c8fad8409f35cdb6ad416de, type: 3}
+  practice: 1
+  practiceTrial: 0
+  testing: 0
+  leftHandObj: {fileID: 0}
+  rightHandObj: {fileID: 0}
+  conditionCountBlock: 0
+  cube: {fileID: 1340784022694960658, guid: d31d6c9cdd597a84eac39e672e27f7da, type: 3}
+  sphere: {fileID: 1816975964637289481, guid: 6dd6171ad2e25e344bf8e3cf69c1f1c0, type: 3}
+  diamond: {fileID: 0}
+  star: {fileID: 0}
+  respHand: {fileID: 0}
+  colors: []
+  shapes: []
+  positions: []
+  positions_2: []
+  positions_6: []
+  positions_flow: []
+  positions_flow_2: []
+  positions_flow_6: []
+  positions_probes: []
+  positions_probes_2: []
+  positions_probes_6: []
+  positions_all: []
+  positions_circle: []
+  positions_circle_flow: []
+  left_half: []
+  right_half: []
+  left_half_flow: []
+  right_half_flow: []
+  positions_up: []
+  positions_down: []
+  positions1: []
+  positions2: []
+  positions3: []
+  positions4: []
+  stage: none
+  selected: {fileID: 0}
+  timerCounter: 0
+  currentCondition: none
+  currentConditionTurn: none
+  currentNumCondition: 0
+  currentPositions: []
+  currentProbePositions: []
+  currentSelectedObject: {fileID: 0}
+  highlightedObject: {fileID: 0}
+  targetObject: {fileID: 0}
+  closest: {fileID: 0}
+  testinstance: {fileID: 0}
+  pressed: 0
+  pressCount: 0
+  currentTrial: 0
+  currentBlock: 0
+  tm: {fileID: 0}
+  targetInstance: {fileID: 0}
+  responseInstance: {fileID: 0}
+  targetProbe: {fileID: 0}
+  responseProbe: {fileID: 0}
+--- !u!114 &3714170261904855464
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3714170261904855467}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: be3ddac832038734bbecd23053d360d3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  primaryButtonPress:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 3714170261904855466}
+        m_TargetAssemblyTypeName: Experimentscript, Assembly-CSharp
+        m_MethodName: primaryButtonDown
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 1
+--- !u!114 &3714170261904855127
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3714170261904855467}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6fd77484532d08c499b33123741b9b4e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  watcher: {fileID: 3714170261904855464}
+  IsPressed: 0
