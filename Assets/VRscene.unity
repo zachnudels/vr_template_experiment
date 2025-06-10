@@ -4161,7 +4161,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh-1590
+  m_Name: pb_Mesh28278
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -5653,7 +5653,7 @@ PrefabInstance:
       objectReference: {fileID: 493954719111455760, guid: 6dd6171ad2e25e344bf8e3cf69c1f1c0, type: 3}
     - target: {fileID: 3714170261904855466, guid: 16942e6d1f7136e4b9b094df8f265462, type: 3}
       propertyPath: trials
-      value: 5
+      value: 40
       objectReference: {fileID: 0}
     - target: {fileID: 3714170261904855466, guid: 16942e6d1f7136e4b9b094df8f265462, type: 3}
       propertyPath: diamond
@@ -5713,7 +5713,7 @@ PrefabInstance:
       objectReference: {fileID: 1818677628}
     - target: {fileID: 3714170261904855466, guid: 16942e6d1f7136e4b9b094df8f265462, type: 3}
       propertyPath: participant_id
-      value: 1
+      value: 11
       objectReference: {fileID: 0}
     - target: {fileID: 3714170261904855466, guid: 16942e6d1f7136e4b9b094df8f265462, type: 3}
       propertyPath: participant_nr

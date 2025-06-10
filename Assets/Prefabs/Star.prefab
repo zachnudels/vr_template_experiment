@@ -614,6 +614,7 @@ MonoBehaviour:
   shapeCode: 0
   colorCode: 0
   probePositionCode: 0
+  rotation: 0
 --- !u!114 &3839021276874324504
 MonoBehaviour:
   m_ObjectHideFlags: 0

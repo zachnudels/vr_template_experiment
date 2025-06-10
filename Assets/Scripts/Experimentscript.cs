@@ -1808,9 +1808,9 @@ public class Experimentscript : MonoBehaviour
                     tm.text = "Saving...";
                 }
                 //tm.text = "3";
-                tm.text = "before trial data write";
+                tm.text = "";
                 WriteTrialData();
-                tm.text = "after trial data write";
+                tm.text = "";
                 //tm.text = "4";
                 if (practice)
                 {
