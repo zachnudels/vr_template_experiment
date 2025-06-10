@@ -1284,10 +1284,16 @@ public class Experimentscript : MonoBehaviour
         triggerCode = 0;
         currentTick += 1;
 
-        if (stage.Equals("turn"))
+        //if (stage.Equals("turn"))
+        //{
+           
+        //}
+
+        // pointer ray
+        if (stage.Equals("answer"))
         {
             bool encVis = sample_shapes[0].GetComponent<Renderer>().enabled;
-            if (encVis && removeAttempts<2)
+            if (encVis && removeAttempts < 2)
             {
 
                 //hide encoding array
@@ -1311,11 +1317,7 @@ public class Experimentscript : MonoBehaviour
                     }
                 }
             }
-        }
 
-        // pointer ray
-        if (stage.Equals("answer"))
-        {
             if (raySet.Equals("none"))
             {
                 raySet = "ans";
@@ -1472,6 +1474,7 @@ public class Experimentscript : MonoBehaviour
                 //
 
                 clearFixation();
+
                 //tm.text = conditionName;
                 stage = "jitter";
                 addition_num = 100;
@@ -1497,6 +1500,101 @@ public class Experimentscript : MonoBehaviour
                     turnLeft = false;
                     turnSign = -1;
                 }
+
+
+                //PRESENTATION
+                present = true;
+                //reset view infos
+                presCube = null;
+                presSphere = null;
+                //presCylinder = null;
+                //presTriangle = null;
+                presDiamond = null;
+                presStar = null;
+
+
+                xMulVec = new Vector3(turnSign, 1f, 1f);
+
+                for (int i = 0; i < currentNumCondition; i++)
+                {
+
+                    ColorRandomNumber = encColOrder[i];
+                    ShapeRandomNumber = encShapeOrder[i];
+
+                    //tm.color = cyan;
+                    sample_colors[i] = colors[ColorRandomNumber];
+
+
+                    sample_shapes[i] = Instantiate(shapes[ShapeRandomNumber], Vector3.Scale(currentPositions[i], xMulVec) * front + heightOffset + encodingVerticalDeviation, Quaternion.Euler(-90.0f, 90.0f * front, 90.0f)); //shapes[ShapeRandomNumber].transform.rotation
+
+                    Shapescript shapescr = sample_shapes[i].GetComponent<Shapescript>();
+                    shapescr.setColour(sample_colors[i]);
+                    shapescr.spawnPosition = currentPositions[i] + heightOffset + relHeight + encodingVerticalDeviation;
+                    shapescr.spawnPositionCode = i + 1;
+                    shapescr.shapeCode = ShapeRandomNumber + 1;
+                    shapescr.colorCode = ColorRandomNumber + 1;
+
+
+                    //tm.text = (currentPositions[circle_inds[i]] + heightOffset + relHeight).ToString();
+
+                    //tm.text = "switch";
+                    switch (sample_shapes[i].tag)
+                    {
+                        case "cube":
+                            //tm.text = "case cube";
+                            presCube = sample_shapes[i];
+                            break;
+
+                        case "sphere":
+                            //tm.text = "case sphere";
+                            presSphere = sample_shapes[i];
+                            break;
+                        /*
+                        case "cylinder":
+                            //tm.text = "case cylinder";
+                            presCylinder = sample_shapes[i];
+                            break;
+
+                        case "triangle":
+                            //tm.text = "case triangle";
+                            presTriangle = sample_shapes[i];
+                            break;
+                    */
+                        case "diamond":
+                            //tm.text = "case diamond";
+                            presDiamond = sample_shapes[i];
+                            break;
+
+                        case "star":
+                            //tm.text = "case star";
+                            presStar = sample_shapes[i];
+                            break;
+                        /*
+                            case "bar":
+                                //tm.text = "case star";
+                                presBar = sample_shapes[i];
+                                break;
+                        */
+                        default:
+                            break;
+                    }
+
+
+                    //scale
+                    //sample_shapes[i].transform.localScale /= 2;
+
+                    //ConfirmationArray[ColorRandomNumber] = true; // So it will not be picked again
+                    presentationInfo[i, 0] = ColorRandomNumber;
+                    presentationInfo[i, 1] = ShapeRandomNumber;
+
+                    //selection appearance change
+                    //var trans = 0.5f;
+                    //var col = sample_shapes[i].GetComponent<Renderer>().material.color;
+                    //col.a = trans;
+
+
+                }
+
 
                 timeObj.GetComponent<Timer>().setTime(turnTime);
                 timeObj.GetComponent<Timer>().setRunning(true);
@@ -1531,16 +1629,7 @@ public class Experimentscript : MonoBehaviour
 
                 if (halfway)
                 {
-                    //PRESENTATION
-                    present = true;
-                    //reset view infos
-                    presCube = null;
-                    presSphere = null;
-                    //presCylinder = null;
-                    //presTriangle = null;
-                    presDiamond = null;
-                    presStar = null;
-
+                   
 
                     addition_num = 300;
                     
@@ -1548,88 +1637,7 @@ public class Experimentscript : MonoBehaviour
                     //timeObj.GetComponent<Timer>().setTime(presentationTime);
                     //timeObj.GetComponent<Timer>().setRunning(true);
 
-
-                    xMulVec = new Vector3(turnSign, 1f, 1f);
-
-                    for (int i = 0; i < currentNumCondition; i++)
-                    {
-
-                        ColorRandomNumber = encColOrder[i];
-                        ShapeRandomNumber = encShapeOrder[i];
-
-                        //tm.color = cyan;
-                        sample_colors[i] = colors[ColorRandomNumber];
-                                                
-
-                        sample_shapes[i] = Instantiate(shapes[ShapeRandomNumber], Vector3.Scale(currentPositions[i], xMulVec) * front + heightOffset + encodingVerticalDeviation, Quaternion.identity); //shapes[ShapeRandomNumber].transform.rotation
-
-                        Shapescript shapescr = sample_shapes[i].GetComponent<Shapescript>();
-                        shapescr.setColour(sample_colors[i]);
-                        shapescr.spawnPosition = currentPositions[i] + heightOffset + relHeight + encodingVerticalDeviation;
-                        shapescr.spawnPositionCode = i + 1;
-                        shapescr.shapeCode = ShapeRandomNumber + 1;
-                        shapescr.colorCode = ColorRandomNumber + 1;
-
-
-                        //tm.text = (currentPositions[circle_inds[i]] + heightOffset + relHeight).ToString();
-
-                        //tm.text = "switch";
-                        switch (sample_shapes[i].tag)
-                        {
-                            case "cube":
-                                //tm.text = "case cube";
-                                presCube = sample_shapes[i];
-                                break;
-
-                            case "sphere":
-                                //tm.text = "case sphere";
-                                presSphere = sample_shapes[i];
-                                break;
-                            /*
-                            case "cylinder":
-                                //tm.text = "case cylinder";
-                                presCylinder = sample_shapes[i];
-                                break;
                     
-                            case "triangle":
-                                //tm.text = "case triangle";
-                                presTriangle = sample_shapes[i];
-                                break;
-                        */
-                            case "diamond":
-                                //tm.text = "case diamond";
-                                presDiamond = sample_shapes[i];
-                                break;
-
-                            case "star":
-                                //tm.text = "case star";
-                                presStar = sample_shapes[i];
-                                break;
-                            /*
-                                case "bar":
-                                    //tm.text = "case star";
-                                    presBar = sample_shapes[i];
-                                    break;
-                            */
-                            default:
-                                break;
-                        }
-
-
-                        //scale
-                        //sample_shapes[i].transform.localScale /= 2;
-
-                        //ConfirmationArray[ColorRandomNumber] = true; // So it will not be picked again
-                        presentationInfo[i, 0] = ColorRandomNumber;
-                        presentationInfo[i, 1] = ShapeRandomNumber;
-
-                        //selection appearance change
-                        //var trans = 0.5f;
-                        //var col = sample_shapes[i].GetComponent<Renderer>().material.color;
-                        //col.a = trans;
-
-
-                    }
 
                     Camera.main.Render();
 
@@ -1714,7 +1722,7 @@ public class Experimentscript : MonoBehaviour
                             int probeIndex = (i * 4) + j;
                             probes_colors[probeIndex] = colors[ColorRandomNumber];
 
-                            sample_probes[probeIndex] = Instantiate(shapes[ShapeRandomNumber], currentProbePositions[probeIndex] * front *-1 + heightOffset, Quaternion.identity); //shapes[ShapeRandomNumber].transform.rotation
+                            sample_probes[probeIndex] = Instantiate(shapes[ShapeRandomNumber], currentProbePositions[probeIndex] * front *-1 + heightOffset, Quaternion.Euler(-90.0f, 0.0f, 180.0f)); //shapes[ShapeRandomNumber].transform.rotation
 
                             Shapescript shapescr = sample_probes[probeIndex].GetComponent<Shapescript>();
                             shapescr.setColour(probes_colors[probeIndex]);
@@ -2044,7 +2052,7 @@ public class Experimentscript : MonoBehaviour
                     //subSys.TryRecenter();
 
                     //calibrate eye
-                     ViveSR.anipal.Eye.SRanipal_Eye.LaunchEyeCalibration();
+                     //ViveSR.anipal.Eye.SRanipal_Eye.LaunchEyeCalibration();
 
                     string block_type = "block " + currentBlock.ToString() + "/" + blocks.ToString();
 

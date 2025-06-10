@@ -38,11 +38,11 @@ public class Shapescript : MonoBehaviour
         {
 
             case "cube":
-                transform.rotation = experiment.GetComponent<Experimentscript>().cube.transform.rotation;
+                //transform.rotation = experiment.GetComponent<Experimentscript>().cube.transform.rotation;
                 break;
 
             case "sphere":
-                transform.rotation = experiment.GetComponent<Experimentscript>().sphere.transform.rotation;
+                //transform.rotation = experiment.GetComponent<Experimentscript>().sphere.transform.rotation;
                 break;
             /*
             case "cylinder":
@@ -55,11 +55,11 @@ public class Shapescript : MonoBehaviour
             */
 
             case "diamond":
-                transform.rotation = experiment.GetComponent<Experimentscript>().diamond.transform.rotation;
+                //transform.rotation = experiment.GetComponent<Experimentscript>().diamond.transform.rotation;
                 break;
 
             case "star":
-                transform.rotation = experiment.GetComponent<Experimentscript>().star.transform.rotation;
+                //transform.rotation = experiment.GetComponent<Experimentscript>().star.transform.rotation;
                 break;
             /*
             case "bar":

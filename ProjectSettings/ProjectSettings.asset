@@ -13,7 +13,7 @@ PlayerSettings:
   useOnDemandResources: 0
   accelerometerFrequency: 60
   companyName: NotACompany
-  productName: VRMemory_Lower
+  productName: VRMemory_Stay
   defaultCursor: {fileID: 0}
   cursorHotspot: {x: 0, y: 0}
   m_SplashScreenBackgroundColor: {r: 0.13725491, g: 0.12156863, b: 0.1254902, a: 1}
@@ -797,9 +797,17 @@ PlayerSettings:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
-  - {fileID: 752050016218793377, guid: 9468cd88086b59f48be1154fd5a1f50f, type: 2}
   - {fileID: 0}
-  - {fileID: 4402716715585999083, guid: 570128a634c9bc84c9cab3ecdc3bf8dd, type: 2}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
   metroInputSource: 0
   wsaTransparentSwapchain: 0
   m_HolographicPauseOnTrackingLoss: 1
@@ -819,7 +827,7 @@ PlayerSettings:
   androidMaxAspectRatio: 2.1
   applicationIdentifier:
     Android: com.NotACompany.VRShapesCentricity
-    Standalone: com.NotACompany.VRMemory-Lower
+    Standalone: com.NotACompany.VRMemory-Stay
   buildNumber:
     Standalone: 0
     iPhone: 0
