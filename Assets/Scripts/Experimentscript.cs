@@ -244,6 +244,7 @@ public class Experimentscript : MonoBehaviour
     private List<int> colOrder = new List<int> { 0, 1, 2, 3 };
     private List<int> encShapeOrder = new List<int> { 0, 1, 2, 3 };
     private List<int> encColOrder = new List<int> { 0, 1, 2, 3 };
+    private List<int> encRowOrder = new List<int> { 0, 1, 2, 3 };
 
     // collection components
     //public GameObject bar;
@@ -411,6 +412,14 @@ public class Experimentscript : MonoBehaviour
 
     private UnityEngine.XR.InputDevice handR;
     private UnityEngine.XR.InputDevice handL;
+
+    private static List<Vector3> possibleHeights = new List<Vector3>
+    {
+        new Vector3(0.0f, -0.3f, 0.0f),
+        new Vector3(0.0f, -0.1f, 0.0f),
+        new Vector3(0.0f, 0.1f, 0.0f),
+        new Vector3(0.0f, 0.3f, 0.0f)
+    };
 
 
     XRInputSubsystem subSys;
@@ -1284,10 +1293,6 @@ public class Experimentscript : MonoBehaviour
         triggerCode = 0;
         currentTick += 1;
 
-        //if (stage.Equals("turn"))
-        //{
-           
-        //}
 
         // pointer ray
         if (stage.Equals("answer"))
@@ -1317,7 +1322,6 @@ public class Experimentscript : MonoBehaviour
                     }
                 }
             }
-
             if (raySet.Equals("none"))
             {
                 raySet = "ans";
@@ -1459,6 +1463,7 @@ public class Experimentscript : MonoBehaviour
                 colOrder = colOrder.OrderBy(x => UnityEngine.Random.value).ToList();
                 encShapeOrder = encShapeOrder.OrderBy(x => UnityEngine.Random.value).ToList();
                 encColOrder = encColOrder.OrderBy(x => UnityEngine.Random.value).ToList();
+                encRowOrder = encRowOrder.OrderBy(x => UnityEngine.Random.value).ToList();
 
                 //
                 // NEW PREPARATION CODE
@@ -1474,7 +1479,6 @@ public class Experimentscript : MonoBehaviour
                 //
 
                 clearFixation();
-
                 //tm.text = conditionName;
                 stage = "jitter";
                 addition_num = 100;
@@ -1501,6 +1505,8 @@ public class Experimentscript : MonoBehaviour
                     turnSign = -1;
                 }
 
+                timeObj.GetComponent<Timer>().setTime(turnTime);
+                timeObj.GetComponent<Timer>().setRunning(true);
 
                 //PRESENTATION
                 present = true;
@@ -1513,6 +1519,15 @@ public class Experimentscript : MonoBehaviour
                 presStar = null;
 
 
+                addition_num = 300;
+
+                triggerCode = addition_num + conditionCode + facingAdd;
+                //timeObj.GetComponent<Timer>().setTime(presentationTime);
+                //timeObj.GetComponent<Timer>().setRunning(true);
+
+
+                Camera.main.Render();
+
                 xMulVec = new Vector3(turnSign, 1f, 1f);
 
                 for (int i = 0; i < currentNumCondition; i++)
@@ -1520,12 +1535,12 @@ public class Experimentscript : MonoBehaviour
 
                     ColorRandomNumber = encColOrder[i];
                     ShapeRandomNumber = encShapeOrder[i];
+                    Vector3 randomHeight = possibleHeights[encRowOrder[i]];
 
                     //tm.color = cyan;
                     sample_colors[i] = colors[ColorRandomNumber];
 
-
-                    sample_shapes[i] = Instantiate(shapes[ShapeRandomNumber], Vector3.Scale(currentPositions[i], xMulVec) * front + heightOffset + encodingVerticalDeviation, Quaternion.Euler(-90.0f, 90.0f * front, 90.0f)); //shapes[ShapeRandomNumber].transform.rotation
+                    sample_shapes[i] = Instantiate(shapes[ShapeRandomNumber], Vector3.Scale(currentPositions[i], xMulVec) * front + heightOffset + randomHeight, Quaternion.Euler(-90.0f, 0.0f, 180.0f)); //shapes[ShapeRandomNumber].transform.rotation
 
                     Shapescript shapescr = sample_shapes[i].GetComponent<Shapescript>();
                     shapescr.setColour(sample_colors[i]);
@@ -1595,10 +1610,6 @@ public class Experimentscript : MonoBehaviour
 
                 }
 
-
-                timeObj.GetComponent<Timer>().setTime(turnTime);
-                timeObj.GetComponent<Timer>().setRunning(true);
-
                 //shapescrv.setVisible(false);
                 //shapescrw.setVisible(false);
 
@@ -1629,17 +1640,7 @@ public class Experimentscript : MonoBehaviour
 
                 if (halfway)
                 {
-                   
 
-                    addition_num = 300;
-                    
-                    triggerCode = addition_num + conditionCode + facingAdd;
-                    //timeObj.GetComponent<Timer>().setTime(presentationTime);
-                    //timeObj.GetComponent<Timer>().setRunning(true);
-
-                    
-
-                    Camera.main.Render();
 
                 }
                 else
@@ -2052,7 +2053,7 @@ public class Experimentscript : MonoBehaviour
                     //subSys.TryRecenter();
 
                     //calibrate eye
-                     //ViveSR.anipal.Eye.SRanipal_Eye.LaunchEyeCalibration();
+                     ViveSR.anipal.Eye.SRanipal_Eye.LaunchEyeCalibration();
 
                     string block_type = "block " + currentBlock.ToString() + "/" + blocks.ToString();
 
@@ -2210,6 +2211,7 @@ public class Experimentscript : MonoBehaviour
 
                     encLocInfo[k, 2] = shapeEnc + 1;//shape
                     encLocInfo[k, 3] = colEnc + 1;//col
+                    //encLocInfo[k, 6] = encRowOrder[k] + 1;//height
                     
 
                     if (colEnc.Equals(responseColor - 1) && shapeEnc.Equals(responseShape - 1))
@@ -2218,7 +2220,7 @@ public class Experimentscript : MonoBehaviour
                         encLocInfo[k, 0] = 1; // correct
                         encLocInfo[k, 1] = ansCount; // rank
                         
-                        encLocInfo[k, 5] = Convert.ToInt32(responseTime);//probeloc//rt
+                        encLocInfo[k, 5] = Convert.ToInt32(responseTime); //probeloc//rt
 
                         respInfo[respInd, 0] = 1; // correct
                         respInfo[respInd, 1] = k+1;//encloc
@@ -2573,6 +2575,7 @@ public class Experimentscript : MonoBehaviour
             header += "\t" + "Enc" + (ei + 1).ToString() + "_colour";
             header += "\t" + "Enc" + (ei + 1).ToString() + "_respLoc";
             header += "\t" + "Enc" + (ei + 1).ToString() + "_rt";
+            header += "\t" + "Enc" + (ei + 1).ToString() + "_height";
         }
 
         /*
@@ -2582,6 +2585,7 @@ public class Experimentscript : MonoBehaviour
         encLocInfo[i, 3] = 0; //col
         encLocInfo[i, 4] = 0; //probeloc
         encLocInfo[i, 5] = 0; //respTime
+        encLocInfo[i, 6] = 0; //height
         */
 
         for (int ci = 0; ci < colors.Length; ci++)
