@@ -4198,7 +4198,7 @@ PrefabInstance:
       objectReference: {fileID: 5663095503860141565, guid: 583482dffa1c2f343811ae6cd5b21782, type: 3}
     - target: {fileID: 3714170261904855466, guid: 16942e6d1f7136e4b9b094df8f265462, type: 3}
       propertyPath: expid
-      value: VR7_Stay
+      value: VR7_StaySteps
       objectReference: {fileID: 0}
     - target: {fileID: 3714170261904855466, guid: 16942e6d1f7136e4b9b094df8f265462, type: 3}
       propertyPath: blocks
@@ -4226,7 +4226,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3714170261904855466, guid: 16942e6d1f7136e4b9b094df8f265462, type: 3}
       propertyPath: testing
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3714170261904855466, guid: 16942e6d1f7136e4b9b094df8f265462, type: 3}
       propertyPath: cylinder
@@ -4270,7 +4270,7 @@ PrefabInstance:
       objectReference: {fileID: 1818677628}
     - target: {fileID: 3714170261904855466, guid: 16942e6d1f7136e4b9b094df8f265462, type: 3}
       propertyPath: participant_id
-      value: 3
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3714170261904855466, guid: 16942e6d1f7136e4b9b094df8f265462, type: 3}
       propertyPath: participant_nr

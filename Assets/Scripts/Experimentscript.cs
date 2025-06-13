@@ -731,10 +731,10 @@ public class Experimentscript : MonoBehaviour
         //ConfirmationArray = new bool[colors.Length, shapes.Length];
         //ProbeConfirmationArray = new bool[colors.Length, shapes.Length];
 
-        encLocInfo = new int[objectCount, 6]; // per location: correct, respRank
+        encLocInfo = new int[objectCount, 7]; // per location: correct, respRank
         respInfo = new int[respCount, 8];
-        colInfo = new int[colors.Length,7];
-        shapeInfo = new int[shapes.Length,7];
+        colInfo = new int[colors.Length, 7];
+        shapeInfo = new int[shapes.Length, 7];
 
         int somecounter1 = 0;
         foreach (Vector3 fixedPos in positions4)
@@ -1658,6 +1658,11 @@ public class Experimentscript : MonoBehaviour
                         fixationtarget.transform.position = new Vector3(0f, heightOffset.y, fixationDepth*front*-1);
                         //tm.text = "b";
                     }
+
+                    if (testing)
+                    {
+                        tm.text = "answer";
+                    }
                     //tm.text = "c";
                     for (int i = 0; i < sample_shapes.Length; i++)
                     {
@@ -1667,6 +1672,7 @@ public class Experimentscript : MonoBehaviour
                         encLocInfo[i, 3] = 0; //col
                         encLocInfo[i, 4] = 0; //probeloc
                         encLocInfo[i, 5] = 0; //respTime
+                        encLocInfo[i, 6] = 0; //height
                         //tm.text = "d";
 
                     }
@@ -1711,6 +1717,10 @@ public class Experimentscript : MonoBehaviour
                     clearFixation();
                     //tm.text = "i";
 
+                    if (testing)
+                    {
+                        tm.text = "probe display";
+                    }
                     //probes
                     for (int i = 0; i < probeCount / 4; i++)
                     {
@@ -2053,8 +2063,10 @@ public class Experimentscript : MonoBehaviour
                     //subSys.TryRecenter();
 
                     //calibrate eye
-                     ViveSR.anipal.Eye.SRanipal_Eye.LaunchEyeCalibration();
-
+                    if (!testing)
+                    {
+                        ViveSR.anipal.Eye.SRanipal_Eye.LaunchEyeCalibration();
+                    }
                     string block_type = "block " + currentBlock.ToString() + "/" + blocks.ToString();
 
                     //tm.transform.position = new Vector3(tm.transform.position.x, heightOffset.y, 5f);
@@ -2199,9 +2211,10 @@ public class Experimentscript : MonoBehaviour
                 colInfo[responseColor - 1, 5] = ansCount; //rank of col
                 shapeInfo[responseShape - 1, 5] = ansCount; //rank of shape
 
-                colInfo[responseColor - 1, 6] = Convert.ToInt32(responseTime); //rank of col
-                shapeInfo[responseShape - 1, 6] = Convert.ToInt32(responseTime); //rank of shape
-                //tm.text = "p";
+                if (testing)
+                {
+                    tm.text = "Probe writing";
+                }
                 //check if answer matched 
                 for (int k = 0; k < sample_shapes.Length; k++)
                 {
@@ -2211,7 +2224,7 @@ public class Experimentscript : MonoBehaviour
 
                     encLocInfo[k, 2] = shapeEnc + 1;//shape
                     encLocInfo[k, 3] = colEnc + 1;//col
-                    //encLocInfo[k, 6] = encRowOrder[k] + 1;//height
+                    encLocInfo[k, 6] = encRowOrder[k] + 1;//height
                     
 
                     if (colEnc.Equals(responseColor - 1) && shapeEnc.Equals(responseShape - 1))
@@ -2379,25 +2392,25 @@ public class Experimentscript : MonoBehaviour
         if (timeformat)
         {
 #if UNITY_EDITOR
-            return Application.dataPath + "/TSV/" + timedataName + ".tsv";
+            return Application.dataPath + "/TSV/" + timedataName + ".txt";
 #elif UNITY_ANDROID
-            return Application.persistentDataPath+ timedataName + ".tsv";
+            return Application.persistentDataPath+ timedataName + ".txt";
 #elif UNITY_IPHONE
-            return Application.persistentDataPath+"/"+ timedataName + ".tsv";
+            return Application.persistentDataPath+"/"+ timedataName + ".txt";
 #else
-            return Application.dataPath + "/" + timedataName + ".tsv";
+            return Application.dataPath + "/" + timedataName + ".txt";
 #endif
         }
         else
         {
 #if UNITY_EDITOR
-            return Application.dataPath + "/TSV/" +  trialdataName + ".tsv";
+            return Application.dataPath + "/TSV/" +  trialdataName + ".txt";
 #elif UNITY_ANDROID
-            return Application.persistentDataPath+ trialdataName + ".tsv";
+            return Application.persistentDataPath+ trialdataName + ".txt";
 #elif UNITY_IPHONE
-            return Application.persistentDataPath+ trialdataName + ".tsv";
+            return Application.persistentDataPath+ trialdataName + ".txt";
 #else
-            return Application.dataPath + "/" + trialdataName + ".tsv";
+            return Application.dataPath + "/" + trialdataName + ".txt";
 #endif
         }
     }
@@ -2407,25 +2420,25 @@ public class Experimentscript : MonoBehaviour
         if (timeformat)
         {
 #if UNITY_EDITOR
-            return Application.dataPath + "/TSV/" + timedataName + ".tsv";
+            return Application.dataPath + "/TSV/" + timedataName + ".txt";
 #elif UNITY_ANDROID
-            return Application.persistentDataPath+ timedataName + ".tsv";
+            return Application.persistentDataPath+ timedataName + ".txt";
 #elif UNITY_IPHONE
-            return Application.persistentDataPath+"/"+ timedataName + ".tsv";
+            return Application.persistentDataPath+"/"+ timedataName + ".txt";
 #else
-            return Application.dataPath + "/" + timedataName + ".tsv";
+            return Application.dataPath + "/" + timedataName + ".txt";
 #endif
         }
         else
         {
 #if UNITY_EDITOR
-            return Application.dataPath + "/TSV/" +  trialdataName + ".tsv";
+            return Application.dataPath + "/TSV/" +  trialdataName + ".txt";
 #elif UNITY_ANDROID
-            return Application.persistentDataPath+ trialdataName + ".tsv";
+            return Application.persistentDataPath+ trialdataName + ".txt";
 #elif UNITY_IPHONE
-            return Application.persistentDataPath+"/"+ trialdataName + ".tsv";
+            return Application.persistentDataPath+"/"+ trialdataName + ".txt";
 #else
-            return Application.dataPath + "/" + trialdataName + ".tsv";
+            return Application.dataPath + "/" + trialdataName + ".txt";
 #endif
         }
     }
@@ -2525,6 +2538,10 @@ public class Experimentscript : MonoBehaviour
 
     private void WriteTrialData()
     {
+        if (testing)
+        {
+            tm.text = "Writing trial data";
+        }
         string filePath;
 
         if (practice)
@@ -2728,6 +2745,7 @@ public class Experimentscript : MonoBehaviour
             string enc_col_ = encLocInfo[ei, 3].ToString(); //col
             string enc_probeloc_ = encLocInfo[ei, 4].ToString(); //probeloc
             string enc_rt_ = encLocInfo[ei, 5].ToString(); //respTime
+            string height_ = encLocInfo[ei, 6].ToString(); //height
 
             if (enc_corr_.Equals("0"))
             {
@@ -2742,6 +2760,7 @@ public class Experimentscript : MonoBehaviour
             File.AppendAllText(filePath, "\t" + enc_col_);
             File.AppendAllText(filePath, "\t" + enc_probeloc_);
             File.AppendAllText(filePath, "\t" + enc_rt_);
+            File.AppendAllText(filePath, "\t" + height_);
 
         }
 
