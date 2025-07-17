@@ -620,6 +620,84 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 16
   m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
+--- !u!1 &267511583
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 267511585}
+  - component: {fileID: 267511584}
+  m_Layer: 0
+  m_Name: EyeTracker
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &267511584
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 267511583}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 19ade48b384c2455cb1ccfa4372c5e7d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  objectName: eyetracker
+  measurementDescriptor: eye_tracking
+  customHeader:
+  - trigger_code
+  - trial
+  - block
+  - gaze_origin_x
+  - gaze_origin_y
+  - gaze_origin_z
+  - gaze_direction_x
+  - gaze_direction_y
+  - gaze_direction_z
+  - eye_openness_left
+  - eye_openness_right
+  - pupil_diameter_left
+  - pupil_diameter_right
+  - focus_object_raw
+  - focus_point_x
+  - focus_point_y
+  - focus_point_z
+  - focus_distance
+  - head_pos_x
+  - head_pos_y
+  - head_pos_z
+  - head_dir_x
+  - head_dir_y
+  - head_dir_z
+  updateType: 0
+  session: {fileID: 0}
+  cam: {fileID: 819375639}
+  maxFocusDistance: 100
+  focusMask:
+    serializedVersion: 2
+    m_Bits: 0
+  debug: 0
+--- !u!4 &267511585
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 267511583}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 3.5535958, y: 1.2067531, z: 0.054266483}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 26
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &311956099
 GameObject:
   m_ObjectHideFlags: 0
@@ -3101,8 +3179,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1047872841498813192, guid: 522f807d4d25a4c7b869139da15c74c7, type: 3}
       propertyPath: trackedObjects.Array.size
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 1047872841498813192, guid: 522f807d4d25a4c7b869139da15c74c7, type: 3}
+      propertyPath: trackedObjects.Array.data[0]
+      value: 
+      objectReference: {fileID: 267511584}
     - target: {fileID: 1047872841498813192, guid: 522f807d4d25a4c7b869139da15c74c7, type: 3}
       propertyPath: onTrialEnd.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
@@ -4365,12 +4447,20 @@ PrefabInstance:
       value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 8866231359495051881, guid: a65c69ddbfab240cc8db7a657477a9b7, type: 3}
+      propertyPath: shapeSettings.encodingShapeRotations.Array.size
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 8866231359495051881, guid: a65c69ddbfab240cc8db7a657477a9b7, type: 3}
       propertyPath: shapeSettings.reportingShapeDistances.Array.size
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 8866231359495051881, guid: a65c69ddbfab240cc8db7a657477a9b7, type: 3}
       propertyPath: shapeSettings.reportingShapePositions.Array.size
       value: 16
+      objectReference: {fileID: 0}
+    - target: {fileID: 8866231359495051881, guid: a65c69ddbfab240cc8db7a657477a9b7, type: 3}
+      propertyPath: shapeSettings.reportingShapeRotations.Array.size
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 8866231359495051881, guid: a65c69ddbfab240cc8db7a657477a9b7, type: 3}
       propertyPath: shapeSettings.shapeRotations.Array.data[0].value.x
@@ -4394,7 +4484,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8866231359495051881, guid: a65c69ddbfab240cc8db7a657477a9b7, type: 3}
       propertyPath: shapeSettings.shapeRotations.Array.data[2].value.y
-      value: -85
+      value: -95
       objectReference: {fileID: 0}
     - target: {fileID: 8866231359495051881, guid: a65c69ddbfab240cc8db7a657477a9b7, type: 3}
       propertyPath: shapeSettings.shapeRotations.Array.data[2].value.z
@@ -4505,6 +4595,22 @@ PrefabInstance:
       value: 0.1
       objectReference: {fileID: 0}
     - target: {fileID: 8866231359495051881, guid: a65c69ddbfab240cc8db7a657477a9b7, type: 3}
+      propertyPath: shapeSettings.encodingShapeRotations.Array.data[0].key
+      value: Cube
+      objectReference: {fileID: 0}
+    - target: {fileID: 8866231359495051881, guid: a65c69ddbfab240cc8db7a657477a9b7, type: 3}
+      propertyPath: shapeSettings.encodingShapeRotations.Array.data[1].key
+      value: Diamond (2)
+      objectReference: {fileID: 0}
+    - target: {fileID: 8866231359495051881, guid: a65c69ddbfab240cc8db7a657477a9b7, type: 3}
+      propertyPath: shapeSettings.encodingShapeRotations.Array.data[2].key
+      value: Star1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8866231359495051881, guid: a65c69ddbfab240cc8db7a657477a9b7, type: 3}
+      propertyPath: shapeSettings.encodingShapeRotations.Array.data[3].key
+      value: Sphere
+      objectReference: {fileID: 0}
+    - target: {fileID: 8866231359495051881, guid: a65c69ddbfab240cc8db7a657477a9b7, type: 3}
       propertyPath: shapeSettings.reportingShapePositions.Array.data[10].x
       value: 0.1
       objectReference: {fileID: 0}
@@ -4551,6 +4657,74 @@ PrefabInstance:
     - target: {fileID: 8866231359495051881, guid: a65c69ddbfab240cc8db7a657477a9b7, type: 3}
       propertyPath: shapeSettings.reportingShapePositions.Array.data[15].y
       value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8866231359495051881, guid: a65c69ddbfab240cc8db7a657477a9b7, type: 3}
+      propertyPath: shapeSettings.reportingShapeRotations.Array.data[0].key
+      value: Cube
+      objectReference: {fileID: 0}
+    - target: {fileID: 8866231359495051881, guid: a65c69ddbfab240cc8db7a657477a9b7, type: 3}
+      propertyPath: shapeSettings.reportingShapeRotations.Array.data[1].key
+      value: Diamond (2)
+      objectReference: {fileID: 0}
+    - target: {fileID: 8866231359495051881, guid: a65c69ddbfab240cc8db7a657477a9b7, type: 3}
+      propertyPath: shapeSettings.reportingShapeRotations.Array.data[2].key
+      value: Star1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8866231359495051881, guid: a65c69ddbfab240cc8db7a657477a9b7, type: 3}
+      propertyPath: shapeSettings.reportingShapeRotations.Array.data[3].key
+      value: Sphere
+      objectReference: {fileID: 0}
+    - target: {fileID: 8866231359495051881, guid: a65c69ddbfab240cc8db7a657477a9b7, type: 3}
+      propertyPath: shapeSettings.encodingShapeRotations.Array.data[0].value.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8866231359495051881, guid: a65c69ddbfab240cc8db7a657477a9b7, type: 3}
+      propertyPath: shapeSettings.encodingShapeRotations.Array.data[0].value.z
+      value: 90
+      objectReference: {fileID: 0}
+    - target: {fileID: 8866231359495051881, guid: a65c69ddbfab240cc8db7a657477a9b7, type: 3}
+      propertyPath: shapeSettings.encodingShapeRotations.Array.data[1].value.x
+      value: 90
+      objectReference: {fileID: 0}
+    - target: {fileID: 8866231359495051881, guid: a65c69ddbfab240cc8db7a657477a9b7, type: 3}
+      propertyPath: shapeSettings.encodingShapeRotations.Array.data[1].value.z
+      value: 95
+      objectReference: {fileID: 0}
+    - target: {fileID: 8866231359495051881, guid: a65c69ddbfab240cc8db7a657477a9b7, type: 3}
+      propertyPath: shapeSettings.encodingShapeRotations.Array.data[2].value.x
+      value: -85
+      objectReference: {fileID: 0}
+    - target: {fileID: 8866231359495051881, guid: a65c69ddbfab240cc8db7a657477a9b7, type: 3}
+      propertyPath: shapeSettings.encodingShapeRotations.Array.data[2].value.y
+      value: -95
+      objectReference: {fileID: 0}
+    - target: {fileID: 8866231359495051881, guid: a65c69ddbfab240cc8db7a657477a9b7, type: 3}
+      propertyPath: shapeSettings.encodingShapeRotations.Array.data[3].value.z
+      value: 90
+      objectReference: {fileID: 0}
+    - target: {fileID: 8866231359495051881, guid: a65c69ddbfab240cc8db7a657477a9b7, type: 3}
+      propertyPath: shapeSettings.reportingShapeRotations.Array.data[0].value.x
+      value: 90
+      objectReference: {fileID: 0}
+    - target: {fileID: 8866231359495051881, guid: a65c69ddbfab240cc8db7a657477a9b7, type: 3}
+      propertyPath: shapeSettings.reportingShapeRotations.Array.data[1].value.x
+      value: 90
+      objectReference: {fileID: 0}
+    - target: {fileID: 8866231359495051881, guid: a65c69ddbfab240cc8db7a657477a9b7, type: 3}
+      propertyPath: shapeSettings.reportingShapeRotations.Array.data[2].value.x
+      value: 55
+      objectReference: {fileID: 0}
+    - target: {fileID: 8866231359495051881, guid: a65c69ddbfab240cc8db7a657477a9b7, type: 3}
+      propertyPath: shapeSettings.reportingShapeRotations.Array.data[2].value.y
+      value: -95
+      objectReference: {fileID: 0}
+    - target: {fileID: 8866231359495051881, guid: a65c69ddbfab240cc8db7a657477a9b7, type: 3}
+      propertyPath: shapeSettings.reportingShapeRotations.Array.data[2].value.z
+      value: -85
+      objectReference: {fileID: 0}
+    - target: {fileID: 8866231359495051881, guid: a65c69ddbfab240cc8db7a657477a9b7, type: 3}
+      propertyPath: shapeSettings.reportingShapeRotations.Array.data[3].value.x
+      value: 90
       objectReference: {fileID: 0}
     - target: {fileID: 8866231359495051882, guid: a65c69ddbfab240cc8db7a657477a9b7, type: 3}
       propertyPath: m_Name

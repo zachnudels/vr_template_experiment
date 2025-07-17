@@ -49,7 +49,8 @@ namespace ActionSimilarity
         public GameObject reportingShape;
         public Mesh[] shapeMeshes;
         public Color[] shapeColours;
-        public List<Vector3Dictionary> shapeRotations;
+        public List<Vector3Dictionary> reportingShapeRotations;
+        public List<Vector3Dictionary> encodingShapeRotations;
         public float[] shapeSpacing;
 
         [HideInInspector] public Vector3[] encodingShapePositions;
@@ -59,7 +60,8 @@ namespace ActionSimilarity
         
         [HideInInspector] public List<int> shapeRows; 
         [HideInInspector] public List<int> colorCols;
-        [HideInInspector] public Dictionary<string, Vector3> shapeRotationMap;
+        [HideInInspector] public Dictionary<string, Vector3> reportingShapeRotationMap;
+        [HideInInspector] public Dictionary<string, Vector3> encodingShapeRotationMap;
 
         public void Init()
         {
@@ -78,7 +80,8 @@ namespace ActionSimilarity
                 throw new UnityException("reportingShapes must be square of other values!");
             }
             
-            shapeRotationMap = shapeRotations.ToDictionary(e => e.key, e => e.value);
+            reportingShapeRotationMap = reportingShapeRotations.ToDictionary(e => e.key, e => e.value);
+            encodingShapeRotationMap = encodingShapeRotations.ToDictionary(e => e.key, e => e.value);
             
         }
 
@@ -153,6 +156,7 @@ namespace ActionSimilarity
         bool sessionStart;
 
         private string _stageName;
+        private List<ResponseShapeMetadata> _reportedStimuli;
         
         /*
         * code will be sent to the eye tracking recorder
@@ -274,6 +278,11 @@ namespace ActionSimilarity
 
             _colorCode = _uxf.settings.GetInt("colorCode");
             // TODO: write results 
+            
+            _uxf.result["ConditionCode"] = _turnDirection == TurnDirection.Left ? 1 : 2;
+            _uxf.result["Condition"] = _turnDirection.ToString().ToLower();
+            _uxf.result["HeightOffset"] = eyes.position.y;
+            _uxf.result["Facing"] = faceDirection;
 
             //trial.result["straightTop"] = straightTop;
             //trial.result["straightLeft"] = straightLeft;
@@ -331,6 +340,8 @@ namespace ActionSimilarity
             
             textControllerWall.ChangeWall(faceDirection);
             fixationSettings.fixationSphere.transform.position = eyes.position + new Vector3(0.0f, downOffset, fixationSettings.FixationDepth * (int)faceDirection);;
+            
+            _reportedStimuli = new List<ResponseShapeMetadata>();
 
             reportedIndex = 1;
         }
@@ -603,15 +614,16 @@ namespace ActionSimilarity
                 
                 Color color = shapeSettings.shapeColours[shapeSettings.colorPositions[i]];
                 Mesh mesh = shapeSettings.shapeMeshes[shapeSettings.shapePositions[i]];
-                Vector3 rotation = shapeSettings.shapeRotationMap.TryGetValue(mesh.name, out var rot) ? rot : Vector3.zero;
+                Vector3 rotation = shapeSettings.encodingShapeRotationMap.TryGetValue(mesh.name, out var rot) ? rot : Vector3.zero;
                 
                 // Change to x rotation since we're sideways now
-                rotation = new Vector3(rotation.z, rotation.y, rotation.x);
+                // Debug.Log(faceDirection.ToString() + " " + _turnDirection.ToString());
+                // rotation = new Vector3(rotation.z, rotation.y, rotation.x);
                 Vector3 position = shapeSettings.encodingShapePositions[i]
                                    + eyes.position
                                    + new Vector3(
                                        fixationSettings.FixationDepth * (int)faceDirection *
-                                       (int)fixationRotator.Direction,
+                                       (int)_turnDirection,
                                        0.0f,
                                        0.0f
                                    );  
@@ -646,7 +658,7 @@ namespace ActionSimilarity
                         
                     Color color = color_i == _colorCode ? shapeSettings.shapeColours[color_i] : Color.gray;
                     Mesh mesh = shapeSettings.shapeMeshes[shape_i];
-                    Vector3 rotation = shapeSettings.shapeRotationMap.TryGetValue(mesh.name, out var rot) ? rot : Vector3.zero;
+                    Vector3 rotation = shapeSettings.reportingShapeRotationMap.TryGetValue(mesh.name, out var rot) ? rot : Vector3.zero;
                     Vector3 position = shapeSettings.reportingShapePositions[posIndex]
                                        + eyes.position
                                        + new Vector3(
@@ -682,6 +694,8 @@ namespace ActionSimilarity
                         shapeEncIndex,
                         encodingIndex
                     );
+                    // Add for logging purposes
+                    _reportedStimuli.Add(shapeData);
                     
                     // Add shape Data as a component to the shape GameObject
                     ResponseShapeMetadataObject metadataObject = shape.AddComponent<ResponseShapeMetadataObject>();
@@ -705,29 +719,91 @@ namespace ActionSimilarity
          */
         public void cleanUpTrial(UXF.Trial trial)
         {
-            logFeedbackResults();
+            logResults();
             textControllerWall.Clear();
             StopAllCoroutines();
         }
 
-        void logFeedbackResults()
+        void logResults()
         {
-            _uxf.result["ConditionCode"] = _turnDirection == TurnDirection.Left ? 1 : 2;
-            _uxf.result["Condition"] = _turnDirection.ToString().ToLower();
+            for (int i = 0; i != shapeSettings.count; ++i)
+            {
+                ResponseShapeMetadata response = _reportedStimuli
+                    .FirstOrDefault(item => item.EncodingIndex == i);
+                if (response == null)
+                {
+                    throw new UnityException($"Could not find reported stimuli with encoding index {i}");
+                }
+                bool notReported = response.RT == -1;
 
-            // try
-            // {
+                _uxf.result[$"Enc{i+1}_rank"] = notReported ? "nan" : response.ReportedIndex.ToString();
+                _uxf.result[$"Enc{i+1}_correct"] = notReported ? 0 : 1;
+                _uxf.result[$"Enc{i+1}_colour"] = shapeSettings.colorPositions[i];
+                _uxf.result[$"Enc{i+1}_shape"] = shapeSettings.shapePositions[i];
+                _uxf.result[$"Enc{i+1}_respLoc"] = response.Loc;
+                _uxf.result[$"Enc{i+1}_rt"] = notReported ? "nan" : response.RT.ToString();
+            }
+            
+            foreach (int i in shapeSettings.colorPositions)
+            {
+                if (i != _colorCode)
+                {
+                    continue;
+                }
+                ResponseShapeMetadata encodingShape = _reportedStimuli
+                    .FirstOrDefault(item => item.ColorIndex == i && item.EncodingIndex != -1);
+                if (encodingShape == null)
+                {
+                    throw new UnityException($"Could not find encoding stimuli with color index {i}");
+                }
+                
+                ResponseShapeMetadata reportedShape = _reportedStimuli
+                    .FirstOrDefault(item => item.ColorIndex == i && item.RT != -1);
+                if (reportedShape == null)
+                {
+                    throw new UnityException($"Could not find reported stimuli with color index {i}");
+                }
+                bool notReported = reportedShape == encodingShape;
 
-                // int choice = (int)_uxf.result["PerceptionChoice"];
-                // float displayTime = (float)trial.result["PerceptionStimulusInstantiationTime"];
-                // float choiceTime = (float)trial.result["PerceptionChoiceTime"];
-                // data.LogChoice(displayTime, choiceTime, choice, triggerMap, trial);
-            // }
-            // catch
-            // {
-                // Debug.LogError("Trial " + trial.number + " was corrupted.");
-            // }
+                _uxf.result[$"Colour{i}_correct"] = notReported ? 0 : 1;
+                _uxf.result[$"Colour{i}_encLoc"] = encodingShape.EncodingIndex;
+                _uxf.result[$"Colour{i}_encShape"] = encodingShape.ShapeIndex;
+                
+                _uxf.result[$"Colour{i}_respLoc"] = reportedShape.Loc;
+                _uxf.result[$"Colour{i}_respShape"] = reportedShape.ShapeIndex;
+                _uxf.result[$"Colour{i}_respRank"] = reportedShape.ReportedIndex;
+                _uxf.result[$"Colour{i}_rt"] = reportedShape.RT;
+            }
+            
+            foreach (int i in shapeSettings.shapePositions)
+            {
+                ResponseShapeMetadata encodingShape = _reportedStimuli
+                    .FirstOrDefault(item => item.ShapeIndex == i && item.EncodingIndex != -1);
+                if (encodingShape == null)
+                {
+                    throw new UnityException($"Could not find encoding stimuli with shape index {i}");
+                }
+                
+                ResponseShapeMetadata reportedShape = _reportedStimuli
+                    .FirstOrDefault(item => item.ShapeIndex == i && item.RT != -1);
+                if (reportedShape == null)
+                {
+                    // throw new UnityException($"Could not find reported stimuli with shape index {i}");
+                    // continue;
+                    reportedShape = null;
+                }
+                bool notReported = reportedShape == encodingShape;
 
+                _uxf.result[$"Shape{i}_correct"] = notReported ? 0 : 1;
+                _uxf.result[$"Shape{i}_encLoc"] = encodingShape.EncodingIndex;
+                _uxf.result[$"Shape{i}_encColour"] = encodingShape.ColorIndex;
+                
+                _uxf.result[$"Shape{i}_respLoc"] = reportedShape == null ? "nan" : reportedShape.Loc.ToString();
+                _uxf.result[$"Shape{i}_respColour"] = reportedShape == null ? "nan" : reportedShape.ColorIndex.ToString();
+                _uxf.result[$"Shape{i}_respRank"] = reportedShape == null ? "nan" : reportedShape.ReportedIndex.ToString();
+                _uxf.result[$"Shape{i}_rt"] = reportedShape == null ? "nan" : reportedShape.RT.ToString();
+            }
+            
         }
         
          public static GameObject InstantiateObjectWithMesh(GameObject prefab,
@@ -802,6 +878,8 @@ namespace ActionSimilarity
              
              ResponseShapeMetadata shapeMetadata = selectedShape.GetComponent<ResponseShapeMetadataObject>().Data;
              shapeMetadata.RT = reactionTime;
+             shapeMetadata.ReportedIndex = reportedIndex;
+             
              
              Tuple<int, int> shapePair = shapeMetadata.GetShapePair();
              // Debug.Log($"shape pos: {shapeMetadata.}");

@@ -11,16 +11,37 @@ public class ResponseShapeMetadata
     private int shapeIndex;
     private int colorIndex;
     private int loc;
+    private int colorEncIndex;
+    private int shapeEncIndex;
     private int rt = -1;
+    private int reportedIndex = -1;
+
+    public int Correct => correct;
+
+    public int EncodingIndex => encodingIndex;
+
+    public int ShapeIndex => shapeIndex;
+
+    public int ColorIndex => colorIndex;
+
+    public int Loc => loc;
+
+    public int ColorEncIndex => colorEncIndex;
+
+    public int ShapeEncIndex => shapeEncIndex;
+
 
     public int RT
     {
         get => rt;
         set => rt = value;
     }
-
-    private int colorEncIndex;
-    private int shapeEncIndex;
+    
+    public int ReportedIndex
+    {
+        get => reportedIndex;
+        set => reportedIndex = value;
+    }
     
     public ResponseShapeMetadata(
         int colorIndex, 

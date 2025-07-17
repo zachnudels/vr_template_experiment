@@ -44,6 +44,8 @@ namespace UXF
         public bool Recording { get { return recording; } }
 
         public UXFDataTable data { get; private set; } = new UXFDataTable();
+
+        private int tick;
         
         /// <summary>
         /// The header that will go at the top of the output file associated with this tracker
@@ -53,8 +55,9 @@ namespace UXF
         { 
             get
             {
-                var newHeader = new string[customHeader.Length + 1];
-                newHeader[0] = "time";
+                var newHeader = new string[customHeader.Length + 2];
+                newHeader[0] = "Tick";
+                newHeader[1] = "Time";
                 customHeader.CopyTo(newHeader, 1);
                 return newHeader;
             }
@@ -93,7 +96,9 @@ namespace UXF
             if (!recording) throw new System.InvalidOperationException("Tracker measurements cannot be taken when not in a trial!");
             
             UXFDataRow newRow = GetCurrentValues();
-            newRow.Add(("time", Time.time));
+            newRow.Add(("Tick", tick));
+            ++tick;
+            newRow.Add(("Time", Time.time));
             data.AddCompleteRow(newRow);
         }
 
@@ -103,6 +108,7 @@ namespace UXF
         public void StartRecording()
         {
             data = new UXFDataTable(header);
+            tick = 0;
             recording = true;
         }
 
