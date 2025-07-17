@@ -23,6 +23,8 @@ namespace ActionSimilarity
         public float delayTime;
         public float cueTime;
         public float reportTime;
+        
+        public int colorCode;
 
         public float endSessionTime;
 
@@ -56,6 +58,7 @@ namespace ActionSimilarity
             session.settings.SetValue("reportTime", reportTime);
             session.settings.SetValue("debug", debug);
             session.settings.SetValue("triggerCode", 0);
+            session.settings.SetValue("colorCode", colorCode);
 
             GenerateBlocks(session);
 

@@ -146,6 +146,8 @@ namespace ActionSimilarity
         private UXF.Trial _uxf;
         private float responseStartTime;
 
+        private int _colorCode;
+
         bool practiceBlock;
         bool firstTrial;
         bool sessionStart;
@@ -270,6 +272,7 @@ namespace ActionSimilarity
 
             _turnDirection = (TurnDirection)_uxf.settings.GetObject("turnDirection");
 
+            _colorCode = _uxf.settings.GetInt("colorCode");
             // TODO: write results 
 
             //trial.result["straightTop"] = straightTop;
@@ -555,7 +558,7 @@ namespace ActionSimilarity
             // yield return new WaitForSeconds((session.CurrentTrial.settings.GetFloat("reportTime")));
             
             // pause = true;
-            yield return new WaitUntil(() => reportedIndex == shapeSettings.count + 1);
+            yield return new WaitUntil(() => reportedIndex == 2);
 
             
             if (this.reportingStimuli == null)
@@ -641,7 +644,7 @@ namespace ActionSimilarity
                     int shape_i = shapeSettings.colorCols[shapeCol];
                     Debug.Log($"Shape pos: {posIndex} colorI: {color_i}, shape_i: {shape_i}");
                         
-                    Color color = shapeSettings.shapeColours[color_i];
+                    Color color = color_i == _colorCode ? shapeSettings.shapeColours[color_i] : Color.gray;
                     Mesh mesh = shapeSettings.shapeMeshes[shape_i];
                     Vector3 rotation = shapeSettings.shapeRotationMap.TryGetValue(mesh.name, out var rot) ? rot : Vector3.zero;
                     Vector3 position = shapeSettings.reportingShapePositions[posIndex]
@@ -651,6 +654,7 @@ namespace ActionSimilarity
                                            0.0f,
                                            fixationSettings.FixationDepth * (int)faceDirection
                                        );
+                    
                     GameObject shape = InstantiateObjectWithMeshAndColor(shapeSettings.reportingShape,
                         mesh,
                         position,
@@ -787,6 +791,10 @@ namespace ActionSimilarity
 
          public void ReportShapeSelected(GameObject selectedShape)
          {
+             if (selectedShape.GetComponent<Renderer>().material.color != shapeSettings.shapeColours[_colorCode])
+             {
+                 return;
+             } 
              // Determine reaction time
              float currentTime = Time.time;
              int reactionTime = (int)((currentTime - responseStartTime) * 1000);
