@@ -44,8 +44,6 @@ namespace UXF
         public bool Recording { get { return recording; } }
 
         public UXFDataTable data { get; private set; } = new UXFDataTable();
-
-        private int tick;
         
         /// <summary>
         /// The header that will go at the top of the output file associated with this tracker
@@ -58,10 +56,14 @@ namespace UXF
                 var newHeader = new string[customHeader.Length + 2];
                 newHeader[0] = "Tick";
                 newHeader[1] = "Time";
-                customHeader.CopyTo(newHeader, 1);
+                customHeader.CopyTo(newHeader, 2);
+                tick = 0;
+                Debug.Log(string.Join(", ", newHeader));
                 return newHeader;
             }
         }
+
+        private int tick;
 
         /// <summary>
         /// When the tracker should take measurements.
@@ -108,7 +110,6 @@ namespace UXF
         public void StartRecording()
         {
             data = new UXFDataTable(header);
-            tick = 0;
             recording = true;
         }
 

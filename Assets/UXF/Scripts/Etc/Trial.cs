@@ -279,3 +279,12 @@ namespace UXF
 
 
 }
+
+/*
+ * import pandas as pd
+ * from pathlib import Path
+ * path = Path('/Users/zach/2025_RA/freek/experiments/VR7_Single/data_output/test_run/crept-65195ea0-b5a3-41ad-b8b0-700f4cf82f56/S001')
+ * files = list(sorted(path.rglob('*eyetracker*.csv')))
+ * df_all = pd.concat((pd.read_csv(f) for f in files), ignore_index=True)
+ * df_all.to_csv(path.joinpath("time_results.csv"), index=False)
+*/

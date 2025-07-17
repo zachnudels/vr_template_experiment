@@ -105,8 +105,8 @@ public class EyeTracker : Tracker
         
         Vector3 hand_direction = GameObject.FindGameObjectsWithTag("rightHand")[0].GetComponent<Transform>().forward;
         row.Add(("HandRDirX", hand_direction.x));
-        row.Add(("HandRDirX", hand_direction.y));
-        row.Add(("HandRDirX", hand_direction.z));    }
+        row.Add(("HandRDirY", hand_direction.y));
+        row.Add(("HandRDirZ", hand_direction.z));    }
 
     void RecordHead(UXFDataRow row)
     {
@@ -136,6 +136,8 @@ public class EyeTracker : Tracker
             "GazeDirX",
             "GazeDirY",
             "GazeDirZ",
+            "GazeAngleX",
+            "GazeAngleY",
         };
         
         if (simulating)
@@ -252,7 +254,13 @@ public class EyeTracker : Tracker
     void RecordEyeFocus(UXFDataRow row)
     {
 
-        string[] headers = { "focus_object_raw", "focus_point_x", "focus_point_y", "focus_point_z", "focus_distance" };
+        string[] headers = { "ViewGazeX", "ViewGazeY", "ViewGazeZ" };
+        
+        Vector3 screenPosFixation = cam.WorldToViewportPoint(trial.fixationSettings.fixationSphere.transform.position);
+        row.Add(("ViewFixX", screenPosFixation.x));
+        row.Add(("ViewFixY", screenPosFixation.y));
+        row.Add(("ViewFixZ", screenPosFixation.z));
+        
         if (simulating)
         {
             AddNans(headers, row);
@@ -281,17 +289,12 @@ public class EyeTracker : Tracker
 
 
             //fixation cross
-            //tm.text = "fixationcross";
-            Vector3 screenPosFixation = cam.WorldToViewportPoint(trial.fixationSettings.fixationSphere.transform.position);
-            row.Add(("ViewFixX", screenPosFixation.x));
-            row.Add(("ViewFixY", screenPosFixation.y));
-            row.Add(("ViewFixZ", screenPosFixation.z));
 
-            row.Add(("focus_object_raw", focusInfo.transform.name));
-            row.Add(("focus_point_x", focusInfo.point.x));
-            row.Add(("focus_point_y", focusInfo.point.y));
-            row.Add(("focus_point_z", focusInfo.point.z));
-            row.Add(("focus_distance", focusInfo.distance));
+            // row.Add(("focus_object_raw", focusInfo.transform.name));
+            // row.Add(("focus_point_x", focusInfo.point.x));
+            // row.Add(("focus_point_y", focusInfo.point.y));
+            // row.Add(("focus_point_z", focusInfo.point.z));
+            // row.Add(("focus_distance", focusInfo.distance));
         }
         else
         {
@@ -328,10 +331,10 @@ public class EyeTracker : Tracker
             "PupilSensorLy",
             "PupilSensorRx",
             "PupilSensorRy",
-            "PositionLx",
-            "PositionLy",
-            "PositionRx",
-            "PositionRy",
+            // "PositionLx",
+            // "PositionLy",
+            // "PositionRx",
+            // "PositionRy",
             "GazeAngleX",
             "GazeAngleY",
             "HeadAngleX",
