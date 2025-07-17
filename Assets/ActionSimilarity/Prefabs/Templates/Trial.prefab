@@ -1,0 +1,98 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &8866231359495051882
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8866231359495051880}
+  - component: {fileID: 8866231359495051881}
+  - component: {fileID: 8866231359495051879}
+  m_Layer: 0
+  m_Name: Trial
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8866231359495051880
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8866231359495051882}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8866231359495051881
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8866231359495051882}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4ba2625ae112642378944f25e185edea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  session: {fileID: 0}
+  fixationSettings:
+    fixationSphere: {fileID: 3133701270604379711, guid: a4dbc45cbdf47c747983ebd76fd06e05, type: 3}
+    fixationDepth: 1
+  shapeSettings:
+    count: 0
+    encodingShape: {fileID: 8165808477015924126, guid: 551e8c0cb92f89a4e906fc16ae77c09d, type: 3}
+    reportingShape: {fileID: 2349023219368754960, guid: 5dc6d6b33d657487abafb9a9a34220c1, type: 3}
+    shapeMeshes:
+    - {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+    - {fileID: 2401994324257950250, guid: 377a6b79e736ab841b0b70039a12962a, type: 3}
+    shapeColours:
+    - {r: 0, g: 1, b: 1, a: 0}
+    - {r: 0, g: 1, b: 0, a: 0}
+    shapeRotation: {x: 0, y: 0, z: 0}
+    encodingShapePositions:
+    - {x: 0, y: 0, z: -0.1}
+    - {x: 0, y: 0, z: 0.1}
+    shapePositions: 
+    colorPositions: 
+    reportingShapePositions:
+    - {x: -0.1, y: -0.1, z: 0}
+    - {x: -0.1, y: 0.1, z: 0}
+    - {x: 0.1, y: -0.1, z: 0}
+    - {x: 0.1, y: 0.1, z: 0}
+    shapeRows: 
+    colorCols: 
+  codes:
+  - key: instructions
+    value: 100
+  - key: halfway_turn
+    value: 300
+  - key: iti
+    value: 50
+  - key: turn
+    value: 500
+  textControllerWall: {fileID: 0}
+  simulating: 0
+  pause: 0
+  initializedEnvironment: 0
+--- !u!114 &8866231359495051879
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8866231359495051882}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b8cdb1a512dde40609d071660f9bba6b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

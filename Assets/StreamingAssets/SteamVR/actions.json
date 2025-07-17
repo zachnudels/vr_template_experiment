@@ -1,56 +1,56 @@
 {
   "actions": [
     {
-      "name": "/actions/default/in/InteractUI",
+      "name": "/actions/trigger/in/InteractUI",
       "type": "boolean"
     },
     {
-      "name": "/actions/default/in/Teleport",
+      "name": "/actions/trigger/in/Teleport",
       "type": "boolean"
     },
     {
-      "name": "/actions/default/in/GrabPinch",
+      "name": "/actions/trigger/in/GrabPinch",
       "type": "boolean"
     },
     {
-      "name": "/actions/default/in/GrabGrip",
+      "name": "/actions/trigger/in/GrabGrip",
       "type": "boolean"
     },
     {
-      "name": "/actions/default/in/Pose",
+      "name": "/actions/trigger/in/Pose",
       "type": "pose"
     },
     {
-      "name": "/actions/default/in/SkeletonLeftHand",
+      "name": "/actions/trigger/in/SkeletonLeftHand",
       "type": "skeleton",
       "skeleton": "/skeleton/hand/left"
     },
     {
-      "name": "/actions/default/in/SkeletonRightHand",
+      "name": "/actions/trigger/in/SkeletonRightHand",
       "type": "skeleton",
       "skeleton": "/skeleton/hand/right"
     },
     {
-      "name": "/actions/default/in/Squeeze",
+      "name": "/actions/trigger/in/Squeeze",
       "type": "vector1",
       "requirement": "optional"
     },
     {
-      "name": "/actions/default/in/HeadsetOnHead",
+      "name": "/actions/trigger/in/HeadsetOnHead",
       "type": "boolean",
       "requirement": "optional"
     },
     {
-      "name": "/actions/default/in/SnapTurnLeft",
+      "name": "/actions/trigger/in/SnapTurnLeft",
       "type": "boolean",
       "requirement": "suggested"
     },
     {
-      "name": "/actions/default/in/SnapTurnRight",
+      "name": "/actions/trigger/in/SnapTurnRight",
       "type": "boolean"
     },
     {
-      "name": "/actions/default/out/Haptic",
+      "name": "/actions/trigger/out/Haptic",
       "type": "vibration"
     },
     {
@@ -83,14 +83,23 @@
       "requirement": "optional"
     },
     {
-      "name": "/actions/newActionSet/in/trigger",
+      "name": "/actions/default/in/trigger",
       "type": "vector1",
       "requirement": "suggested"
+    },
+    {
+      "name": "/actions/default/in/yes",
+      "type": "boolean",
+      "requirement": "optional"
+    },
+    {
+      "name": "/actions/default/in/no",
+      "type": "boolean"
     }
   ],
   "action_sets": [
     {
-      "name": "/actions/default",
+      "name": "/actions/trigger",
       "usage": "single"
     },
     {
@@ -106,7 +115,7 @@
       "usage": "single"
     },
     {
-      "name": "/actions/newActionSet",
+      "name": "/actions/default",
       "usage": "single"
     }
   ],
@@ -167,18 +176,7 @@
   "localization": [
     {
       "language_tag": "en_US",
-      "/actions/default/in/GrabGrip": "Grab Grip",
-      "/actions/default/in/GrabPinch": "Grab Pinch",
-      "/actions/default/in/HeadsetOnHead": "Headset on head (proximity sensor)",
-      "/actions/default/in/InteractUI": "Interact With UI",
-      "/actions/default/in/Pose": "Pose",
-      "/actions/default/in/SkeletonLeftHand": "Skeleton (Left)",
-      "/actions/default/in/SkeletonRightHand": "Skeleton (Right)",
-      "/actions/default/in/Teleport": "Teleport",
-      "/actions/default/out/Haptic": "Haptic",
-      "/actions/platformer/in/Jump": "Jump",
-      "/actions/default/in/SnapTurnLeft": "Snap Turn (Left)",
-      "/actions/default/in/SnapTurnRight": "Snap Turn (Right)"
+      "/actions/platformer/in/Jump": "Jump"
     }
   ]
 }

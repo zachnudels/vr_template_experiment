@@ -1,0 +1,2 @@
+experiment,ppid,session_num,trial_num,block_num,trial_num_in_block,start_time,end_time,ConditionCode,Condition
+test_run,earth-aca54b23-e1bd-4833-8faf-18369d9f7798,1,1,1,1,68.34437,77.18983,2,right

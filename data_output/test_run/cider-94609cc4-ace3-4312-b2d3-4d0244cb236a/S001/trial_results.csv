@@ -1,0 +1,2 @@
+experiment,ppid,session_num,trial_num,block_num,trial_num_in_block,start_time,end_time,ConditionCode,Condition
+test_run,cider-94609cc4-ace3-4312-b2d3-4d0244cb236a,1,1,1,1,2.410758,37.18,2,right

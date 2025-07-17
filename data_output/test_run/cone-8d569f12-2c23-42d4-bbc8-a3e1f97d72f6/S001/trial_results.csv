@@ -1,0 +1,2 @@
+experiment,ppid,session_num,trial_num,block_num,trial_num_in_block,start_time,end_time,ConditionCode,Condition
+test_run,cone-8d569f12-2c23-42d4-bbc8-a3e1f97d72f6,1,1,1,1,12.10202,19.59588,2,right

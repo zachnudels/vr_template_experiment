@@ -15,23 +15,18 @@ namespace ViveSR
                 [SerializeField] private LineRenderer GazeRayRenderer;
                 private static EyeData eyeData = new EyeData();
                 private bool eye_callback_registered = false;
-                private GameObject expObj;
-
                 private void Start()
                 {
-                    expObj = GameObject.FindGameObjectsWithTag("experimentobj")[0];
                     if (!SRanipal_Eye_Framework.Instance.EnableEye)
                     {
                         enabled = false;
                         return;
                     }
-
                     Assert.IsNotNull(GazeRayRenderer);
                 }
 
                 private void Update()
                 {
-                    
                     if (SRanipal_Eye_Framework.Status != SRanipal_Eye_Framework.FrameworkStatus.WORKING &&
                         SRanipal_Eye_Framework.Status != SRanipal_Eye_Framework.FrameworkStatus.NOT_SUPPORT) return;
 
@@ -66,19 +61,6 @@ namespace ViveSR
                     Vector3 GazeDirectionCombined = Camera.main.transform.TransformDirection(GazeDirectionCombinedLocal);
                     GazeRayRenderer.SetPosition(0, Camera.main.transform.position - Camera.main.transform.up * 0.05f);
                     GazeRayRenderer.SetPosition(1, Camera.main.transform.position + GazeDirectionCombined * LengthOfRay);
-
-                    // custom code
-                    
-                    if (expObj == null) {
-                        expObj = GameObject.FindGameObjectsWithTag("experimentobj")[0];
-                    } else {
-                        expObj.GetComponent<Experimentscript>().eyeData = eyeData;
-                        expObj.GetComponent<Experimentscript>().centerEyePos  = Camera.main.transform.position - Camera.main.transform.up * 0.05f;
-                        expObj.GetComponent<Experimentscript>().gazeDirectionCombined  = GazeDirectionCombined;
-                    }
-                    
-                    // end of custom code
-
                 }
                 private void Release() {
                     if (eye_callback_registered == true)

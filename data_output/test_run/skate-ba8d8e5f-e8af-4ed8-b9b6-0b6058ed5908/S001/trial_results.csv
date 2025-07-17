@@ -1,0 +1,2 @@
+experiment,ppid,session_num,trial_num,block_num,trial_num_in_block,start_time,end_time,ConditionCode,Condition
+test_run,skate-ba8d8e5f-e8af-4ed8-b9b6-0b6058ed5908,1,1,1,1,0.645115,15.27963,1,left

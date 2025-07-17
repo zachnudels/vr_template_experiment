@@ -1,0 +1,2 @@
+experiment,ppid,session_num,trial_num,block_num,trial_num_in_block,start_time,end_time,ConditionCode,Condition
+test_run,cable-9ede864a-5226-4a6a-9142-448e49113ea5,1,1,1,1,3.246107,26.84311,1,left

@@ -1,0 +1,2 @@
+experiment,ppid,session_num,trial_num,block_num,trial_num_in_block,start_time,end_time,Resp1_correct,Resp1_encLoc,Resp1_shape,Resp1_colour,Resp1_loc,Resp1_rt,Resp1_colourEncLoc,Resp1_shapeEncLoc,ConditionCode,Condition
+test_run,spill-88834dfb-eb09-49ed-8ebe-31b868d2ec67,1,1,1,1,14.4836,33.86783,0,-1,2,0,5,555,0,1,1,left

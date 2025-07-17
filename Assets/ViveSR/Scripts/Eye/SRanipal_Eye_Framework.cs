@@ -1,5 +1,6 @@
 //========= Copyright 2018, HTC Corporation. All rights reserved. ===========
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -11,7 +12,7 @@ namespace ViveSR
         {
             public class SRanipal_Eye_Framework : MonoBehaviour
             {
-                public enum FrameworkStatus { STOP, START, WORKING, ERROR, NOT_SUPPORT }
+                public enum FrameworkStatus { STOP, START, WORKING, ERROR, NOT_SUPPORT, STOPPING } // Added STOPPING to allow for Unity stopping the framework while another thread is still listening
                 /// <summary>
                 /// The status of the anipal engine.
                 /// </summary>
@@ -53,14 +54,44 @@ namespace ViveSR
                     }
                 }
 
+                IEnumerator DelayAwake()
+                {
+                    yield return new WaitForSeconds(0.15f);
+
+                    if (Mgr != null && Mgr != this)
+                    {
+                        Destroy(this.gameObject);
+                    }
+                    else
+                    {
+                        Mgr = this;
+                    }
+
+                    DontDestroyOnLoad(Mgr);
+                }
+                
+                IEnumerator DelayStart()
+                {
+                    yield return new WaitForSeconds(0.15f);
+
+                    StartFramework();
+
+                }
+                
                 void Start()
                 {
-                    StartFramework();
+                    StartCoroutine(DelayStart());
                 }
 
                 void OnDestroy()
                 {
-                    StopFramework();
+                    if (Mgr != null && Mgr == this)
+                    {
+                        // Added to ensure that listening thread doesn't try to access framework after stopped
+                        Status = FrameworkStatus.STOPPING;
+
+                        StopFramework();
+                    }
                 }
 
                 public void StartFramework()

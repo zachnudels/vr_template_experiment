@@ -1,0 +1,2 @@
+experiment,ppid,session_num,trial_num,block_num,trial_num_in_block,start_time,end_time,ConditionCode,Condition
+test_run,snowy-c394e94e-edac-4839-811c-0c6792ef2b7c,1,1,1,1,0.642481,28.87752,1,left

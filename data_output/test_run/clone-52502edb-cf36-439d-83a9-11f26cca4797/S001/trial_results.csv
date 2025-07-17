@@ -1,0 +1,2 @@
+experiment,ppid,session_num,trial_num,block_num,trial_num_in_block,start_time,end_time,ConditionCode,Condition
+test_run,clone-52502edb-cf36-439d-83a9-11f26cca4797,1,1,1,1,0.682357,15.96324,2,right

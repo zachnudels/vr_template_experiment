@@ -20,6 +20,10 @@ TagManager:
   - fixationtarget
   - respObj
   - bar
+  - ReportingShape
+  - FxTemporaire
+  - projectile
+  - Target
   layers:
   - Default
   - TransparentFX

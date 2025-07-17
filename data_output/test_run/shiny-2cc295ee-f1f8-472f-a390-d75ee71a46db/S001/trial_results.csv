@@ -1,0 +1,2 @@
+experiment,ppid,session_num,trial_num,block_num,trial_num_in_block,start_time,end_time,ConditionCode,Condition
+test_run,shiny-2cc295ee-f1f8-472f-a390-d75ee71a46db,1,1,1,1,4.118078,20.13455,2,right
