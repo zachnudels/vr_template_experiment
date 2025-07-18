@@ -1,8 +1,7 @@
-﻿using System.Collections;
-using System.IO;
-using System.Collections.Generic;
+﻿using System.IO;
 using UnityEngine;
 using UnityEditor;
+using UnityEditor.Build;
 
 namespace UXF.EditorUtils
 {
@@ -137,7 +136,13 @@ namespace UXF.EditorUtils
 
             GUILayout.Label("Compatibility", EditorStyles.boldLabel);
 
-            bool compatible = PlayerSettings.GetApiCompatibilityLevel(BuildTargetGroup.Standalone) == targetApiLevel;
+#if UNITY_6000
+            var standalone = NamedBuildTarget.Android;
+#else
+            var standalone = BuildTargetGroup.Standalone;
+#endif            
+            
+            bool compatible = PlayerSettings.GetApiCompatibilityLevel(standalone) == targetApiLevel;
 
             if (compatible)
             {
@@ -148,9 +153,25 @@ namespace UXF.EditorUtils
                 EditorGUILayout.HelpBox("API Compatibility Level should be set to .NET 2.0 (Older versions of Unity) or .NET 4.x (Unity 2018.3+), expect errors on building", MessageType.Warning);
                 if (GUILayout.Button("Fix"))
                 {
-                    PlayerSettings.SetApiCompatibilityLevel(BuildTargetGroup.Standalone, targetApiLevel);
+                    PlayerSettings.SetApiCompatibilityLevel(standalone, targetApiLevel);
                 }
             }
+
+#if UNITY_2019_3_OR_NEWER
+            if (!EditorSettings.enterPlayModeOptionsEnabled || EditorSettings.enterPlayModeOptions != EnterPlayModeOptions.None)
+            {
+                EditorGUILayout.HelpBox("You currently must enable Reload Domain and Reload Scene in the Editor Settings to use UXF. Please enable these options.", MessageType.Error);
+                if (GUILayout.Button("Fix"))
+                {
+                    EditorSettings.enterPlayModeOptionsEnabled = true;
+                    EditorSettings.enterPlayModeOptions = EnterPlayModeOptions.None;
+                }
+            }
+            else
+            {
+                EditorGUILayout.HelpBox("Reload Domain and Reload Scene Editor Settings are correctly enabled.", MessageType.Info);
+            }
+#endif
 
             EditorGUILayout.Separator();
 

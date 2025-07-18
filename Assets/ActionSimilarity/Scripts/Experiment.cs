@@ -149,7 +149,7 @@ namespace ActionSimilarity
                 // start += trialsPerBlock;
             }
 
-            SaveCSV("/Users/zach/2025_RA/freek/data/test/shapePoses.csv", fullList);
+            //SaveCSV("/Users/zach/2025_RA/freek/data/test/shapePoses.csv", fullList);
         }
         
         public static List<List<int>> WithinBlockShuffling(int numberOfItems, int repeats)

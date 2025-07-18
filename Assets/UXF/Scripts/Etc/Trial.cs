@@ -13,7 +13,7 @@ namespace UXF
     /// The base unit of experiments. A Trial is usually a singular attempt at a task by a participant after/during the presentation of a stimulus.
     /// </summary>
     [Serializable]
-    public class Trial : ISettingsContainer, IDataAssociatable
+    public class Trial : IExperimentUnit, IDataAssociatable
     {
 
         /// <summary>
@@ -46,7 +46,16 @@ namespace UXF
         /// <summary>
         /// Trial settings. These will override block settings if set.
         /// </summary>
-        public Settings settings { get; private set; }
+        public Settings settings { get; protected set; }
+
+        /// <summary>
+        /// Should data be saved for this session?
+        /// </summary>
+        public bool saveData
+        {
+            get => settings.GetBool(Constants.SAVE_DATA_SETTING_NAME, true);
+            set => settings.SetValue(Constants.SAVE_DATA_SETTING_NAME, value);
+        }
 
         /// <summary>
         /// Dictionary of results in a order.
@@ -110,6 +119,12 @@ namespace UXF
                     Utilities.UXFDebugLogWarning("An item in the Tracked Objects field of the UXF session if empty (null)!");
                 }
             }
+
+            if (this == block.firstTrial)
+            {
+                session.onBlockBegin.Invoke(block);
+            }
+
             session.onTrialBegin.Invoke(this);
         }
 
@@ -121,37 +136,18 @@ namespace UXF
             status = TrialStatus.Done;
             endTime = Time.time;
             result["end_time"] = endTime;
-
-            // check no duplicate trackers
-            List<string> duplicateTrackers = session.trackedObjects.Where(tracker => tracker != null)
-              .GroupBy(tracker => tracker.dataName)
-              .Where(g => g.Count() > 1)
-              .Select(y => y.Key)
-              .ToList(); 
-
-            if (duplicateTrackers.Any()) throw new InvalidOperationException(string.Format("Two or more trackers in the Tracked Objects field in the Session Inspector have the following object name and descriptor pair, please change the object name fields on the trackers to make them unique: {0}", string.Join(",", duplicateTrackers)));
-
-            // log tracked objects
-            foreach (Tracker tracker in session.trackedObjects)
+            
+            if (saveData)
             {
-                try
-                {
-                    tracker.StopRecording();
-                    SaveDataTable(tracker.data, tracker.dataName, dataType: UXFDataType.Trackers);
-                }
-                catch (NullReferenceException)
-                {
-                    Utilities.UXFDebugLogWarning("An item in the Tracked Objects field of the UXF session if empty (null)!");
-                }
-            }
-
-            // log any settings we need to for this trial
-            foreach (string s in session.settingsToLog)
-            {
-                result[s] = settings.GetObject(s, string.Empty);
+                SaveData();
             }
 
             session.onTrialEnd.Invoke(this);
+
+            if (this == block.lastTrial)
+            {
+                session.onBlockEnd.Invoke(block);
+            }
         }
 
         public bool CheckDataTypeIsValid(string dataName, UXFDataType dataType)
@@ -262,7 +258,40 @@ namespace UXF
             }
         }
 
+        private void SaveData()
+        {
+            // check no duplicate trackers
+            List<string> duplicateTrackers = session.trackedObjects.Where(tracker => tracker != null)
+              .GroupBy(tracker => tracker.DataName)
+              .Where(g => g.Count() > 1)
+              .Select(y => y.Key)
+              .ToList();
 
+            if (duplicateTrackers.Any()) throw new InvalidOperationException(string.Format("Two or more trackers in the Tracked Objects field in the Session Inspector have the following object name and descriptor pair, please change the object name fields on the trackers to make them unique: {0}", string.Join(",", duplicateTrackers)));
+
+            // log tracked objects
+            foreach (Tracker tracker in session.trackedObjects)
+            {
+                try
+                {
+                    tracker.StopRecording();
+                    if (tracker.Data.CountRows() > 0)
+                    {
+                        SaveDataTable(tracker.Data, tracker.DataName, dataType: UXFDataType.Trackers);
+                    }
+                }
+                catch (NullReferenceException)
+                {
+                    Utilities.UXFDebugLogWarning("An item in the Tracked Objects field of the UXF session if empty (null)!");
+                }
+            }
+
+            // log any settings we need to for this trial
+            foreach (string s in session.settingsToLog)
+            {
+                result[s] = settings.GetObject(s, string.Empty);
+            }
+        }
     }
 
     
@@ -279,12 +308,3 @@ namespace UXF
 
 
 }
-
-/*
- * import pandas as pd
- * from pathlib import Path
- * path = Path('/Users/zach/2025_RA/freek/experiments/VR7_Single/data_output/test_run/crept-65195ea0-b5a3-41ad-b8b0-700f4cf82f56/S001')
- * files = list(sorted(path.rglob('*eyetracker*.csv')))
- * df_all = pd.concat((pd.read_csv(f) for f in files), ignore_index=True)
- * df_all.to_csv(path.joinpath("time_results.csv"), index=False)
-*/

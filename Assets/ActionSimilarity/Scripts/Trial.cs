@@ -51,6 +51,7 @@ namespace ActionSimilarity
         public Color[] shapeColours;
         public List<Vector3Dictionary> reportingShapeRotations;
         public List<Vector3Dictionary> encodingShapeRotations;
+        public List<Vector3Dictionary> shapeScales;
         public float[] shapeSpacing;
 
         [HideInInspector] public Vector3[] encodingShapePositions;
@@ -62,6 +63,7 @@ namespace ActionSimilarity
         [HideInInspector] public List<int> colorCols;
         [HideInInspector] public Dictionary<string, Vector3> reportingShapeRotationMap;
         [HideInInspector] public Dictionary<string, Vector3> encodingShapeRotationMap;
+        [HideInInspector] public Dictionary<string, Vector3> shapeScaleMap;
 
         public void Init()
         {
@@ -82,7 +84,8 @@ namespace ActionSimilarity
             
             reportingShapeRotationMap = reportingShapeRotations.ToDictionary(e => e.key, e => e.value);
             encodingShapeRotationMap = encodingShapeRotations.ToDictionary(e => e.key, e => e.value);
-            
+            shapeScaleMap = shapeScales.ToDictionary(e => e.key, e => e.value);
+
         }
 
         private void InitEncodingPositions()
@@ -208,34 +211,26 @@ namespace ActionSimilarity
                 {
                     throw new UnityException("Must choose to activate only one between Simulate and Player!");
                 }
-                GameObject cameraOffset = GameObject.Find("CameraOffset");
-                if (cameraOffset != null)
-                {
-                    eyes = cameraOffset.transform;
-                    simulating = true;
-                }
-                else
-                {
-                    Debug.LogError("Camera Offset not found under Simulate");
-                }
+                simulating = true;
             }
             else if (playerObj != null && playerObj.activeInHierarchy)
             {
-                GameObject vrCam = GameObject.Find("VRCamera");
-                if (vrCam != null)
-                {
-                    eyes = vrCam.transform;
-                    Debug.Log("eyes: " + eyes.position);
-                    simulating = false;
-                }
-                else
-                {
-                    Debug.LogError("VRCamera not found under Player");
-                }
+                simulating = false;
             }
             else
             {
                 Debug.LogError("Neither Simulate nor Player is active in hierarchy");
+            }
+
+            GameObject cameraOffset = GameObject.Find("Main Camera");
+            if (cameraOffset != null)
+            {
+                eyes = cameraOffset.transform;
+               
+            }
+            else
+            {
+                Debug.LogError("Camera not found");
             }
         }
 
@@ -339,7 +334,7 @@ namespace ActionSimilarity
             faceDirection = _uxf.number % 2 == 0 ? FaceDirection.Back : FaceDirection.Front;
             
             textControllerWall.ChangeWall(faceDirection);
-            fixationSettings.fixationSphere.transform.position = eyes.position + new Vector3(0.0f, downOffset, fixationSettings.FixationDepth * (int)faceDirection);;
+            fixationSettings.fixationSphere.transform.position = eyes.position + new Vector3(0.0f, downOffset, fixationSettings.FixationDepth * (int)faceDirection);
             
             _reportedStimuli = new List<ResponseShapeMetadata>();
 
@@ -615,7 +610,8 @@ namespace ActionSimilarity
                 Color color = shapeSettings.shapeColours[shapeSettings.colorPositions[i]];
                 Mesh mesh = shapeSettings.shapeMeshes[shapeSettings.shapePositions[i]];
                 Vector3 rotation = shapeSettings.encodingShapeRotationMap.TryGetValue(mesh.name, out var rot) ? rot : Vector3.zero;
-                
+                Vector3 scale = shapeSettings.shapeScaleMap.TryGetValue(mesh.name, out var scal) ? scal : Vector3.one;
+
                 // Change to x rotation since we're sideways now
                 // Debug.Log(faceDirection.ToString() + " " + _turnDirection.ToString());
                 // rotation = new Vector3(rotation.z, rotation.y, rotation.x);
@@ -624,14 +620,16 @@ namespace ActionSimilarity
                                    + new Vector3(
                                        fixationSettings.FixationDepth * (int)faceDirection *
                                        (int)_turnDirection,
-                                       0.0f,
+                                       downOffset,
                                        0.0f
                                    );  
                 stimuli[i] = InstantiateObjectWithMeshAndColor(shapeSettings.encodingShape,
                     mesh,
                     position,
                     rotation,
-                    color);
+                    color,
+                    scale * 0.875f
+               );
             }
 
             return stimuli;
@@ -662,17 +660,20 @@ namespace ActionSimilarity
                     Vector3 position = shapeSettings.reportingShapePositions[posIndex]
                                        + eyes.position
                                        + new Vector3(
-                                           0.0f,
-                                           0.0f,
+                                           0f,
+                                           downOffset,
                                            fixationSettings.FixationDepth * (int)faceDirection
                                        );
-                    
+                    Vector3 scale = shapeSettings.shapeScaleMap.TryGetValue(mesh.name, out var scal) ? scal : Vector3.one;
+
+
                     GameObject shape = InstantiateObjectWithMeshAndColor(shapeSettings.reportingShape,
                         mesh,
                         position,
                         rotation,
-                        color
-                    );
+                        color,
+                        scale * 0.875f * 0.875f
+                    ); ;
                     
                     // Store shapeData object for later processing
                     
@@ -827,15 +828,17 @@ namespace ActionSimilarity
              return gameObject;
          }
 
-         GameObject InstantiateObjectWithMeshAndColor(GameObject prefab,
-             Mesh mesh,
-             Vector3 position,
-             Vector3 rotation,
-             Color color)
+        GameObject InstantiateObjectWithMeshAndColor(GameObject prefab,
+            Mesh mesh,
+            Vector3 position,
+            Vector3 rotation,
+            Color color,
+            Vector3? scale = null)
          {
 
+            Vector3 localScale = scale ?? Vector3.one;
 
-             GameObject gameObject = Instantiate(
+            GameObject gameObject = Instantiate(
                  prefab,
                  position,
                  Quaternion.Euler(rotation),
@@ -844,6 +847,7 @@ namespace ActionSimilarity
              gameObject.GetComponent<Renderer>().material.color = color;
              //gameObject.transform.localScale = new Vector3(2f, 2f, 2f);
              gameObject.SetActive(true);
+             gameObject.transform.localScale = localScale;
              return gameObject;
          }
 

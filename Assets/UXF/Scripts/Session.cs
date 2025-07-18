@@ -14,7 +14,7 @@ namespace UXF
     /// The Session represents a single "run" of an experiment, and contains all information about that run. 
     /// </summary>
     [ExecuteInEditMode]
-    public class Session : MonoBehaviour, ISettingsContainer, IDataAssociatable
+    public class Session : MonoBehaviour, IExperimentUnit, IDataAssociatable
     {
         /// <summary>
         /// Enable to automatically safely end the session when the application is quitting.
@@ -68,7 +68,7 @@ namespace UXF
         /// List of dependent variables you plan to measure in your experiment. Once set here, you can add the observations to your results dictionary on each trial.
         /// </summary>
         [Tooltip("List of dependent variables you plan to measure in your experiment. Once set here, you can add the observations to your results dictionary on each trial.")]
-        //[Reorderable]
+        [Reorderable]
         public List<string> customHeaders = new List<string>();
 
         /// <summary>
@@ -76,14 +76,14 @@ namespace UXF
         /// </summary>
         /// <returns></returns>
         [Tooltip("List of settings (independent variables) you wish to log to the behavioural data output for each trial.")]
-        //[Reorderable]
+        [Reorderable]
         public List<string> settingsToLog = new List<string>();
 
         /// <summary>
         /// List of tracked objects. Add a tracker to a GameObject in your scene and set it here to track position and rotation of the object on each Update().
         /// </summary>
         [Tooltip("List of tracked objects. Add a tracker to a GameObject in your scene and set it here to track position and rotation of the object on each Update().")]
-        ////[Reorderable]
+        [Reorderable]
         public List<Tracker> trackedObjects = new List<Tracker>();
 
         /// <summary>
@@ -92,6 +92,13 @@ namespace UXF
         /// <returns></returns>
         [Tooltip("Items in this event will be triggered when the session begins. Useful generating your trials & blocks, setting up the scene, and triggering the first trial.")]
         public SessionEvent onSessionBegin = new SessionEvent();
+
+        /// <summary>
+        /// Event(s) to trigger when a block begins. Can pass the instance of the Block as a dynamic argument
+        /// </summary>
+        /// <returns></returns>
+        [Tooltip("Items in this event will be triggered each time a block begins.")]
+        public BlockEvent onBlockBegin = new BlockEvent();
 
         /// <summary>
         /// Event(s) to trigger when a trial begins. Can pass the instance of the Trial as a dynamic argument
@@ -106,6 +113,13 @@ namespace UXF
         /// <returns></returns>
         [Tooltip("Items in this event will be triggered each time a trial ends. Useful for collecting results from the trial as well as showing feedback.")]
         public TrialEvent onTrialEnd = new TrialEvent();
+
+        /// <summary>
+        /// Event(s) to trigger when a block ends. Can pass the instance of the Block as a dynamic argument
+        /// </summary>
+        /// <returns></returns>
+        [Tooltip("Items in this event will be triggered each time a block ends.")]
+        public BlockEvent onBlockEnd = new BlockEvent();
 
         /// <summary>
         /// Event(s) to trigger just before the session has ended. If you wish to perform any summary statistics or write any final session data this is the time to do it. Do not use this event to quit the application.
@@ -244,7 +258,7 @@ namespace UXF
         /// <summary>
         /// Reference to the associated DataHandlers which handles saving data to the cloud, etc.
         /// </summary>
-        //[Reorderable]
+        [Reorderable]
         public DataHandler[] dataHandlers = new DataHandler[]{};
 
         /// <summary>
@@ -252,6 +266,15 @@ namespace UXF
         /// </summary>
         public IEnumerable<DataHandler> ActiveDataHandlers { get { return dataHandlers.Where(d => d != null && d.active).Distinct(); }}
          
+        /// <summary>
+        /// Should data be saved for this session?
+        /// </summary>
+        public bool saveData
+        {
+            get => settings.GetBool(Constants.SAVE_DATA_SETTING_NAME, true);
+            set => settings.SetValue(Constants.SAVE_DATA_SETTING_NAME, value);
+        }
+
         /// <summary>
         /// Provide references to other components 
         /// </summary>
@@ -477,15 +500,17 @@ namespace UXF
         Trial GetLastTrial()
         {
             if (blocks.Count == 0) throw new NoSuchTrialException("There is no last trial because no blocks have been created!");
-            
+
             Block lastValidBlock;
+            Trial lastTrial;
             int i = blocks.Count - 1;
             while (i >= 0)
             {
                 lastValidBlock = blocks[i];
-                if (lastValidBlock.trials.Count > 0)
+                lastTrial = lastValidBlock.lastTrial;
+                if (lastTrial != null)
                 {
-                    return lastValidBlock.trials[lastValidBlock.trials.Count - 1];
+                    return lastTrial;
                 }
                 i--;
             }
@@ -628,13 +653,13 @@ namespace UXF
                 try { preSessionEnd.Invoke(this); }
                 catch (Exception e) { Debug.LogException(e); }
 
-                if (storeSessionSettings)
+                if (storeSessionSettings && saveData)
                 {
                     // copy Settings to session folder
                     SaveJSONSerializableObject(new Dictionary<string, object>(settings.baseDict), "settings", dataType: UXFDataType.Settings);
                 }
 
-                if (storeParticipantDetails)
+                if (storeParticipantDetails && saveData)
                 {
                     // copy participant details to session folder
                     // we convert to a DataTable because we know the dictionary will be "flat" (one value per key)
@@ -674,14 +699,14 @@ namespace UXF
             // hashset keeps unique set of keys
             HashSet<string> resultsHeaders = new HashSet<string>();
             foreach (Trial t in Trials)
-                if (t.result != null)
+                if (t.result != null && t.saveData)
                     foreach (string key in t.result.Keys)
                         resultsHeaders.Add(key);
 
             UXFDataTable table = new UXFDataTable(Trials.Count(), resultsHeaders.ToArray());
             foreach (Trial t in Trials)
             {
-                if (t.result != null)
+                if (t.result != null && t.saveData)
                 {
                     UXFDataRow row = new UXFDataRow();
                     foreach (string h in resultsHeaders)

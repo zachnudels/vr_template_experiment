@@ -37,7 +37,7 @@ namespace UXF.UI
         [Tooltip("Should the session number be acquired from the UI, or always be set to 1?")]
         public SessionNumMode sessionNumMode = SessionNumMode.AcquireFromUI;
 
-       // [SubjectNerd.Utilities.Reorderable]
+        [SubjectNerd.Utilities.Reorderable]
         public List<FormElementEntry> participantDataPoints = new List<FormElementEntry>();
 
         [Tooltip("The text shown next to the terms and conditions checkbox.")]

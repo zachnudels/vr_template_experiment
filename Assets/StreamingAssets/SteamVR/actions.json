@@ -1,56 +1,56 @@
 {
   "actions": [
     {
-      "name": "/actions/trigger/in/InteractUI",
+      "name": "/actions/actions/in/InteractUI",
       "type": "boolean"
     },
     {
-      "name": "/actions/trigger/in/Teleport",
+      "name": "/actions/actions/in/Teleport",
       "type": "boolean"
     },
     {
-      "name": "/actions/trigger/in/GrabPinch",
+      "name": "/actions/actions/in/GrabPinch",
       "type": "boolean"
     },
     {
-      "name": "/actions/trigger/in/GrabGrip",
+      "name": "/actions/actions/in/GrabGrip",
       "type": "boolean"
     },
     {
-      "name": "/actions/trigger/in/Pose",
+      "name": "/actions/actions/in/Pose",
       "type": "pose"
     },
     {
-      "name": "/actions/trigger/in/SkeletonLeftHand",
+      "name": "/actions/actions/in/SkeletonLeftHand",
       "type": "skeleton",
       "skeleton": "/skeleton/hand/left"
     },
     {
-      "name": "/actions/trigger/in/SkeletonRightHand",
+      "name": "/actions/actions/in/SkeletonRightHand",
       "type": "skeleton",
       "skeleton": "/skeleton/hand/right"
     },
     {
-      "name": "/actions/trigger/in/Squeeze",
+      "name": "/actions/actions/in/Squeeze",
       "type": "vector1",
       "requirement": "optional"
     },
     {
-      "name": "/actions/trigger/in/HeadsetOnHead",
+      "name": "/actions/actions/in/HeadsetOnHead",
       "type": "boolean",
       "requirement": "optional"
     },
     {
-      "name": "/actions/trigger/in/SnapTurnLeft",
+      "name": "/actions/actions/in/SnapTurnLeft",
       "type": "boolean",
       "requirement": "suggested"
     },
     {
-      "name": "/actions/trigger/in/SnapTurnRight",
+      "name": "/actions/actions/in/SnapTurnRight",
       "type": "boolean"
     },
     {
-      "name": "/actions/trigger/out/Haptic",
+      "name": "/actions/actions/out/Haptic",
       "type": "vibration"
     },
     {
@@ -95,11 +95,19 @@
     {
       "name": "/actions/default/in/no",
       "type": "boolean"
+    },
+    {
+      "name": "/actions/custom/in/yes",
+      "type": "boolean"
+    },
+    {
+      "name": "/actions/custom/in/no",
+      "type": "boolean"
     }
   ],
   "action_sets": [
     {
-      "name": "/actions/trigger",
+      "name": "/actions/actions",
       "usage": "single"
     },
     {
@@ -116,6 +124,10 @@
     },
     {
       "name": "/actions/default",
+      "usage": "single"
+    },
+    {
+      "name": "/actions/custom",
       "usage": "single"
     }
   ],
