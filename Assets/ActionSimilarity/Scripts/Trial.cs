@@ -827,14 +827,15 @@ namespace ActionSimilarity
              //gameObject.transform.localScale = new Vector3(2f, 2f, 2f);
              return gameObject;
          }
-
-        GameObject InstantiateObjectWithMeshAndColor(GameObject prefab,
-            Mesh mesh,
-            Vector3 position,
-            Vector3 rotation,
-            Color color,
-            Vector3? scale = null)
+         
+         GameObject InstantiateObjectWithMeshAndColor(GameObject prefab,
+             Mesh mesh,
+             Vector3 position,
+             Vector3 rotation,
+             Color color,
+             Vector3? scale = null)
          {
+             // scale = Vector3.one;
 
             Vector3 localScale = scale ?? Vector3.one;
 
