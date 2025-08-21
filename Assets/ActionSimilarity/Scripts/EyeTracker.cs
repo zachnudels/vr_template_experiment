@@ -129,7 +129,12 @@ public class EyeTracker : UXF.Tracker
     {
         row.Add(("Trial", session.currentTrialNum));
         row.Add(("Block", session.currentBlockNum));
-        row.Add(("TriggerCode", session.settings.GetInt("triggerCode")));
+        int trigger = session.settings.GetInt("triggerCode");
+        row.Add(("TriggerCode", trigger));
+        if (trigger != 0)
+        {
+            session.settings.SetValue("triggerCode", 0);
+        }
     }
 
     void RecordHand(UXFDataRow row)

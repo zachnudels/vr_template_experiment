@@ -363,8 +363,6 @@ namespace ActionSimilarity
 
             // Common Build Methods
             ExtractSettings();
-            SetHand();
-            SetEyes();
 
             // Custom Code - reinitialise any variables
             InitializeTrial();
@@ -409,14 +407,14 @@ namespace ActionSimilarity
             yield return RunStage(WaitToStart);  // preparation + jitter 
             
             // Display shapes
-            GameObject[] stimuli = InstantiateEncodingStimuli();
+            // GameObject[] stimuli = InstantiateEncodingStimuli();
             
             yield return RunStage(Turn);  // Turn  
             
-            foreach (GameObject gameObject in stimuli)
-            {
-                Destroy(gameObject);
-            }
+            //foreach (GameObject gameObject in stimuli)
+            //{
+            //    Destroy(gameObject);
+            //}
 
             // yield return RunStage(Presentation);  // Presentation 
 
@@ -514,7 +512,8 @@ namespace ActionSimilarity
 
         IEnumerator WaitToStart()
         {
-            //Initialise();
+            SetHand();
+            SetEyes();
             yield return new WaitForSeconds(session.CurrentTrial.settings.GetFloat("ITI"));
             setTrigger(codeMap["iti"]);
         }
@@ -542,6 +541,7 @@ namespace ActionSimilarity
                 {
                     setTrigger(codeMap["halfway_turn"]);
                     triggerSent = true;
+                    StartCoroutine(ShowEncodingShapesForOneFrame());
                 }
 
                 yield return null;
@@ -550,7 +550,19 @@ namespace ActionSimilarity
             faceDirection = textControllerWall.ChangeWall(faceDirection, true);
         }
 
-        
+        IEnumerator ShowEncodingShapesForOneFrame()
+        {
+            GameObject[] stimuli = InstantiateEncodingStimuli();
+            yield return null;
+            foreach (GameObject gameObject in stimuli)
+            {
+                Destroy(gameObject);
+            }
+
+
+        }
+
+
         IEnumerator Report()
         {
             

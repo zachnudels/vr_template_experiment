@@ -1055,7 +1055,7 @@ MonoBehaviour:
   maxFocusDistance: 100
   focusMask:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 4294967295
   debug: 0
   trial: {fileID: 898634504}
 --- !u!4 &267511585
@@ -1210,6 +1210,11 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 17
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!4 &423738704 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 5557222587843261590, guid: b3d06a7f7928c4d91b42da4da74be731, type: 3}
+  m_PrefabInstance: {fileID: 1448245081}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &489871334
 GameObject:
   m_ObjectHideFlags: 0
@@ -3747,12 +3752,24 @@ PrefabInstance:
       propertyPath: yesAction.m_Action.m_SingletonActionBindings.Array.data[0].m_Action
       value: Yes
       objectReference: {fileID: 0}
+    - target: {fileID: 3461011991241518138, guid: b3d06a7f7928c4d91b42da4da74be731, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3461011991682098533, guid: b3d06a7f7928c4d91b42da4da74be731, type: 3}
       propertyPath: trial
       value: 
       objectReference: {fileID: 898634504}
     - target: {fileID: 5218488235858986196, guid: b3d06a7f7928c4d91b42da4da74be731, type: 3}
       propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5557222587688784912, guid: b3d06a7f7928c4d91b42da4da74be731, type: 3}
+      propertyPath: m_HDR
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5557222587688784912, guid: b3d06a7f7928c4d91b42da4da74be731, type: 3}
+      propertyPath: m_Depth
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5557222587843261587, guid: b3d06a7f7928c4d91b42da4da74be731, type: 3}
@@ -3787,6 +3804,14 @@ PrefabInstance:
       propertyPath: m_ModelPrefab
       value: 
       objectReference: {fileID: 4000013477813392, guid: 057574477c20401448aba7c848873712, type: 3}
+    - target: {fileID: 5574475328203278315, guid: b3d06a7f7928c4d91b42da4da74be731, type: 3}
+      propertyPath: m_AttachTransform
+      value: 
+      objectReference: {fileID: 423738704}
+    - target: {fileID: 5574475328203278315, guid: b3d06a7f7928c4d91b42da4da74be731, type: 3}
+      propertyPath: m_RayOriginTransform
+      value: 
+      objectReference: {fileID: 423738704}
     - target: {fileID: 5811777495336894941, guid: b3d06a7f7928c4d91b42da4da74be731, type: 3}
       propertyPath: m_Enabled
       value: 1
