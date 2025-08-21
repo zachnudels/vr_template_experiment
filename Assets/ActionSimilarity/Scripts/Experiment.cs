@@ -37,7 +37,6 @@ namespace ActionSimilarity
         public int condition;
 
         public bool debug;
-        public ViveEyeDevice viveEye = new ViveEyeDevice();
 
         int sessionNumber;
         int actionPos;
