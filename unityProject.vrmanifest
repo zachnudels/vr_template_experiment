@@ -5,7 +5,7 @@
       "app_key": "application.generated.unity.vrmemory_stay.exe",
       "launch_type": "url",
       "url": "steam://launch/",
-      "action_manifest_path": "C:\\Users\\memticipation-vr\\Git\\Experiments\\VR7_SingleColour\\Assets\\StreamingAssets\\SteamVR\\actions.json",
+      "action_manifest_path": "C:\\Users\\ZachPBL\\Experiments\\vr7_stay\\Assets\\StreamingAssets\\SteamVR\\actions.json",
       "strings": {
         "en_us": {
           "name": "VRMemory_Stay [Testing]"

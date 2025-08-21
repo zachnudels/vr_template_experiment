@@ -156,12 +156,12 @@ public class EyeTracker : UXF.Tracker
         Vector3 cameraPos = cameraTransform.position;
         Vector3 cameraDir = cameraTransform.forward;
 
-        row.Add(("HeadPosX", cameraDir.x));
-        row.Add(("HeadPosY", cameraDir.y));
-        row.Add(("HeadPosZ", cameraDir.z));
-        row.Add(("HeadDirX", cameraPos.x));
-        row.Add(("HeadDirY", cameraPos.y));
-        row.Add(("HeadDirZ", cameraPos.z));
+        row.Add(("HeadPosX", cameraPos.x));
+        row.Add(("HeadPosY", cameraPos.y));
+        row.Add(("HeadPosZ", cameraPos.z));
+        row.Add(("HeadDirX", cameraDir.x));
+        row.Add(("HeadDirY", cameraDir.y));
+        row.Add(("HeadDirZ", cameraDir.z));
 
         Vector2 headAngle = GetVectorAngle(cam.transform.forward);
         row.Add(("HeadAngleX", headAngle.x));
@@ -194,6 +194,7 @@ public class EyeTracker : UXF.Tracker
         foreach (var idx in idxPriority)
         {
             gaze = SRanipal_Eye_v2.GetGazeRay(idx, out gazeOriginCombinedLocal, out gazeDirectionCombinedLocal);
+            // Debug.Log(gazeDirectionCombinedLocal);
             if (gaze) break;
         }
 
@@ -202,9 +203,12 @@ public class EyeTracker : UXF.Tracker
             Vector3 gazeOriginCombined = cam.transform.TransformPoint(gazeOriginCombinedLocal);
             Vector3 gazeDirectionCombined = cam.transform.TransformDirection(gazeDirectionCombinedLocal);
 
+
             if (debug)
             {
-                Debug.DrawRay(gazeOriginCombined, gazeDirectionCombined, Color.red);
+                Debug.Log(gazeOriginCombined);
+                Debug.Log(gazeDirectionCombined);
+                Debug.DrawRay(gazeOriginCombined, gazeDirectionCombined*1000, Color.red, 0.2f);
             }
 
             // row.Add(("gaze_origin_x", gazeOriginCombined.x));

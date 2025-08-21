@@ -375,7 +375,6 @@ namespace ActionSimilarity
 
         IEnumerator RunTrial()
         {
-            
             Debug.Log("Starting Trial");
             if (_uxf.numberInBlock == 1)
             {
@@ -405,6 +404,9 @@ namespace ActionSimilarity
             }
             
             yield return RunStage(WaitToStart);  // preparation + jitter 
+
+            // bool calibrated = ViveSR.anipal.Eye.SRanipal_Eye.LaunchEyeCalibration();
+
             
             // Display shapes
             // GameObject[] stimuli = InstantiateEncodingStimuli();
