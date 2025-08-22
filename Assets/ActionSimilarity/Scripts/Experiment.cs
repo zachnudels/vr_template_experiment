@@ -64,6 +64,8 @@ namespace ActionSimilarity
 
             GenerateBlocks(session);
 
+            Debug.Log($"Created {session.Trials.Count()} trials");
+
             session.settings.SetValue(
                 "data",
                 new DataProcessing(actionPos, session.blocks[0].trials.Count));
