@@ -15,6 +15,15 @@ public class EyeTracker : UXF.Tracker
     public Transform rightHandTf;
     [Tooltip("Fixation target transform (assign at trial start if dynamic)")]
     public Transform fixationTf;
+    
+    /// <summary>
+    /// These two fields are updated by the SRanipalGazeRaySample_v2 script.
+    /// Please ensure this script is attached to a GameObject called EyeTracker
+    /// so that the SRanipalGazeRaySample_v2 script can find it!
+    /// </summary>
+    public EyeData_v2 eyeData;
+    public Vector3 gazeDirectionCombined;
+
 
     [Header("Gaze → Physics")]
     [Tooltip("Max focus distance for gaze raycast")]
