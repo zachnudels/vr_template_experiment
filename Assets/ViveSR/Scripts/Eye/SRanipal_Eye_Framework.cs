@@ -74,21 +74,7 @@ namespace ViveSR
                 IEnumerator DelayStart()
                 {
                     yield return new WaitForSeconds(0.15f);
-
-                    if (EnableEyeVersion == SupportedEyeVersion.version1)
-                    {
-                        Error result = SRanipal_API.Release(SRanipal_Eye.ANIPAL_TYPE_EYE);
-                        if (result == Error.WORK) Debug.Log("[SRanipal] Release Eye : " + result);
-                        else Debug.LogError("[SRanipal] Release Eye : " + result);
-                    }
-                    else
-                    {
-                        Error result = SRanipal_API.Release(SRanipal_Eye_v2.ANIPAL_TYPE_EYE_V2);
-                        if (result == Error.WORK) Debug.Log("[SRanipal] Release Eye v2: " + result);
-                        else Debug.LogError("[SRanipal] Release Eye v2: " + result);
-                    }
                     
-                    yield return new WaitForSeconds(1.5f);
 
                     StartFramework();
 

@@ -7,6 +7,8 @@ using UnityEngine;
 using UnityEngine.Serialization;
 using UnityEngine.UIElements;
 using UXF;
+using TMPro;
+
 
 namespace ActionSimilarity
 {
@@ -30,8 +32,8 @@ namespace ActionSimilarity
         public string key;
         public Vector3 value;
     }
-    
-    
+
+
     [Serializable]
     public class FixationSettings
     {
@@ -39,6 +41,8 @@ namespace ActionSimilarity
         [SerializeField]
         private int fixationDepth;
         public int FixationDepth => fixationDepth;
+
+        public TextMeshPro textMeshPro;
     }
 
     [Serializable]
@@ -160,6 +164,8 @@ namespace ActionSimilarity
 
         private string _stageName;
         private List<ResponseShapeMetadata> _reportedStimuli;
+
+        private int _n_correct;
         
         /*
         * code will be sent to the eye tracking recorder
@@ -168,7 +174,7 @@ namespace ActionSimilarity
         * This allows you to manipulate the code based on a condition at the start 
         * of the stage
         */
-        
+
 
         void Awake()
         {
@@ -191,6 +197,9 @@ namespace ActionSimilarity
                 new Vector3(0.0f, 0.0f, 0.0f),
                 "fixation"
             );
+
+            fixationSettings.textMeshPro = fixationSettings.fixationSphere.GetComponentInChildren<TextMeshPro>();
+            fixationSettings.textMeshPro.enabled = false;
 
             leftOffset = simulating ? 0.0f : -0.0075f;
             downOffset = simulating ? 0.0f : -0.15f;
@@ -334,7 +343,6 @@ namespace ActionSimilarity
             faceDirection = _uxf.number % 2 == 0 ? FaceDirection.Back : FaceDirection.Front;
             
             textControllerWall.ChangeWall(faceDirection);
-            fixationSettings.fixationSphere.transform.position = eyes.position + new Vector3(0.0f, downOffset, fixationSettings.FixationDepth * (int)faceDirection);
             
             _reportedStimuli = new List<ResponseShapeMetadata>();
 
@@ -344,6 +352,9 @@ namespace ActionSimilarity
 
         public void setTrigger(int code = 0)
         {
+            int turnCondition = (_turnDirection == TurnDirection.Left) ? 1 : 2;
+            int faceCondition = (faceDirection == FaceDirection.Back) ? 1 : 2;
+            code += turnCondition + faceCondition;
             Debug.Log("Trigger: " + code);
             session.settings.SetValue("triggerCode", code);
         }
@@ -384,9 +395,12 @@ namespace ActionSimilarity
                 {
                     Debug.Log("Starting Block");
                     yield return RunStage(StartBlock);
-            
+
                     yield return RunStage(Break);
-            
+
+                    fixationSettings.fixationSphere.transform.position = eyes.position + new Vector3(0.0f, downOffset, fixationSettings.FixationDepth * (int)faceDirection);
+
+
                     // if (condition != session.CurrentBlock.settings.GetInt("condition"))
                     // {
                     //     // New condition!
@@ -397,9 +411,12 @@ namespace ActionSimilarity
                 {
                     Debug.Log("Starting Session");
                     yield return RunStage(StartSession);
-            
+
                     yield return RunStage(Instructions);
                     
+                    fixationSettings.fixationSphere.transform.position = eyes.position + new Vector3(0.0f, downOffset, fixationSettings.FixationDepth * (int)faceDirection);
+
+
                 }
             }
             
@@ -412,7 +429,7 @@ namespace ActionSimilarity
             // GameObject[] stimuli = InstantiateEncodingStimuli();
             
             yield return RunStage(Turn);  // Turn  
-            
+
             //foreach (GameObject gameObject in stimuli)
             //{
             //    Destroy(gameObject);
@@ -422,7 +439,12 @@ namespace ActionSimilarity
 
             // yield return RunStage(Cue);  // answer
 
-            yield return RunStage(Report);  // feedback
+            yield return RunStage(Report);  // answer
+
+            logResults();
+
+            yield return RunStage(Feedback);
+
 
             session.CurrentTrial.End();
             session.NextTrial.Begin();
@@ -465,6 +487,7 @@ namespace ActionSimilarity
             textControllerWall.Write("Pull trigger to continue.");
 
             SetEyes();
+            
 
             pause = true;
             yield return new WaitUntil(() => !pause);
@@ -516,8 +539,8 @@ namespace ActionSimilarity
         {
             SetHand();
             SetEyes();
+            setTrigger(codeMap["jitter"]);
             yield return new WaitForSeconds(session.CurrentTrial.settings.GetFloat("ITI"));
-            setTrigger(codeMap["iti"]);
         }
 
         IEnumerator Turn()
@@ -567,11 +590,15 @@ namespace ActionSimilarity
 
         IEnumerator Report()
         {
+
+            // pause = true;
+            // yield return new WaitUntil(() => !pause);
             
-            pause = true;
-            yield return new WaitUntil(() => !pause);
+            setTrigger(codeMap["answer"]);
             
             this.reportingStimuli = InstantiateReportStimuli();
+
+
 
             this.responseStartTime = Time.time;
             
@@ -585,6 +612,8 @@ namespace ActionSimilarity
             {
                 yield break;
             }
+
+            setTrigger(codeMap["answer_done"]);
             
             foreach (var stimulus in this.reportingStimuli.Values)
             {
@@ -593,6 +622,23 @@ namespace ActionSimilarity
 
             yield return null;
             yield return null;
+        }
+
+        IEnumerator Feedback()
+        {
+            setTrigger(codeMap["feedback"]);
+
+            fixationSettings.textMeshPro.text = _n_correct.ToString();
+
+            float feedbackRotation = (faceDirection == FaceDirection.Front) ? 0f : 180f;
+            fixationSettings.textMeshPro.transform.rotation = Quaternion.Euler(new Vector3(0f, feedbackRotation, 0f));
+
+            fixationSettings.textMeshPro.enabled = true;
+
+            yield return new WaitForSeconds(session.CurrentTrial.settings.GetFloat("feedbackTime"));
+            
+            fixationSettings.textMeshPro.enabled = false;
+
         }
 
 
@@ -630,13 +676,7 @@ namespace ActionSimilarity
                 // Debug.Log(faceDirection.ToString() + " " + _turnDirection.ToString());
                 // rotation = new Vector3(rotation.z, rotation.y, rotation.x);
                 Vector3 position = shapeSettings.encodingShapePositions[i]
-                                   + eyes.position
-                                   + new Vector3(
-                                       fixationSettings.FixationDepth * (int)faceDirection *
-                                       (int)_turnDirection,
-                                       downOffset,
-                                       0.0f
-                                   );  
+                                   + fixationSettings.fixationSphere.transform.position;
                 stimuli[i] = InstantiateObjectWithMeshAndColor(shapeSettings.encodingShape,
                     mesh,
                     position,
@@ -672,12 +712,7 @@ namespace ActionSimilarity
                     Mesh mesh = shapeSettings.shapeMeshes[shape_i];
                     Vector3 rotation = shapeSettings.reportingShapeRotationMap.TryGetValue(mesh.name, out var rot) ? rot : Vector3.zero;
                     Vector3 position = shapeSettings.reportingShapePositions[posIndex]
-                                       + eyes.position
-                                       + new Vector3(
-                                           0f,
-                                           downOffset,
-                                           fixationSettings.FixationDepth * (int)faceDirection
-                                       );
+                                       + fixationSettings.fixationSphere.transform.position;
                     Vector3 scale = shapeSettings.shapeScaleMap.TryGetValue(mesh.name, out var scal) ? scal : Vector3.one;
 
 
@@ -734,7 +769,6 @@ namespace ActionSimilarity
          */
         public void cleanUpTrial(UXF.Trial trial)
         {
-            logResults();
             textControllerWall.Clear();
             StopAllCoroutines();
         }
@@ -809,7 +843,8 @@ namespace ActionSimilarity
                 }
                 bool notReported = reportedShape == encodingShape;
 
-                _uxf.result[$"Shape{i}_correct"] = notReported ? 0 : 1;
+                _n_correct = notReported ? 0 : 1;
+                _uxf.result[$"Shape{i}_correct"] = _n_correct;
                 _uxf.result[$"Shape{i}_encLoc"] = encodingShape.EncodingIndex;
                 _uxf.result[$"Shape{i}_encColour"] = encodingShape.ColorIndex;
                 
