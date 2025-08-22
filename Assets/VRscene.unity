@@ -817,16 +817,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   objectName: eyetracker
   updateType: 1
+  gazeDirectionCombined: {x: 0, y: 0, z: 0}
+  gazeIsWorldSpace: 1
   session: {fileID: 680128612}
   cam: {fileID: 147164502}
-  rightHandTf: {fileID: 0}
-  fixationTf: {fileID: 0}
-  sampleHz: 60
+  rightHandTf: {fileID: 867251868}
+  trial: {fileID: 898634504}
   maxFocusDistance: 100
   focusMask:
     serializedVersion: 2
     m_Bits: 4294967295
-  emitOnlyWhenSampled: 1
   debug: 0
 --- !u!4 &267511585
 Transform:
@@ -949,6 +949,11 @@ MonoBehaviour:
 --- !u!4 &819375639 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5557222587688784917, guid: b3d06a7f7928c4d91b42da4da74be731, type: 3}
+  m_PrefabInstance: {fileID: 1448245081}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &867251868 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 5557222587843261590, guid: b3d06a7f7928c4d91b42da4da74be731, type: 3}
   m_PrefabInstance: {fileID: 1448245081}
   m_PrefabAsset: {fileID: 0}
 --- !u!114 &898634504 stripped
@@ -1983,6 +1988,24 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a65c69ddbfab240cc8db7a657477a9b7, type: 3}
+--- !u!1 &1968962346 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1707266662751158, guid: f676e25d0fcd1ec4fa22af3017316de9, type: 3}
+  m_PrefabInstance: {fileID: 178470874}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1968962348
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1968962346}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 43bf5f04ac7c2f947a757157f8d9adb5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  LengthOfRay: 25
 --- !u!1001 &6309794100549128074
 PrefabInstance:
   m_ObjectHideFlags: 0

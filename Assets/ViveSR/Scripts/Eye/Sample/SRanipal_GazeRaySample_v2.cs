@@ -12,11 +12,11 @@ namespace ViveSR
             public class SRanipal_GazeRaySample_v2 : MonoBehaviour
             {
                 public int LengthOfRay = 25;
-                [SerializeField] private LineRenderer GazeRayRenderer;
+                // [SerializeField] private LineRenderer GazeRayRenderer;
                 private static EyeData_v2 eyeData = new EyeData_v2();
                 private bool eye_callback_registered = false;
-                private EyeTracker eyeTracker; 
-                
+                private EyeTracker eyeTracker;
+
                 private void Start()
                 {
                     if (!SRanipal_Eye_Framework.Instance.EnableEye)
@@ -24,11 +24,13 @@ namespace ViveSR
                         enabled = false;
                         return;
                     }
-                    Assert.IsNotNull(GazeRayRenderer);
-                    
-                    if (eyeTracker == null) {
+                    // Assert.IsNotNull(GazeRayRenderer);
+
+                    if (eyeTracker == null)
+                    {
                         eyeTracker = GameObject.Find("EyeTracker").GetComponent<EyeTracker>();
                     }
+                    Debug.Log("Enabled");
                 }
 
                 private void Update()
@@ -65,17 +67,22 @@ namespace ViveSR
                     }
 
                     Vector3 GazeDirectionCombined = Camera.main.transform.TransformDirection(GazeDirectionCombinedLocal);
-                    GazeRayRenderer.SetPosition(0, Camera.main.transform.position - Camera.main.transform.up * 0.05f);
-                    GazeRayRenderer.SetPosition(1, Camera.main.transform.position + GazeDirectionCombined * LengthOfRay);
-                    
+                    // GazeRayRenderer.SetPosition(0, Camera.main.transform.position - Camera.main.transform.up * 0.05f);
+                    // GazeRayRenderer.SetPosition(1, Camera.main.transform.position + GazeDirectionCombined * LengthOfRay);
+
                     // custom code
-                    
-                    if (eyeTracker == null) {
+
+                    if (eyeTracker == null)
+                    {
+                        Debug.Log("No eye tracker found");
                         eyeTracker = GameObject.Find("EyeTracker").GetComponent<EyeTracker>();
-                    } 
+                    }
+                    else
+                    {    
+                        eyeTracker.eyeData = eyeData;
+                        eyeTracker.gazeDirectionCombined  = GazeDirectionCombined;
+                    }
                     
-                    eyeTracker.eyeData = eyeData;
-                    eyeTracker.gazeDirectionCombined  = GazeDirectionCombined;
                     
                     // end of custom code
                 }

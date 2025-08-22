@@ -23,6 +23,7 @@ namespace ViveSR
                         return;
                     }
                     Assert.IsNotNull(GazeRayRenderer);
+                    Debug.Log("Ënabled v1 gaze");
                 }
 
                 private void Update()
