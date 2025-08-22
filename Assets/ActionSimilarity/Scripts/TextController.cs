@@ -31,7 +31,7 @@ namespace ActionSimilarity
             {
                 textMesh.text = text;
             } else {
-                textMesh.text = "Debug is false";
+                // textMesh.text = "Debug is false";
             }
         }
 

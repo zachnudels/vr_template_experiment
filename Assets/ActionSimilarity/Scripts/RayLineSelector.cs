@@ -51,7 +51,7 @@ public class RayLineSelector : MonoBehaviour
                     return;
                 }
 
-                trial.ReportShapeSelected(hitObj);
+                trial.ReportShapeSelected(hitObj, false);
                 hoverTime = -999f; // prevent re-triggering
             }
             else

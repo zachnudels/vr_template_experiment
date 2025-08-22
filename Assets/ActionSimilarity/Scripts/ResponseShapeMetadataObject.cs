@@ -16,6 +16,8 @@ public class ResponseShapeMetadata
     private int rt = -1;
     private int reportedIndex = -1;
 
+    private bool processed;
+
     public int Correct => correct;
 
     public int EncodingIndex => encodingIndex;
@@ -36,6 +38,12 @@ public class ResponseShapeMetadata
         get => rt;
         set => rt = value;
     }
+
+    public bool Processed
+    {
+        get => processed;
+        set => processed = value;
+    }
     
     public int ReportedIndex
     {
@@ -51,6 +59,7 @@ public class ResponseShapeMetadata
         int shapeEncIndex,
         int encodingIndex = -1)
     {
+        this.processed = false;
         this.colorIndex = colorIndex;
         this.shapeIndex = shapeIndex;
         this.encodingIndex = encodingIndex;
@@ -60,17 +69,17 @@ public class ResponseShapeMetadata
         this.correct = this.encodingIndex == -1 ? 0 : 1;
     }
     
-    public Dictionary<string, int> ToDictionary(int responseIndex)
+    public Dictionary<string, string> ToDictionary(int responseIndex)
     {
-        return new Dictionary<string, int> {
-            [$"Resp{responseIndex}_correct"] = correct,
-            [$"Resp{responseIndex}_encLoc"] = encodingIndex,
-            [$"Resp{responseIndex}_shape"] = shapeIndex,
-            [$"Resp{responseIndex}_colour"] = colorIndex,
-            [$"Resp{responseIndex}_loc"] = loc,
-            [$"Resp{responseIndex}_rt"] = rt, 
-            [$"Resp{responseIndex}_colourEncLoc"] = colorEncIndex,
-            [$"Resp{responseIndex}_shapeEncLoc"] = shapeEncIndex
+        return new Dictionary<string, string> {
+            [$"Resp{responseIndex}_correct"] = correct.ToString(),
+            [$"Resp{responseIndex}_encLoc"] = (encodingIndex == -1) ? "nan" : (encodingIndex + 1).ToString(),
+            [$"Resp{responseIndex}_shape"] = shapeIndex.ToString(),
+            [$"Resp{responseIndex}_colour"] = colorIndex.ToString(),
+            [$"Resp{responseIndex}_loc"] = loc.ToString(),
+            [$"Resp{responseIndex}_rt"] = rt.ToString(), 
+            [$"Resp{responseIndex}_colourEncLoc"] = colorEncIndex.ToString(),
+            [$"Resp{responseIndex}_shapeEncLoc"] = shapeEncIndex.ToString()
         };
     }
 

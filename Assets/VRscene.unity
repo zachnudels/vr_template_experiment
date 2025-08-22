@@ -143,8 +143,16 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1775712494732527387, guid: 6dbc52e72cb4341ebabc1787888ade18, type: 3}
-      propertyPath: numberOfBlocks
+      propertyPath: debug
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1775712494732527387, guid: 6dbc52e72cb4341ebabc1787888ade18, type: 3}
+      propertyPath: feedbackTime
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1775712494732527387, guid: 6dbc52e72cb4341ebabc1787888ade18, type: 3}
+      propertyPath: numberOfBlocks
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 1775712494732527387, guid: 6dbc52e72cb4341ebabc1787888ade18, type: 3}
       propertyPath: numberOfColors
@@ -754,7 +762,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10100, guid: 0000000000000000e000000000000000, type: 0}
+  - {fileID: 2100004, guid: 6296e48663fd7ad46b1a2af507f871cf, type: 3}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -820,7 +828,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   objectName: eyetracker
-  updateType: 1
+  updateType: 0
   gazeDirectionCombined: {x: 0, y: 0, z: 0}
   gazeIsWorldSpace: 1
   session: {fileID: 680128612}
@@ -1071,6 +1079,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 2307464322626738743, guid: 4631b2c35ba274d028dd9d7c1687c4ad, type: 3}
     - target: {fileID: 253619718766523437, guid: b3d06a7f7928c4d91b42da4da74be731, type: 3}
+      propertyPath: m_SmoothMotionEnabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 253619718766523437, guid: b3d06a7f7928c4d91b42da4da74be731, type: 3}
       propertyPath: m_TeleportModeActivate
       value: 
       objectReference: {fileID: -8061240218431744966, guid: 4631b2c35ba274d028dd9d7c1687c4ad, type: 3}
@@ -1218,10 +1230,6 @@ PrefabInstance:
       propertyPath: m_ModelPrefab
       value: 
       objectReference: {fileID: 4000011683143748, guid: 5dc81ef5cae96304586abbc6e4b5beb8, type: 3}
-    - target: {fileID: 5557222587843261587, guid: b3d06a7f7928c4d91b42da4da74be731, type: 3}
-      propertyPath: m_AnimateModel
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 5557222587843261587, guid: b3d06a7f7928c4d91b42da4da74be731, type: 3}
       propertyPath: m_PositionAction.m_Reference
       value: 

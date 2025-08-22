@@ -93,6 +93,18 @@ namespace ActionSimilarity
             }
         }
 
+        void SaveCSV<T>(string path, List<T> rows)
+        {
+            using (StreamWriter writer = new StreamWriter(path))
+            {
+                foreach (T word in rows)
+                {
+                    string line = string.Join(",", word.ToString());
+                    writer.WriteLine(line);
+                }
+            }
+        }
+
 
         void GenerateBlocks(Session session)
         {
@@ -151,7 +163,7 @@ namespace ActionSimilarity
                 // start += trialsPerBlock;
             }
 
-            //SaveCSV("/Users/zach/2025_RA/freek/data/test/shapePoses.csv", fullList);
+            SaveCSV("C:\\Users\\ZachPBL\\Desktop\\shapePoses.csv", turns);
         }
         
         public static List<List<int>> WithinBlockShuffling(int numberOfItems, int repeats)
