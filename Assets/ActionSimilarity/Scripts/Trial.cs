@@ -158,6 +158,8 @@ namespace ActionSimilarity
 
         private int _colorCode;
 
+        private int _shapeCode;
+
         bool practiceBlock;
         bool firstTrial;
         bool sessionStart;
@@ -166,6 +168,7 @@ namespace ActionSimilarity
         private List<ResponseShapeMetadata> _reportedStimuli;
 
         private int _n_correct;
+        private FaceDirection _start_face_direction;
         
         /*
         * code will be sent to the eye tracking recorder
@@ -341,6 +344,7 @@ namespace ActionSimilarity
 
             // Change which way we are facing
             faceDirection = _uxf.number % 2 == 0 ? FaceDirection.Back : FaceDirection.Front;
+            _start_face_direction = faceDirection;
 
             textControllerWall.ChangeWall(faceDirection);
 
@@ -355,7 +359,7 @@ namespace ActionSimilarity
         public void setTrigger(int code = 0)
         {
             int turnCondition = (_turnDirection == TurnDirection.Left) ? 0 : 1;
-            int faceCondition = (faceDirection == FaceDirection.Front) ? 0 : 1;
+            int faceCondition = (_start_face_direction == FaceDirection.Front) ? 0 : 1;
             code += faceCondition * 2 + turnCondition + 1;
             Debug.Log("Trigger: " + code);
             session.settings.SetValue("triggerCode", code);
@@ -395,57 +399,29 @@ namespace ActionSimilarity
             Debug.Log("Starting Trial");
             if (_uxf.numberInBlock == 1)
             {
+                
+                fixationSettings.fixationSphere.SetActive(false);
                 Debug.Log("First in block");
                 firstTrial = true;
                 if (_uxf.number != 1)
                 {
                     Debug.Log("Starting Block");
-                    yield return RunStage(StartBlock);
-
                     yield return RunStage(Break);
-
-                    fixationSettings.fixationSphere.transform.position = eyes.position + new Vector3(0.0f, downOffset, fixationSettings.FixationDepth * (int)faceDirection);
-
-
-                    // if (condition != session.CurrentBlock.settings.GetInt("condition"))
-                    // {
-                    //     // New condition!
-                    //     yield return RunStage(Instructions);
-                    // }
                 }
                 else
                 {
-                    fixationSettings.fixationSphere.SetActive(false);
                     Debug.Log("Starting Session");
                     yield return RunStage(StartSession);
 
-                    yield return RunStage(Instructions);
-
-                    fixationSettings.fixationSphere.transform.position = eyes.position + new Vector3(0.0f, downOffset, fixationSettings.FixationDepth * (int)faceDirection);
-                    fixationSettings.fixationSphere.SetActive(true);
-
-
+                    //yield return RunStage(Instructions);
                 }
+
+                yield return RunStage(CalibrateEyes);
             }
             
             yield return RunStage(WaitToStart);  // preparation + jitter 
-
-            // bool calibrated = ViveSR.anipal.Eye.SRanipal_Eye.LaunchEyeCalibration();
-
-            
-            // Display shapes
-            // GameObject[] stimuli = InstantiateEncodingStimuli();
             
             yield return RunStage(Turn);  // Turn  
-
-            //foreach (GameObject gameObject in stimuli)
-            //{
-            //    Destroy(gameObject);
-            //}
-
-            // yield return RunStage(Presentation);  // Presentation 
-
-            // yield return RunStage(Cue);  // answer
 
             yield return RunStage(Report);  // answer
 
@@ -458,11 +434,12 @@ namespace ActionSimilarity
                 yield return RunStage(EndSession);
             }
 
-
             session.CurrentTrial.End();
             session.NextTrial.Begin();
 
         }
+
+
 
         IEnumerator RunStage(Func<IEnumerator> stage)
         {
@@ -478,15 +455,11 @@ namespace ActionSimilarity
         * Trial Stages
         */
 
-        IEnumerator StartSession()
-        {
-            // condition = session.CurrentBlock.settings.GetInt("condition");
-            textControllerWall.Write($"Welcome! We hope you enjoy. Blah blah. Pull trigger to start.");
-            // If first trial of session, wait for trigger to start
-
+        IEnumerator CalibrateEyes() {
+            textControllerWall.Write($"Pull the trigger to start calibration.");
+            
             pause = true;
             yield return new WaitUntil(() => !pause);
-            sessionStart = true;
 
             if (!debug)
             {
@@ -497,10 +470,28 @@ namespace ActionSimilarity
                 }
                 yield return new WaitUntil(() => calibrated);
             }
-            textControllerWall.Write("Pull trigger to continue.");
 
-            SetEyes();
             
+            fixationSettings.fixationSphere.transform.position = eyes.position + new Vector3(0.0f, downOffset, fixationSettings.FixationDepth * (int)faceDirection);
+            fixationSettings.fixationSphere.SetActive(true);
+
+            textControllerWall.Write($"Pull the trigger to start the block.");
+            
+            pause = true;
+            yield return new WaitUntil(() => !pause);
+        }
+
+        IEnumerator StartSession()
+        {
+            // condition = session.CurrentBlock.settings.GetInt("condition");
+            textControllerWall.Write($"Welcome! We hope you enjoy the experiment."
+                                    + "\n\nMake sure this text is clear (move the headset up and down to clarify and then tighten it at the back)." 
+                                    + "\n\n Pull the trigger to continue.");
+            // If first trial of session, wait for trigger to start
+
+            sessionStart = true;
+
+            SetEyes();            
 
             pause = true;
             yield return new WaitUntil(() => !pause);
@@ -509,20 +500,12 @@ namespace ActionSimilarity
 
         }
 
-        IEnumerator StartBlock()
-        // If first trial of new block, show feedback and take a break
-        {
-
-            yield return new WaitForSeconds(0.1f);
-            textControllerWall.Write("Well done! Time to take a well deserved break"
-                            + " \n\n Press any thumb button when you're ready to start the next block");
-
-        }
-
         IEnumerator Instructions()
         {
             UnityEngine.Debug.Log("Running Instructions");
-            textControllerWall.Write("Display your instructions here \n\nPress any thumb button to continue");
+            textControllerWall.Write("Always follow the fixation ball!" 
+                                     + "\n\nTry remember the blue shape and select the shape after your turn by pointing the laser"
+                                     +"\n\nPress any thumb button to continue");
             UnityEngine.Debug.Log("pausing");
             yield return null;
             pause = true;
@@ -537,6 +520,10 @@ namespace ActionSimilarity
 
         IEnumerator Break()
         {
+            fixationSettings.fixationSphere.SetActive(false);
+            textControllerWall.Write("Well done! Time to take a well deserved break"
+                            + " \n\n Press any thumb button when you're ready to start the next block (calibration first again ;) )");
+
             yield return new WaitForSeconds(3f);
             data.reset(session.CurrentBlock.trials.Count);
 
@@ -567,6 +554,8 @@ namespace ActionSimilarity
             
             setTrigger(codeMap["turn"]);
 
+            GameObject[] stimuli = InstantiateEncodingStimuli(false);
+
             while (!fixationRotator.isFinished())
             {
                 float dt = Time.deltaTime;
@@ -579,24 +568,40 @@ namespace ActionSimilarity
                 {
                     setTrigger(codeMap["halfway_turn"]);
                     triggerSent = true;
-                    StartCoroutine(ShowEncodingShapesForOneFrame());
+                    StartCoroutine(ShowEncodingShapesForOneFrame(stimuli));
                 }
 
                 yield return null;
+            }
+
+            foreach (GameObject gameObject in stimuli)
+            {
+                Destroy(gameObject);
             }
             
             faceDirection = textControllerWall.ChangeWall(faceDirection, true);
         }
 
-        IEnumerator ShowEncodingShapesForOneFrame()
+        IEnumerator ShowEncodingShapesForOneFrame(GameObject[] stimuli)
         {
-            GameObject[] stimuli = InstantiateEncodingStimuli();
-            yield return null;
-            foreach (GameObject gameObject in stimuli)
+            for (int i=0; i != stimuli.Length; ++i)
             {
-                Destroy(gameObject);
+                
+                Vector3 position = shapeSettings.encodingShapePositions[i]
+                                   + fixationSettings.fixationSphere.transform.position;
+                GameObject gameObject = stimuli[i];
+                gameObject.transform.position = position;
+                
+                gameObject.SetActive(true);
             }
 
+            yield return new WaitForEndOfFrame();
+            
+            foreach (GameObject gameObject in stimuli)
+            {
+                gameObject.SetActive(false);
+            }
+            setTrigger(codeMap["remove_shapes"]);
 
         }
 
@@ -607,7 +612,7 @@ namespace ActionSimilarity
             // pause = true;
             // yield return new WaitUntil(() => !pause);
 
-            setTrigger(codeMap["answer"]);
+            setTrigger(codeMap["start_answer"]);
 
             fixationSettings.fixationSphere.SetActive(false);
 
@@ -629,7 +634,7 @@ namespace ActionSimilarity
                 yield break;
             }
 
-            setTrigger(codeMap["answer_done"]);
+            setTrigger(codeMap["end_answer"]);
 
             float endTime = Time.time;
 
@@ -652,9 +657,6 @@ namespace ActionSimilarity
 
         IEnumerator Feedback()
         {
-            setTrigger(codeMap["feedback"]);
-
-            
 
             fixationSettings.textMeshPro.text = _n_correct.ToString();
 
@@ -685,7 +687,7 @@ namespace ActionSimilarity
         * Instantiation methods
         */
 
-        GameObject[] InstantiateEncodingStimuli()
+        GameObject[] InstantiateEncodingStimuli(bool active)
         {
 
             GameObject[] stimuli = new GameObject[shapeSettings.count];
@@ -711,6 +713,12 @@ namespace ActionSimilarity
                 Vector3 rotation = shapeSettings.encodingShapeRotationMap.TryGetValue(mesh.name, out var rot) ? rot : Vector3.zero;
                 Vector3 scale = shapeSettings.shapeScaleMap.TryGetValue(mesh.name, out var scal) ? scal : Vector3.one;
 
+                // Singleton exp - save correct encoding shape
+                if (shapeSettings.colorPositions[i] == _colorCode)
+                {
+                    _shapeCode = shapeSettings.shapePositions[i];
+                }
+
                 // Change to x rotation since we're sideways now
                 // Debug.Log(faceDirection.ToString() + " " + _turnDirection.ToString());
                 // rotation = new Vector3(rotation.z, rotation.y, rotation.x);
@@ -721,6 +729,7 @@ namespace ActionSimilarity
                     position,
                     rotation,
                     color,
+                    active,
                     scale * 0.875f
                );
             }
@@ -746,7 +755,7 @@ namespace ActionSimilarity
                     int color_i = shapeSettings.shapeRows[colorRow];
                     int shape_i = shapeSettings.colorCols[shapeCol];
                     Debug.Log($"Shape pos: {posIndex} colorI: {color_i}, shape_i: {shape_i}");
-                        
+                    
                     Color color = color_i == _colorCode ? shapeSettings.shapeColours[color_i] : Color.gray;
                     Mesh mesh = shapeSettings.shapeMeshes[shape_i];
                     Vector3 rotation = shapeSettings.reportingShapeRotationMap.TryGetValue(mesh.name, out var rot) ? rot : Vector3.zero;
@@ -760,6 +769,7 @@ namespace ActionSimilarity
                         position,
                         rotation,
                         color,
+                        true,
                         scale * 0.875f * 0.875f
                     ); ;
                     
@@ -817,6 +827,7 @@ namespace ActionSimilarity
             
             for (int i = 0; i != shapeSettings.count; ++i)
             {
+                // Get the response stimulus corresponding to this encoding stimulus
                 ResponseShapeMetadata response = _reportedStimuli
                     .FirstOrDefault(item => item.EncodingIndex == i);
                 if (response == null)
@@ -825,47 +836,64 @@ namespace ActionSimilarity
                 }
                 bool notReported = response.RT == -1;
 
+                // Single color specific. Only the specific chosen color can be reported on 
+                bool canBeReported = shapeSettings.colorPositions[i] == _colorCode;
+                Debug.Log($"Can be reported :{canBeReported}, colorCode: {shapeSettings.colorPositions[i]}");
+                string correct = "nan";
+                if (canBeReported && notReported)
+                {
+                    correct = "0";
+                } else if (canBeReported && !notReported) {
+                    correct = "1";
+                }
+
                 _uxf.result[$"Enc{i + 1}_rank"] = notReported ? "nan" : response.ReportedIndex.ToString();
-                _uxf.result[$"Enc{i + 1}_correct"] = notReported ? 0 : 1;
+                _uxf.result[$"Enc{i + 1}_correct"] = correct;
                 _uxf.result[$"Enc{i + 1}_colour"] = shapeSettings.colorPositions[i];
                 _uxf.result[$"Enc{i + 1}_shape"] = shapeSettings.shapePositions[i];
                 _uxf.result[$"Enc{i + 1}_respLoc"] = response.Loc;
                 _uxf.result[$"Enc{i + 1}_rt"] = notReported ? "nan" : response.RT.ToString();
             }
             
-            foreach (int i in shapeSettings.colorPositions)
+            for (int i = 0; i != shapeSettings.count; ++i)
             {
-                // if (i != _colorCode)
-                // {
-                //     continue;
-                // }
+                
+                // Single color specific. Only the specific chosen color can be reported on 
+                bool canBeReported = i == _colorCode;
+
                 ResponseShapeMetadata encodingShape = _reportedStimuli
                     .FirstOrDefault(item => item.ColorIndex == i && item.EncodingIndex != -1);
                 if (encodingShape == null)
                 {
                     throw new UnityException($"Could not find encoding stimuli with color index {i}");
                 }
-                
+
                 ResponseShapeMetadata reportedShape = _reportedStimuli
                     .FirstOrDefault(item => item.ColorIndex == i && item.RT != -1);
-                if (reportedShape == null && i == _colorCode)
+                if (reportedShape == null && canBeReported)
                 {
                     throw new UnityException($"Could not find reported stimuli with color index {i}");
                 }
                 bool notReported = reportedShape == encodingShape;
 
-                _uxf.result[$"Colour{i}_correct"] = notReported ? 0 : 1;
-                _uxf.result[$"Colour{i}_encLoc"] = encodingShape.EncodingIndex;
-                _uxf.result[$"Colour{i}_encShape"] = encodingShape.ShapeIndex;
-                
+                string correct = "nan";
+                if (canBeReported && notReported)
+                {
+                    correct = "0";
+                } else if (canBeReported && !notReported) {
+                    correct = "1";
+                }
 
-                _uxf.result[$"Colour{i}_respLoc"] = (reportedShape == null) ? "nan" : reportedShape.Loc.ToString();
-                _uxf.result[$"Colour{i}_respShape"] = (reportedShape == null) ? "nan" : reportedShape.ShapeIndex.ToString();
-                _uxf.result[$"Colour{i}_respRank"] = (reportedShape == null) ? "nan" : reportedShape.ReportedIndex.ToString();
-                _uxf.result[$"Colour{i}_rt"] = (reportedShape == null) ? "nan" : reportedShape.RT.ToString();
+                _uxf.result[$"Colour{i+1}_correct"] = correct;
+                _uxf.result[$"Colour{i+1}_encLoc"] = encodingShape.EncodingIndex;
+                _uxf.result[$"Colour{i+1}_encShape"] = encodingShape.ShapeIndex;
+                _uxf.result[$"Colour{i+1}_respLoc"] = (reportedShape == null) ? "nan" : reportedShape.Loc.ToString();
+                _uxf.result[$"Colour{i+1}_respShape"] = (reportedShape == null) ? "nan" : reportedShape.ShapeIndex.ToString();
+                _uxf.result[$"Colour{i+1}_respRank"] = (reportedShape == null) ? "nan" : reportedShape.ReportedIndex.ToString();
+                _uxf.result[$"Colour{i+1}_rt"] = (reportedShape == null) ? "nan" : reportedShape.RT.ToString();
             }
             
-            foreach (int i in shapeSettings.shapePositions)
+            for (int i = 0; i != shapeSettings.count; ++i)
             {
                 ResponseShapeMetadata encodingShape = _reportedStimuli
                     .FirstOrDefault(item => item.ShapeIndex == i && item.EncodingIndex != -1);
@@ -882,16 +910,26 @@ namespace ActionSimilarity
                     // continue;
                     reportedShape = null;
                 }
-                bool notReported = reportedShape == encodingShape;
+                bool notReported = reportedShape != null && reportedShape == encodingShape;
 
-                _uxf.result[$"Shape{i}_correct"] = notReported ? 0 : 1;
-                _uxf.result[$"Shape{i}_encLoc"] = encodingShape.EncodingIndex;
-                _uxf.result[$"Shape{i}_encColour"] = encodingShape.ColorIndex;
+                // Single color specific. Only the specific chosen color can be reported on 
+                bool canBeReported = i == _shapeCode;
+                string correct = "nan";
+                if (canBeReported && notReported)
+                {
+                    correct = "0";
+                } else if (canBeReported && !notReported) {
+                    correct = "1";
+                }
+
+                _uxf.result[$"Shape{i+1}_correct"] = correct;
+                _uxf.result[$"Shape{i+1}_encLoc"] = encodingShape.EncodingIndex;
+                _uxf.result[$"Shape{i+1}_encColour"] = encodingShape.ColorIndex;
                 
-                _uxf.result[$"Shape{i}_respLoc"] = reportedShape == null ? "nan" : reportedShape.Loc.ToString();
-                _uxf.result[$"Shape{i}_respColour"] = reportedShape == null ? "nan" : reportedShape.ColorIndex.ToString();
-                _uxf.result[$"Shape{i}_respRank"] = reportedShape == null ? "nan" : reportedShape.ReportedIndex.ToString();
-                _uxf.result[$"Shape{i}_rt"] = reportedShape == null ? "nan" : reportedShape.RT.ToString();
+                _uxf.result[$"Shape{i+1}_respLoc"] = reportedShape == null ? "nan" : reportedShape.Loc.ToString();
+                _uxf.result[$"Shape{i+1}_respColour"] = reportedShape == null ? "nan" : reportedShape.ColorIndex.ToString();
+                _uxf.result[$"Shape{i+1}_respRank"] = reportedShape == null ? "nan" : reportedShape.ReportedIndex.ToString();
+                _uxf.result[$"Shape{i+1}_rt"] = reportedShape == null ? "nan" : reportedShape.RT.ToString();
             }
             
         }
@@ -922,7 +960,9 @@ namespace ActionSimilarity
              Vector3 position,
              Vector3 rotation,
              Color color,
-             Vector3? scale = null)
+             bool active = true,
+             Vector3? scale = null
+            )
          {
              // scale = Vector3.one;
 
@@ -936,7 +976,7 @@ namespace ActionSimilarity
              gameObject.GetComponent<MeshFilter>().mesh = mesh;
              gameObject.GetComponent<Renderer>().material.color = color;
              //gameObject.transform.localScale = new Vector3(2f, 2f, 2f);
-             gameObject.SetActive(true);
+             gameObject.SetActive(active);
              gameObject.transform.localScale = localScale;
              return gameObject;
          }
@@ -985,7 +1025,28 @@ namespace ActionSimilarity
                 shapeMetadata.RT = reactionTime;
                 shapeMetadata.ReportedIndex = reportedIndex;
                 Debug.Log($"Adding {shapeMetadata.Correct} to _n_correct = {_n_correct}");
+
+                setTrigger(codeMap["answer_i"] + (_n_correct * 100));
+
                 _n_correct += shapeMetadata.Correct;
+
+                // Log everything to the results dictionary
+                foreach (KeyValuePair<string, string> kvp in shapeMetadata.ToDictionary(reportedIndex))
+                {
+                    _uxf.result[kvp.Key] = kvp.Value;
+                    Debug.Log($"{kvp.Key}: {kvp.Value}");
+                }
+
+                // Update the shape we're reporting on for the next time
+                reportedIndex++;
+            }
+            else
+            {
+                // Log everything to the results dictionary
+                foreach (KeyValuePair<string, string> kvp in shapeMetadata.ToDictionary(reportedIndex))
+                {
+                    _uxf.result[kvp.Key] = "nan"; 
+                }
             }
              
              
@@ -999,15 +1060,7 @@ namespace ActionSimilarity
                  Destroy(this.reportingStimuli[(shapePair.Item1, i)]); // 0,0, 0,1
                  Destroy(this.reportingStimuli[(i, shapePair.Item2)]); // 0,0, 1,0
              }
-
-             // Log everything to the results dictionary
-             foreach (KeyValuePair<string, string> kvp in shapeMetadata.ToDictionary(reportedIndex))
-             {
-                 _uxf.result[kvp.Key] = kvp.Value; 
-             }
              
-             // Update the shape we're reporting on for the next time
-             reportedIndex++;
          }
          
     }
