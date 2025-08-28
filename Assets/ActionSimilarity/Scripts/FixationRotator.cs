@@ -34,7 +34,7 @@ namespace ActionSimilarity
             set => turnTime = value;
         }
 
-        public FixationRotator(TurnDirection direction = TurnDirection.Right, float turnTime = 2.5f)
+        public FixationRotator(float turnTime = 2.5f, TurnDirection direction = TurnDirection.Right)
         { 
         /*
            * The issue here is that we need a constant acceleration,

@@ -20,6 +20,9 @@ namespace ActionSimilarity
         public float ITI;
         public float actionTime;
         public float presentationTime;
+
+        public float turnTime;
+
         public float delayTime;
         public float cueTime;
         public float reportTime;
@@ -39,6 +42,8 @@ namespace ActionSimilarity
         public int condition;
 
         public bool debug;
+        public bool randomSimulationDebug;
+
 
         int sessionNumber;
         int actionPos;
@@ -54,11 +59,13 @@ namespace ActionSimilarity
             session.settings.SetValue("ITI", ITI);
             session.settings.SetValue("actionTime", actionTime);
             session.settings.SetValue("presentationTime", presentationTime);
+            session.settings.SetValue("turnTime", turnTime);
             session.settings.SetValue("delayTime", delayTime);
             session.settings.SetValue("cueTime", cueTime);
             session.settings.SetValue("reportTime", reportTime);
             session.settings.SetValue("feedbackTime", feedbackTime);
             session.settings.SetValue("debug", debug);
+            session.settings.SetValue("randomSimulationDebug", randomSimulationDebug);
             session.settings.SetValue("triggerCode", 0);
             session.settings.SetValue("colorCode", colorCode);
 

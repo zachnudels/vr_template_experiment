@@ -43,6 +43,8 @@ namespace ActionSimilarity
         public int FixationDepth => fixationDepth;
 
         public TextMeshPro textMeshPro;
+
+        public float turnTime;
     }
 
     [Serializable]
@@ -140,7 +142,8 @@ namespace ActionSimilarity
         public TextController textControllerWall;
         public bool simulating;
         public bool pause;
-        public bool initializedEnvironment = false;
+
+        // public bool initializedEnvironment = false;
 
         float leftOffset;
         float downOffset;
@@ -151,6 +154,8 @@ namespace ActionSimilarity
         private FixationRotator fixationRotator;
         DataProcessing data;
         private bool debug;
+        public bool _randomSimulationDebug = false;
+
         private Dictionary<(int, int), GameObject> reportingStimuli;
         private int reportedIndex;
         private UXF.Trial _uxf;
@@ -208,30 +213,22 @@ namespace ActionSimilarity
             downOffset = simulating ? 0.0f : -0.15f;
 
             _stageName = "none";
-            fixationRotator = new FixationRotator();
+
             faceDirection = FaceDirection.Front;
         }
 
         void SetEyes()
         {
             GameObject simulateObj = GameObject.Find("Simulate");
-            GameObject playerObj = GameObject.Find("Player");
+            // GameObject playerObj = GameObject.Find("Player");
 
             if (simulateObj != null && simulateObj.activeInHierarchy)
             {
-                if (playerObj != null && playerObj.activeInHierarchy)
-                {
-                    throw new UnityException("Must choose to activate only one between Simulate and Player!");
-                }
                 simulating = true;
-            }
-            else if (playerObj != null && playerObj.activeInHierarchy)
-            {
-                simulating = false;
             }
             else
             {
-                Debug.LogError("Neither Simulate nor Player is active in hierarchy");
+                simulating = false;
             }
 
             GameObject cameraOffset = GameObject.Find("Main Camera");
@@ -249,7 +246,10 @@ namespace ActionSimilarity
         // Update is called once per frame
         void Update()
         {
-
+            if (_randomSimulationDebug)
+            {
+                pause = false;
+            }
         }
 
         /// <summary>
@@ -275,6 +275,8 @@ namespace ActionSimilarity
             //jitter = trial.settings.GetInt("jitter");
             //practiceBlock = trial.settings.GetBool("practice");
             debug = _uxf.settings.GetBool("debug");
+            _randomSimulationDebug = _uxf.settings.GetBool("randomSimulationDebug");
+
 
             shapeSettings.shapePositions = _uxf.settings.GetIntList("shapePositions");
             shapeSettings.colorPositions = _uxf.settings.GetIntList("colorPositions");
@@ -285,11 +287,15 @@ namespace ActionSimilarity
 
             _colorCode = _uxf.settings.GetInt("colorCode");
             // TODO: write results 
-            
+
             _uxf.result["ConditionCode"] = _turnDirection == TurnDirection.Left ? 1 : 2;
             _uxf.result["ConditionTurn"] = _turnDirection.ToString().ToLower();
             _uxf.result["HeightOffset"] = eyes.position.y;
             _uxf.result["Facing"] = faceDirection.ToString().ToLower();
+
+            fixationSettings.turnTime = _uxf.settings.GetFloat("turnTime");
+            fixationRotator = new FixationRotator(fixationSettings.turnTime);
+
 
             //trial.result["straightTop"] = straightTop;
             //trial.result["straightLeft"] = straightLeft;
@@ -626,8 +632,22 @@ namespace ActionSimilarity
             // yield return new WaitForSeconds((session.CurrentTrial.settings.GetFloat("reportTime")));
 
             // pause = true;
-            yield return new WaitUntil(() => reportedIndex == 2);
 
+            if (!_randomSimulationDebug)
+            {
+                yield return new WaitUntil(() => reportedIndex == 2);
+            }
+            else
+            {
+                Color color = shapeSettings.shapeColours[_colorCode];
+                List<GameObject> coloredObjs = reportingStimuli.Values.Where(obj =>
+                {
+                    Renderer renderer = obj.GetComponent<Renderer>();
+                    return renderer != null && renderer.material.color == color;
+                }).ToList();
+                GameObject randomReportedObj = coloredObjs[UnityEngine.Random.Range(0, coloredObjs.Count)];
+                ReportShapeSelected(randomReportedObj, false);
+            }
 
             if (this.reportingStimuli == null)
             {
@@ -1001,7 +1021,7 @@ namespace ActionSimilarity
 
          public void ReportShapeSelected(GameObject selectedShape, bool ignoring)
          {
-             if (selectedShape.GetComponent<Renderer>().material.color != shapeSettings.shapeColours[_colorCode])
+             if (selectedShape == null || selectedShape.GetComponent<Renderer>().material.color != shapeSettings.shapeColours[_colorCode])
              {
                  return;
              } 
@@ -1034,7 +1054,7 @@ namespace ActionSimilarity
                 foreach (KeyValuePair<string, string> kvp in shapeMetadata.ToDictionary(reportedIndex))
                 {
                     _uxf.result[kvp.Key] = kvp.Value;
-                    Debug.Log($"{kvp.Key}: {kvp.Value}");
+                    //Debug.Log($"{kvp.Key}: {kvp.Value}");
                 }
 
                 // Update the shape we're reporting on for the next time
@@ -1042,11 +1062,13 @@ namespace ActionSimilarity
             }
             else
             {
+                // Specific to singleton - logging nans for other shapes in report array
                 // Log everything to the results dictionary
                 foreach (KeyValuePair<string, string> kvp in shapeMetadata.ToDictionary(reportedIndex))
                 {
-                    _uxf.result[kvp.Key] = "nan"; 
+                    _uxf.result[kvp.Key] = "nan";
                 }
+                reportedIndex++;
             }
              
              
@@ -1056,9 +1078,15 @@ namespace ActionSimilarity
              // Destroy same colors and shapes
              for (int i = 0; i != shapeSettings.count; ++i)
              {
-                //  Debug.Log($"Destroying ({shapePair.Item1}, {i}) and ({i}, {shapePair.Item2})");
-                 Destroy(this.reportingStimuli[(shapePair.Item1, i)]); // 0,0, 0,1
-                 Destroy(this.reportingStimuli[(i, shapePair.Item2)]); // 0,0, 1,0
+                if (this.reportingStimuli[(shapePair.Item1, i)] != null)
+                {
+                    //  Debug.Log($"Destroying ({shapePair.Item1}, {i}) and ({i}, {shapePair.Item2})");
+                    Destroy(this.reportingStimuli[(shapePair.Item1, i)]); // 0,0, 0,1
+                }
+                if (this.reportingStimuli[(i, shapePair.Item2)] != null)
+                {
+                    Destroy(this.reportingStimuli[(i, shapePair.Item2)]); // 0,0, 1,0
+                }
              }
              
          }
