@@ -29,8 +29,6 @@ namespace ActionSimilarity
 
         public float feedbackTime;
         
-        public int colorCode;
-
         public float endSessionTime;
 
         public int repeatsPerBlock;
@@ -67,7 +65,6 @@ namespace ActionSimilarity
             session.settings.SetValue("debug", debug);
             session.settings.SetValue("randomSimulationDebug", randomSimulationDebug);
             session.settings.SetValue("triggerCode", 0);
-            session.settings.SetValue("colorCode", colorCode);
 
             GenerateBlocks(session);
 
