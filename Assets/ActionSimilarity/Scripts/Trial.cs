@@ -190,7 +190,7 @@ namespace ActionSimilarity
         // Start is called before the first frame update
         void Start()
         {
-            
+
             Application.targetFrameRate = 90;
 
             // Find eyes depending on simulation or not
@@ -211,6 +211,7 @@ namespace ActionSimilarity
             _stageName = "none";
 
             faceDirection = FaceDirection.Front;
+            
         }
 
         void SetEyes()
@@ -346,6 +347,17 @@ namespace ActionSimilarity
             // Change which way we are facing
             faceDirection = _uxf.number % 2 == 0 ? FaceDirection.Back : FaceDirection.Front;
             _start_face_direction = faceDirection;
+
+            // If we are facing the front, negative z is further from us, so go from biggest to smallest 
+            // Otherwise, go from smallest (negative) to biggest
+            if (faceDirection == FaceDirection.Front)
+            {
+                Array.Sort(encodingShapePositions, (a, b) => b.z.CompareTo(a.z));
+            }
+            else
+            {
+                Array.Sort(encodingShapePositions, (a, b) => a.z.CompareTo(b.z));
+            }
 
             textControllerWall.ChangeWall(faceDirection);
 
@@ -706,12 +718,12 @@ namespace ActionSimilarity
         {
 
             GameObject[] stimuli = new GameObject[shapeSettings.count];
-            Debug.Log($"shapeSettings.count: {shapeSettings.count}");
-            Debug.Log($"colorPositions.Length: {shapeSettings.colorPositions.Count}");
-            Debug.Log($"shapeColours.Length: {shapeSettings.shapeColours.Length}");
-            Debug.Log($"shapePositions.Length: {shapeSettings.shapePositions.Count}");
-            Debug.Log($"shapeMeshes.Length: {shapeSettings.shapeMeshes.Length}");
-            Debug.Log($"encodingShapePositions.Length: {shapeSettings.encodingShapePositions.Length}");
+            // Debug.Log($"shapeSettings.count: {shapeSettings.count}");
+            // Debug.Log($"colorPositions.Length: {shapeSettings.colorPositions.Count}");
+            // Debug.Log($"shapeColours.Length: {shapeSettings.shapeColours.Length}");
+            // Debug.Log($"shapePositions.Length: {shapeSettings.shapePositions.Count}");
+            // Debug.Log($"shapeMeshes.Length: {shapeSettings.shapeMeshes.Length}");
+            // Debug.Log($"encodingShapePositions.Length: {shapeSettings.encodingShapePositions.Length}");
 
             for (int i = 0; i < shapeSettings.count; i++)
             {
