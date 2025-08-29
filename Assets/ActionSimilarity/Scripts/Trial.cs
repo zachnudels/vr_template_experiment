@@ -143,6 +143,10 @@ namespace ActionSimilarity
         public bool simulating;
         public bool pause;
 
+        // [HideInInspector] public bool ShouldShowRay => _stageName == "Report";
+        [HideInInspector] public event Action<string> StageChanged;
+
+
         // public bool initializedEnvironment = false;
 
         float leftOffset;
@@ -412,23 +416,15 @@ namespace ActionSimilarity
             Debug.Log("Starting Trial");
             if (_uxf.numberInBlock == 1)
             {
-                
                 fixationSettings.fixationSphere.SetActive(false);
                 Debug.Log("First in block");
                 firstTrial = true;
-                if (_uxf.number != 1)
-                {
-                    Debug.Log("Starting Block");
-                    yield return RunStage(Break);
-                }
-                else
+                if (_uxf.number == 1)
                 {
                     Debug.Log("Starting Session");
                     yield return RunStage(StartSession);
 
-                    //yield return RunStage(Instructions);
                 }
-
                 yield return RunStage(CalibrateEyes);
             }
             
@@ -441,6 +437,11 @@ namespace ActionSimilarity
             LogResults();
 
             yield return RunStage(Feedback);
+
+            if (_uxf == session.CurrentBlock.lastTrial)
+            {
+                yield return RunStage(Break);
+            }
 
             if (_uxf == session.LastTrial)
             {
@@ -459,6 +460,9 @@ namespace ActionSimilarity
             _stageName = stage.Method.Name;
             UnityEngine.Debug.Log(_stageName);
             textControllerWall.Debug(_stageName);
+
+            // Invoke the method for any subscriber listening for stage changes
+            StageChanged?.Invoke(_stageName);
             // code = stageName.GetHashCode();
             yield return StartCoroutine(stage());
             textControllerWall.Clear();

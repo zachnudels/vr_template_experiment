@@ -30,6 +30,34 @@ public class RayLineSelector : MonoBehaviour
         rayInteractor = GetComponent<XRRayInteractor>();
         lineVisual = GetComponent<XRInteractorLineVisual>();
     }
+
+    private void OnEnable()
+    {
+        if (trial != null)
+        {
+            trial.StageChanged += UpdateRayFromStage;
+        }
+    }
+    
+    private void OnDisable()
+    {
+        if (trial != null)
+        {
+            trial.StageChanged -= UpdateRayFromStage;
+        }
+    }
+
+    private void UpdateRayFromStage(string stage)
+    {
+        if (stage == "Report")
+        {
+            lineVisual.enabled = true;
+        }
+        else
+        {
+            lineVisual.enabled = false;
+        }
+    }
     
     void Update()
     {

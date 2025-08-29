@@ -139,9 +139,14 @@ namespace ActionSimilarity
             List<List<int>> shapeRows = GetNPermutations(numberOfShapes, repeatsPerBlock);
             
             // Generate turning directions
-            List<TurnDirection> turns = Enumerable.Repeat(TurnDirection.Left, trialsPerBlock / 2)
-                .Concat(Enumerable.Repeat(TurnDirection.Right, trialsPerBlock / 2))
+            List<TurnDirection> turnsFront = Enumerable.Repeat(TurnDirection.Left, trialsPerBlock / 4)
+                .Concat(Enumerable.Repeat(TurnDirection.Right, trialsPerBlock / 4))
                 .ToList();
+
+            List<TurnDirection> turnsBack = Enumerable.Repeat(TurnDirection.Left, trialsPerBlock / 4)
+                .Concat(Enumerable.Repeat(TurnDirection.Right, trialsPerBlock / 4))
+                .ToList();
+            
             
             
             // Debug.Log($"trials per block: {trialsPerBlock}");
@@ -154,7 +159,8 @@ namespace ActionSimilarity
                 colorPositions.Shuffle();
                 colorCols.Shuffle();
                 shapeRows.Shuffle();
-                turns.Shuffle();
+                turnsFront.Shuffle();
+                turnsBack.Shuffle();
                 
                 for (int i = 0; i < trialsPerBlock; i++) {
                     UXF.Trial newTrial = blocks[blockNumber].CreateTrial();
@@ -162,14 +168,21 @@ namespace ActionSimilarity
                     newTrial.settings.SetValue("colorPositions", colorPositions[i]);
                     newTrial.settings.SetValue("shapeRows", colorCols[i]);
                     newTrial.settings.SetValue("colorCols", shapeRows[i]);
-                    newTrial.settings.SetValue("turnDirection", turns[i]);
+                    if (i % 2 == 0)
+                    { // facing front
+                        newTrial.settings.SetValue("turnDirection", turnsFront[(int)(i / 2)]);
+                    }
+                    else
+                    {
+                        newTrial.settings.SetValue("turnDirection", turnsBack[(int)(i / 2)]);
+                    }
                     fullList.Add(colorPositions[i]);
                 }
                 // Update shape list range for next block
                 // start += trialsPerBlock;
             }
 
-            SaveCSV("C:\\Users\\ZachPBL\\Desktop\\shapePoses.csv", turns);
+            // SaveCSV("C:\\Users\\ZachPBL\\Desktop\\shapePoses.csv", turns);
         }
         
         public static List<List<int>> WithinBlockShuffling(int numberOfItems, int repeats)
