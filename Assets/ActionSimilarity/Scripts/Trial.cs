@@ -352,11 +352,11 @@ namespace ActionSimilarity
             // Otherwise, go from smallest (negative) to biggest
             if (faceDirection == FaceDirection.Front)
             {
-                Array.Sort(encodingShapePositions, (a, b) => b.z.CompareTo(a.z));
+                Array.Sort(shapeSettings.encodingShapePositions, (a, b) => b.z.CompareTo(a.z));
             }
             else
             {
-                Array.Sort(encodingShapePositions, (a, b) => a.z.CompareTo(b.z));
+                Array.Sort(shapeSettings.encodingShapePositions, (a, b) => a.z.CompareTo(b.z));
             }
 
             textControllerWall.ChangeWall(faceDirection);
@@ -574,12 +574,13 @@ namespace ActionSimilarity
             {
                 float dt = Time.deltaTime;
                 elapsed += dt;
-                fixationRotator.Step(dt); 
+                fixationRotator.Step(dt);
                 fixationSettings.fixationSphere.transform.position = fixationRotator.GetCurrentPosition(
                     fixationSettings.FixationDepth, fixationSettings.fixationSphere.transform.position, faceDirection);
                 
                 if (!triggerSent && elapsed >= halfwayTime)
                 {
+                    Debug.Log(fixationRotator.LogString());
                     setTrigger(codeMap["halfway_turn"]);
                     triggerSent = true;
                     StartCoroutine(ShowEncodingShapesForOneFrame(stimuli));
@@ -598,6 +599,7 @@ namespace ActionSimilarity
 
         IEnumerator ShowEncodingShapesForOneFrame(GameObject[] stimuli)
         {
+            Debug.Log($"{faceDirection}, {_turnDirection}");
             Debug.Log(fixationSettings.fixationSphere.transform.position);
             for (int i = 0; i != stimuli.Length; ++i)
             {

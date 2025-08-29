@@ -361,7 +361,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1775712494732527387, guid: 6dbc52e72cb4341ebabc1787888ade18, type: 3}
       propertyPath: debug
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1775712494732527387, guid: 6dbc52e72cb4341ebabc1787888ade18, type: 3}
       propertyPath: turnTime
@@ -389,7 +389,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1775712494732527387, guid: 6dbc52e72cb4341ebabc1787888ade18, type: 3}
       propertyPath: randomSimulationDebug
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1775712494732527388, guid: 6dbc52e72cb4341ebabc1787888ade18, type: 3}
       propertyPath: m_RootOrder
@@ -542,7 +542,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1707266662751158, guid: f676e25d0fcd1ec4fa22af3017316de9, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4879914434278830, guid: f676e25d0fcd1ec4fa22af3017316de9, type: 3}
       propertyPath: m_RootOrder
@@ -1210,7 +1210,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &267511584
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2474,7 +2474,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2331056656837139034, guid: aa9ff2b7bd7354c6792a1d6536c8d833, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: aa9ff2b7bd7354c6792a1d6536c8d833, type: 3}
@@ -5114,6 +5114,10 @@ PrefabInstance:
     - target: {fileID: 8866231359495051881, guid: a65c69ddbfab240cc8db7a657477a9b7, type: 3}
       propertyPath: shapeSettings.shapeRotation.x
       value: 90
+      objectReference: {fileID: 0}
+    - target: {fileID: 8866231359495051881, guid: a65c69ddbfab240cc8db7a657477a9b7, type: 3}
+      propertyPath: fixationSettings.fixationDepth
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 8866231359495051881, guid: a65c69ddbfab240cc8db7a657477a9b7, type: 3}
       propertyPath: fixationSettings.fixationSphere
