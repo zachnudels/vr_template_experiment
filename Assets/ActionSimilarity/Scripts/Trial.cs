@@ -218,11 +218,11 @@ namespace ActionSimilarity
             // Otherwise, go from smallest (negative) to biggest
             if (faceDirection == FaceDirection.Front)
             {
-                Array.Sort(shapeSettings.encodingShapePositions, (a, b) => b.z.CompareTo(a.z));
+                Array.Sort(settings.shapeSettings.encodingShapePositions, (a, b) => b.z.CompareTo(a.z));
             }
             else
             {
-                Array.Sort(shapeSettings.encodingShapePositions, (a, b) => a.z.CompareTo(b.z));
+                Array.Sort(settings.shapeSettings.encodingShapePositions, (a, b) => a.z.CompareTo(b.z));
             }
 
             textControllerWall.ChangeWall(faceDirection);
@@ -476,6 +476,8 @@ namespace ActionSimilarity
             // Debug.Log(settings.fixationSettings.fixationSphere.transform.position);
             for (int i = 0; i != stimuli.Length; ++i)
             {
+                Debug.Log($"{faceDirection}, {_turnDirection}");
+                Debug.Log(settings.shapeSettings.encodingShapePositions[i]);
 
                 Vector3 position = settings.shapeSettings.encodingShapePositions[i]
                                    + _fixationSphere.transform.position;
@@ -947,7 +949,7 @@ namespace ActionSimilarity
                 shapeMetadata.ReportedIndex = reportedIndex;
                 Debug.Log($"Adding {shapeMetadata.Correct} to _n_correct = {_n_correct}");
 
-                setTrigger(codeMap["answer_i"] + (_n_correct * 100));
+                setTrigger(codeMap["answer_i"] + ((reportedIndex-1) * 100));
 
                 _n_correct += shapeMetadata.Correct;
 

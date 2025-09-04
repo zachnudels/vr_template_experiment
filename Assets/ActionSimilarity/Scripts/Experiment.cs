@@ -160,9 +160,7 @@ namespace ActionSimilarity
             List<TurnDirection> turnsBack = Enumerable.Repeat(TurnDirection.Left, trialsPerBlock / 4)
                 .Concat(Enumerable.Repeat(TurnDirection.Right, trialsPerBlock / 4))
                 .ToList();
-            
-            
-            
+                
             // Debug.Log($"trials per block: {trialsPerBlock}");
             List<List<int>> fullList = new List<List<int>>();
             for (int blockNumber = 0; blockNumber < blocks.Length; blockNumber++)

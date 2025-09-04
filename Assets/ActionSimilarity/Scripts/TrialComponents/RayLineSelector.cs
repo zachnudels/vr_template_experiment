@@ -47,7 +47,7 @@ public class RayLineSelector : MonoBehaviour
     
     private void OnStageChanged(string stageName)
     {
-        lineVisual.enabled = stageName != "Report";
+        lineVisual.enabled = stageName == "Report";
     }
     
     void Update()
