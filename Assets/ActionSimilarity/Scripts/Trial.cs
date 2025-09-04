@@ -59,6 +59,7 @@ namespace ActionSimilarity
         public List<Vector3Dictionary> encodingShapeRotations;
         public List<Vector3Dictionary> shapeScales;
         public float[] shapeSpacing;
+        public float reportShapeScaleFactor;
 
         [HideInInspector] public Vector3[] encodingShapePositions;
         [HideInInspector] public List<int> shapePositions; // which mesh goes on which encoding shape
@@ -158,7 +159,7 @@ namespace ActionSimilarity
         private FixationRotator fixationRotator;
         DataProcessing data;
         private bool debug;
-        public bool _randomSimulationDebug = false;
+        private bool _randomSimulationDebug;
 
         private Dictionary<(int, int), GameObject> reportingStimuli;
         private int reportedIndex;
@@ -758,7 +759,7 @@ namespace ActionSimilarity
                     rotation,
                     color,
                     active,
-                    scale * 0.875f
+                    scale 
                );
             }
 
@@ -798,7 +799,7 @@ namespace ActionSimilarity
                         rotation,
                         color,
                         true,
-                        scale * 0.875f * 0.875f
+                        scale * shapeSettings.reportShapeScaleFactor
                     ); ;
                     
                     // Store shapeData object for later processing
