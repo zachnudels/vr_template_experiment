@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: TrialSettings
   m_EditorClassIdentifier: 
   shapeSettings:
-    count: 0
+    count: 4
     encodingShape: {fileID: 8165808477015924126, guid: 551e8c0cb92f89a4e906fc16ae77c09d, type: 3}
     reportingShape: {fileID: 2349023219368754960, guid: 5dc6d6b33d657487abafb9a9a34220c1, type: 3}
     shapeMeshes:
@@ -57,17 +57,37 @@ MonoBehaviour:
     - 0.1
     - 0.3
     reportingShapeScale: 0.875
-    encodingShapePositions: []
-    shapePositions: 
-    colorPositions: 
-    reportingShapePositions: []
-    shapeRows: 
-    colorCols: 
+    encodingShapePositions:
+    - {x: 0, y: 0, z: -0.3}
+    - {x: 0, y: 0, z: -0.1}
+    - {x: 0, y: 0, z: 0.1}
+    - {x: 0, y: 0, z: 0.3}
+    shapePositions: 03000000020000000100000000000000
+    colorPositions: 02000000030000000100000000000000
+    reportingShapePositions:
+    - {x: -0.3, y: -0.3, z: 0}
+    - {x: -0.1, y: -0.3, z: 0}
+    - {x: 0.1, y: -0.3, z: 0}
+    - {x: 0.3, y: -0.3, z: 0}
+    - {x: -0.3, y: -0.1, z: 0}
+    - {x: -0.1, y: -0.1, z: 0}
+    - {x: 0.1, y: -0.1, z: 0}
+    - {x: 0.3, y: -0.1, z: 0}
+    - {x: -0.3, y: 0.1, z: 0}
+    - {x: -0.1, y: 0.1, z: 0}
+    - {x: 0.1, y: 0.1, z: 0}
+    - {x: 0.3, y: 0.1, z: 0}
+    - {x: -0.3, y: 0.3, z: 0}
+    - {x: -0.1, y: 0.3, z: 0}
+    - {x: 0.1, y: 0.3, z: 0}
+    - {x: 0.3, y: 0.3, z: 0}
+    shapeRows: 02000000000000000100000003000000
+    colorCols: 03000000020000000100000000000000
   fixationSettings:
     fixationSphere: {fileID: 1166504846522755356, guid: a4dbc45cbdf47c747983ebd76fd06e05, type: 3}
     fixationDepth: 2
     textMeshPro: {fileID: 0}
-    turnTime: 0
+    turnTime: 2.5
     leftOffset: 0
     downOffset: -0.15
   codes:

@@ -368,6 +368,10 @@ PrefabInstance:
       value: 2.5
       objectReference: {fileID: 0}
     - target: {fileID: 1775712494732527387, guid: 6dbc52e72cb4341ebabc1787888ade18, type: 3}
+      propertyPath: colorCode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1775712494732527387, guid: 6dbc52e72cb4341ebabc1787888ade18, type: 3}
       propertyPath: feedbackTime
       value: 1
       objectReference: {fileID: 0}
@@ -783,7 +787,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 653059108743847710, guid: 0a3b6392f04558844bd340e68ced1ff9, type: 3}
       propertyPath: experimentName
-      value: VR7_Remake
+      value: VR7_Single
       objectReference: {fileID: 0}
     - target: {fileID: 653059108743847710, guid: 0a3b6392f04558844bd340e68ced1ff9, type: 3}
       propertyPath: sessionNumMode

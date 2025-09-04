@@ -46,13 +46,16 @@ namespace ActionSimilarity
         int sessionNumber;
         int actionPos;
         int jitters;
+        
+        public int colorCode;
+
 
         private bool CheckSimulating()
         {
             GameObject simulateObj = GameObject.Find("Simulate");
 
             return simulateObj != null && simulateObj.activeInHierarchy;
-            
+
         }
 
         public void Generate(Session session)
@@ -74,6 +77,8 @@ namespace ActionSimilarity
             session.settings.SetValue("randomSimulationDebug", randomSimulationDebug);
             session.settings.SetValue("simulating", CheckSimulating());
             session.settings.SetValue("triggerCode", 0);
+            session.settings.SetValue("colorCode", colorCode);
+
 
             GenerateBlocks(session);
 
@@ -171,7 +176,8 @@ namespace ActionSimilarity
                 turnsFront.Shuffle();
                 turnsBack.Shuffle();
                 
-                for (int i = 0; i < trialsPerBlock; i++) {
+                for (int i = 0; i < trialsPerBlock; i++)
+                {
                     UXF.Trial newTrial = blocks[blockNumber].CreateTrial();
                     newTrial.settings.SetValue("shapePositions", shapePositions[i]);
                     newTrial.settings.SetValue("colorPositions", colorPositions[i]);

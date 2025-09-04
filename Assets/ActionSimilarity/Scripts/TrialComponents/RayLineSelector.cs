@@ -33,30 +33,21 @@ public class RayLineSelector : MonoBehaviour
 
     private void OnEnable()
     {
-        if (trial != null)
-        {
-            trial.StageChanged += UpdateRayFromStage;
-        }
-    }
-    
-    private void OnDisable()
-    {
-        if (trial != null)
-        {
-            trial.StageChanged -= UpdateRayFromStage;
+        if (trial != null) {
+            trial.StageChanged += OnStageChanged;
         }
     }
 
-    private void UpdateRayFromStage(string stage)
+    private void OnDisable()
     {
-        if (stage == "Report")
-        {
-            lineVisual.enabled = true;
+        if (trial != null) {
+            trial.StageChanged -= OnStageChanged;
         }
-        else
-        {
-            lineVisual.enabled = false;
-        }
+    }
+    
+    private void OnStageChanged(string stageName)
+    {
+        lineVisual.enabled = stageName != "Report";
     }
     
     void Update()

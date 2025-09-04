@@ -11,8 +11,7 @@ namespace ActionSimilarity
     public class FixationSettings
     {
         public GameObject fixationSphere;
-        [SerializeField]
-        private int fixationDepth;
+        [SerializeField] private int fixationDepth;
         public int FixationDepth => fixationDepth;
 
         [HideInInspector] public TextMeshPro textMeshPro;
