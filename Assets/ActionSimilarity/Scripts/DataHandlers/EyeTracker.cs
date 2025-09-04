@@ -81,7 +81,7 @@ public class EyeTracker : UXF.Tracker
     {
         session = Session.instance;
         if (!cam) cam = Camera.main; // cache once
-        fixationTf = trial.fixationSettings.fixationSphere.transform;
+        fixationTf = trial.FixationTf;
     }
 
     // ------- Main logging path (no SRanipal calls) -------

@@ -19,30 +19,22 @@ namespace ActionSimilarity
         Back = -1,
     }
     
-    [System.Serializable]
-    public class CodeDictionary
-    {
-        public string key;
-        public int value;
-    }
-    
-    [System.Serializable]
-    public class Vector3Dictionary
-    {
-        public string key;
-        public Vector3 value;
-    }
-
-
 
     public class Trial : MonoBehaviour
     {
         public Session session;
-        public List<CodeDictionary> codes;
+        
         private Dictionary<string, int> codeMap;
+        private bool simulating; // from exp
+        
         public TextController textControllerWall;
-        public bool simulating; // from exp
-        [HideInInspector] public bool pause;  
+
+
+        [SerializeField] private TrialSettings settings; 
+
+        [HideInInspector] public bool pause;
+
+        [HideInInspector] public Transform FixationTf => settings.fixationSettings.fixationSphere.transform;
 
         // [HideInInspector] public bool ShouldShowRay => _stageName == "Report";
         [HideInInspector] public event Action<string> StageChanged;
@@ -50,8 +42,6 @@ namespace ActionSimilarity
 
         // public bool initializedEnvironment = false;
 
-        float leftOffset;
-        float downOffset;
         FaceDirection faceDirection;
         private TurnDirection _turnDirection;
         Transform eyes;
@@ -66,7 +56,6 @@ namespace ActionSimilarity
         private UXF.Trial _uxf;
         private float responseStartTime;
 
-        bool practiceBlock;
         bool firstTrial;
         bool sessionStart;
 
@@ -76,19 +65,12 @@ namespace ActionSimilarity
         private int _n_correct;
         private FaceDirection _start_face_direction;
         
-        /*
-        * code will be sent to the eye tracking recorder
-        * Please set the mapping from event to code
-        * Make sure to leave enough space between each event code
-        * This allows you to manipulate the code based on a condition at the start 
-        * of the stage
-        */
 
 
         void Awake()
         {
-            shapeSettings.Init();
-            codeMap = codes.ToDictionary(e => e.key, e => e.value);
+            settings.shapeSettings.Init();
+            codeMap = settings.codes.ToDictionary(e => e.key, e => e.value);
         }
 
 
@@ -101,18 +83,14 @@ namespace ActionSimilarity
             // Find eyes depending on simulation or not
             SetEyes();
 
-            fixationSettings.fixationSphere = InstantiateObject(fixationSettings.fixationSphere,
-                fixationSettings.fixationSphere.transform.position,
+            settings.fixationSettings.fixationSphere = InstantiateObject(settings.fixationSettings.fixationSphere,
+                settings.fixationSettings.fixationSphere.transform.position,
                 new Vector3(0.0f, 0.0f, 0.0f),
                 "fixation"
             );
 
-            fixationSettings.textMeshPro = fixationSettings.fixationSphere.GetComponentInChildren<TextMeshPro>();
-            fixationSettings.textMeshPro.enabled = false;
-
-            leftOffset = simulating ? 0.0f : -0.0075f;
-            downOffset = simulating ? 0.0f : -0.15f;
-
+            settings.fixationSettings.textMeshPro = settings.fixationSettings.fixationSphere.GetComponentInChildren<TextMeshPro>();
+            settings.fixationSettings.textMeshPro.enabled = false;
             _stageName = "none";
 
             faceDirection = FaceDirection.Front;
@@ -121,18 +99,6 @@ namespace ActionSimilarity
 
         void SetEyes()
         {
-            GameObject simulateObj = GameObject.Find("Simulate");
-            // GameObject playerObj = GameObject.Find("Player");
-
-            if (simulateObj != null && simulateObj.activeInHierarchy)
-            {
-                simulating = true;
-            }
-            else
-            {
-                simulating = false;
-            }
-
             GameObject cameraOffset = GameObject.Find("Main Camera");
             if (cameraOffset != null)
             {
@@ -165,25 +131,15 @@ namespace ActionSimilarity
         /// </summary>
         private void ExtractSettings()
         {
-            //shapePair = trial.settings.GetString("shapePair");
-            //shapeCategory = trial.settings.GetString("shapeCategory");
-
-            //straightTop = trial.settings.GetBool("straightTop");
-            //straightLeft = trial.settings.GetBool("straightLeft");
-            //condition = trial.settings.GetInt("condition");
-            //sameCondition = condition == 1;
-            //actionPos = trial.settings.GetInt("actionPos");
-            //compPos = trial.settings.GetInt("compPos");
-            //jitter = trial.settings.GetInt("jitter");
-            //practiceBlock = trial.settings.GetBool("practice");
             debug = _uxf.settings.GetBool("debug");
             _randomSimulationDebug = _uxf.settings.GetBool("randomSimulationDebug");
+            simulating = _uxf.settings.GetBool("simulating");
 
 
-            shapeSettings.shapePositions = _uxf.settings.GetIntList("shapePositions");
-            shapeSettings.colorPositions = _uxf.settings.GetIntList("colorPositions");
-            shapeSettings.colorCols = _uxf.settings.GetIntList("colorCols");
-            shapeSettings.shapeRows = _uxf.settings.GetIntList("shapeRows");
+            settings.shapeSettings.shapePositions = _uxf.settings.GetIntList("shapePositions");
+            settings.shapeSettings.colorPositions = _uxf.settings.GetIntList("colorPositions");
+            settings.shapeSettings.colorCols = _uxf.settings.GetIntList("colorCols");
+            settings.shapeSettings.shapeRows = _uxf.settings.GetIntList("shapeRows");
 
             _turnDirection = (TurnDirection)_uxf.settings.GetObject("turnDirection");
 
@@ -194,18 +150,9 @@ namespace ActionSimilarity
             _uxf.result["HeightOffset"] = eyes.position.y;
             _uxf.result["Facing"] = faceDirection.ToString().ToLower();
 
-            fixationSettings.turnTime = _uxf.settings.GetFloat("turnTime");
-            fixationRotator = new FixationRotator(fixationSettings.turnTime);
+            settings.fixationSettings.turnTime = _uxf.settings.GetFloat("turnTime");
+            fixationRotator = new FixationRotator(settings.fixationSettings.turnTime);
 
-
-            //trial.result["straightTop"] = straightTop;
-            //trial.result["straightLeft"] = straightLeft;
-            //trial.result["sameCondition"] = sameCondition;
-            //trial.result["actionPos"] = actionPos;
-
-            //trial.result["PerceptionShapeIndex"] = compPos;
-            //trial.result["PerceptionJitter"] = jitter;
-            //trial.result["PerceptionCategory"] = shapeCategory;
         }
 
         private void SetHand()
@@ -317,7 +264,8 @@ namespace ActionSimilarity
             Debug.Log("Starting Trial");
             if (_uxf.numberInBlock == 1)
             {
-                fixationSettings.fixationSphere.SetActive(false);
+                
+                settings.fixationSettings.fixationSphere.SetActive(false);
                 Debug.Log("First in block");
                 firstTrial = true;
                 if (_uxf.number == 1)
@@ -390,8 +338,8 @@ namespace ActionSimilarity
             }
 
             
-            fixationSettings.fixationSphere.transform.position = eyes.position + new Vector3(0.0f, downOffset, fixationSettings.FixationDepth * (int)faceDirection);
-            fixationSettings.fixationSphere.SetActive(true);
+            settings.fixationSettings.fixationSphere.transform.position = eyes.position + new Vector3(0.0f, settings.fixationSettings.downOffset, settings.fixationSettings.FixationDepth * (int)faceDirection);
+            settings.fixationSettings.fixationSphere.SetActive(true);
 
             textControllerWall.Write($"Pull the trigger to start the block.");
             
@@ -438,7 +386,7 @@ namespace ActionSimilarity
 
         IEnumerator Break()
         {
-            fixationSettings.fixationSphere.SetActive(false);
+            settings.fixationSettings.fixationSphere.SetActive(false);
             textControllerWall.Write("Well done! Time to take a well deserved break"
                             + " \n\n Are you standing on the line?"
                             + " \n\n Press any thumb button when you're ready to start the next block (calibration first again ;) )");
@@ -479,9 +427,9 @@ namespace ActionSimilarity
             {
                 float dt = Time.deltaTime;
                 elapsed += dt;
-                fixationRotator.Step(dt);
-                fixationSettings.fixationSphere.transform.position = fixationRotator.GetCurrentPosition(
-                    fixationSettings.FixationDepth, fixationSettings.fixationSphere.transform.position, faceDirection);
+                fixationRotator.Step(dt); 
+                settings.fixationSettings.fixationSphere.transform.position = fixationRotator.GetCurrentPosition(
+                    settings.fixationSettings.FixationDepth, settings.fixationSettings.fixationSphere.transform.position, faceDirection);
                 
                 if (!triggerSent && elapsed >= halfwayTime)
                 {
@@ -504,16 +452,16 @@ namespace ActionSimilarity
 
         IEnumerator ShowEncodingShapesForOneFrame(GameObject[] stimuli)
         {
-            Debug.Log($"{faceDirection}, {_turnDirection}");
-            Debug.Log(fixationSettings.fixationSphere.transform.position);
+            // Debug.Log($"{faceDirection}, {_turnDirection}");
+            // Debug.Log(settings.fixationSettings.fixationSphere.transform.position);
             for (int i = 0; i != stimuli.Length; ++i)
             {
 
-                Vector3 position = shapeSettings.encodingShapePositions[i]
-                                   + fixationSettings.fixationSphere.transform.position;
+                Vector3 position = settings.shapeSettings.encodingShapePositions[i]
+                                   + settings.fixationSettings.fixationSphere.transform.position;
                 GameObject gameObject = stimuli[i];
                 gameObject.transform.position = position;
-                Debug.Log(position);
+                // Debug.Log(position);
 
                 gameObject.SetActive(true);
             }
@@ -537,7 +485,7 @@ namespace ActionSimilarity
 
             setTrigger(codeMap["start_answer"]);
 
-            fixationSettings.fixationSphere.SetActive(false);
+            settings.fixationSettings.fixationSphere.SetActive(false);
 
             this.reportingStimuli = InstantiateReportStimuli();
 
@@ -556,7 +504,7 @@ namespace ActionSimilarity
             }
             else
             {
-                foreach (Color color in shapeSettings.shapeColours)
+                foreach (Color color in settings.shapeSettings.shapeColours)
                 {
                     List<GameObject> coloredObjs = reportingStimuli.Values.Where(obj =>
                     {
@@ -580,7 +528,7 @@ namespace ActionSimilarity
             yield return null;
             yield return null;
 
-            fixationSettings.fixationSphere.SetActive(true);
+            settings.fixationSettings.fixationSphere.SetActive(true);
 
             _uxf.result["Score"] = _n_correct;
             _uxf.result["RT"] = endTime - startTime;
@@ -592,16 +540,16 @@ namespace ActionSimilarity
         IEnumerator Feedback()
         {
 
-            fixationSettings.textMeshPro.text = _n_correct.ToString();
+            settings.fixationSettings.textMeshPro.text = _n_correct.ToString();
 
             float feedbackRotation = (faceDirection == FaceDirection.Front) ? 0f : 180f;
-            fixationSettings.textMeshPro.transform.rotation = Quaternion.Euler(new Vector3(0f, feedbackRotation, 0f));
+            settings.fixationSettings.textMeshPro.transform.rotation = Quaternion.Euler(new Vector3(0f, feedbackRotation, 0f));
 
-            fixationSettings.textMeshPro.enabled = true;
+            settings.fixationSettings.textMeshPro.enabled = true;
 
             yield return new WaitForSeconds(session.CurrentTrial.settings.GetFloat("feedbackTime"));
             
-            fixationSettings.textMeshPro.enabled = false;
+            settings.fixationSettings.textMeshPro.enabled = false;
 
         }
 
@@ -624,36 +572,36 @@ namespace ActionSimilarity
         GameObject[] InstantiateEncodingStimuli(bool active)
         {
 
-            GameObject[] stimuli = new GameObject[shapeSettings.count];
-            // Debug.Log($"shapeSettings.count: {shapeSettings.count}");
-            // Debug.Log($"colorPositions.Length: {shapeSettings.colorPositions.Count}");
-            // Debug.Log($"shapeColours.Length: {shapeSettings.shapeColours.Length}");
-            // Debug.Log($"shapePositions.Length: {shapeSettings.shapePositions.Count}");
-            // Debug.Log($"shapeMeshes.Length: {shapeSettings.shapeMeshes.Length}");
-            // Debug.Log($"encodingShapePositions.Length: {shapeSettings.encodingShapePositions.Length}");
+            GameObject[] stimuli = new GameObject[settings.shapeSettings.count];
+            // Debug.Log($"shapeSettings.count: {settings.shapeSettings.count}");
+            // Debug.Log($"colorPositions.Length: {settings.shapeSettings.colorPositions.Count}");
+            // Debug.Log($"shapeColours.Length: {settings.shapeSettings.shapeColours.Length}");
+            // Debug.Log($"shapePositions.Length: {settings.shapeSettings.shapePositions.Count}");
+            // Debug.Log($"shapeMeshes.Length: {settings.shapeSettings.shapeMeshes.Length}");
+            // Debug.Log($"encodingShapePositions.Length: {settings.shapeSettings.encodingShapePositions.Length}");
 
-            for (int i = 0; i < shapeSettings.count; i++)
+            for (int i = 0; i < settings.shapeSettings.count; i++)
             {
-                Debug.Log($"i: {i}, colorIndex: {shapeSettings.colorPositions[i]}, meshIndex: {shapeSettings.shapePositions[i]}");
+                Debug.Log($"i: {i}, colorIndex: {settings.shapeSettings.colorPositions[i]}, meshIndex: {settings.shapeSettings.shapePositions[i]}");
 
-                if (shapeSettings.colorPositions[i] >= shapeSettings.shapeColours.Length)
-                    Debug.Log($"Invalid color index {shapeSettings.colorPositions[i]} at i={i}");
+                if (settings.shapeSettings.colorPositions[i] >= settings.shapeSettings.shapeColours.Length)
+                    Debug.Log($"Invalid color index {settings.shapeSettings.colorPositions[i]} at i={i}");
 
-                if (shapeSettings.shapePositions[i] >= shapeSettings.shapeMeshes.Length)
-                    Debug.Log($"Invalid mesh index {shapeSettings.shapePositions[i]} at i={i}");
+                if (settings.shapeSettings.shapePositions[i] >= settings.shapeSettings.shapeMeshes.Length)
+                    Debug.Log($"Invalid mesh index {settings.shapeSettings.shapePositions[i]} at i={i}");
                 
-                Color color = shapeSettings.shapeColours[shapeSettings.colorPositions[i]];
-                Mesh mesh = shapeSettings.shapeMeshes[shapeSettings.shapePositions[i]];
-                Vector3 rotation = shapeSettings.encodingShapeRotationMap.TryGetValue(mesh.name, out var rot) ? rot : Vector3.zero;
-                Vector3 scale = shapeSettings.shapeScaleMap.TryGetValue(mesh.name, out var scal) ? scal : Vector3.one;
+                Color color = settings.shapeSettings.shapeColours[settings.shapeSettings.colorPositions[i]];
+                Mesh mesh = settings.shapeSettings.shapeMeshes[settings.shapeSettings.shapePositions[i]];
+                Vector3 rotation = settings.shapeSettings.encodingShapeRotationMap.TryGetValue(mesh.name, out var rot) ? rot : Vector3.zero;
+                Vector3 scale = settings.shapeSettings.shapeScaleMap.TryGetValue(mesh.name, out var scal) ? scal : Vector3.one;
 
 
                 // Change to x rotation since we're sideways now
                 // Debug.Log(faceDirection.ToString() + " " + _turnDirection.ToString());
                 // rotation = new Vector3(rotation.z, rotation.y, rotation.x);
-                Vector3 position = shapeSettings.encodingShapePositions[i]
-                                   + fixationSettings.fixationSphere.transform.position;
-                stimuli[i] = InstantiateObjectWithMeshAndColor(shapeSettings.encodingShape,
+                Vector3 position = settings.shapeSettings.encodingShapePositions[i]
+                                   + settings.fixationSettings.fixationSphere.transform.position;
+                stimuli[i] = InstantiateObjectWithMeshAndColor(settings.shapeSettings.encodingShape,
                     mesh,
                     position,
                     rotation,
@@ -671,42 +619,42 @@ namespace ActionSimilarity
             Dictionary<(int, int), GameObject> stimuli = new Dictionary<(int, int), GameObject>();
             
             Dictionary<(int, int), int> pairIndex = new Dictionary<(int, int), int>();
-            for (int i = 0; i < shapeSettings.count; i++)
+            for (int i = 0; i < settings.shapeSettings.count; i++)
             {
-                pairIndex[(shapeSettings.colorPositions[i], shapeSettings.shapePositions[i])] = i;
+                pairIndex[(settings.shapeSettings.colorPositions[i], settings.shapeSettings.shapePositions[i])] = i;
             }
             
-            for (int colorRow = 0; colorRow != shapeSettings.count; ++colorRow)
+            for (int colorRow = 0; colorRow != settings.shapeSettings.count; ++colorRow)
             {
-                for (int shapeCol = 0; shapeCol != shapeSettings.count; ++shapeCol)
+                for (int shapeCol = 0; shapeCol != settings.shapeSettings.count; ++shapeCol)
                 {
-                    int posIndex = colorRow + shapeCol + (colorRow * (shapeSettings.count - 1));
-                    int color_i = shapeSettings.shapeRows[colorRow];
-                    int shape_i = shapeSettings.colorCols[shapeCol];
+                    int posIndex = colorRow + shapeCol + (colorRow * (settings.shapeSettings.count - 1));
+                    int color_i = settings.shapeSettings.shapeRows[colorRow];
+                    int shape_i = settings.shapeSettings.colorCols[shapeCol];
                     // Debug.Log($"Shape pos: {posIndex} colorI: {color_i}, shape_i: {shape_i}");
                     
-                    Color color = shapeSettings.shapeColours[color_i];
-                    Mesh mesh = shapeSettings.shapeMeshes[shape_i];
-                    Vector3 rotation = shapeSettings.reportingShapeRotationMap.TryGetValue(mesh.name, out var rot) ? rot : Vector3.zero;
-                    Vector3 position = shapeSettings.reportingShapePositions[posIndex]
-                                       + fixationSettings.fixationSphere.transform.position;
-                    Vector3 scale = shapeSettings.shapeScaleMap.TryGetValue(mesh.name, out var scal) ? scal : Vector3.one;
+                    Color color = settings.shapeSettings.shapeColours[color_i];
+                    Mesh mesh = settings.shapeSettings.shapeMeshes[shape_i];
+                    Vector3 rotation = settings.shapeSettings.reportingShapeRotationMap.TryGetValue(mesh.name, out var rot) ? rot : Vector3.zero;
+                    Vector3 position = settings.shapeSettings.reportingShapePositions[posIndex]
+                                       + settings.fixationSettings.fixationSphere.transform.position;
+                    Vector3 scale = settings.shapeSettings.shapeScaleMap.TryGetValue(mesh.name, out var scal) ? scal : Vector3.one;
 
 
-                    GameObject shape = InstantiateObjectWithMeshAndColor(shapeSettings.reportingShape,
+                    GameObject shape = InstantiateObjectWithMeshAndColor(settings.shapeSettings.reportingShape,
                         mesh,
                         position,
                         rotation,
                         color,
                         true,
-                        scale * shapeSettings.reportShapeScaleFactor
+                        scale * settings.shapeSettings.reportingShapeScale
                     ); ;
                     
                     // Store shapeData object for later processing
                     
                     // Find position of this color/shape in encoding array
-                    int colorEncIndex = shapeSettings.colorPositions.IndexOf(color_i);
-                    int shapeEncIndex = shapeSettings.shapePositions.IndexOf(shape_i);
+                    int colorEncIndex = settings.shapeSettings.colorPositions.IndexOf(color_i);
+                    int shapeEncIndex = settings.shapeSettings.shapePositions.IndexOf(shape_i);
                     int encodingIndex = -1;
                     
                     // Determine if object is in encoding array
@@ -754,7 +702,7 @@ namespace ActionSimilarity
         void LogResults()
         {
             
-            for (int i = 0; i != shapeSettings.count; ++i)
+            for (int i = 0; i != settings.shapeSettings.count; ++i)
             {
                 // Get the response stimulus corresponding to this encoding stimulus
                 ResponseShapeMetadata response = _reportedStimuli
@@ -767,13 +715,13 @@ namespace ActionSimilarity
 
                 _uxf.result[$"Enc{i + 1}_rank"] = notReported ? "nan" : response.ReportedIndex.ToString();
                 _uxf.result[$"Enc{i + 1}_correct"] = notReported ? "0" : "1";
-                _uxf.result[$"Enc{i + 1}_colour"] = shapeSettings.colorPositions[i];
-                _uxf.result[$"Enc{i + 1}_shape"] = shapeSettings.shapePositions[i];
+                _uxf.result[$"Enc{i + 1}_colour"] = settings.shapeSettings.colorPositions[i];
+                _uxf.result[$"Enc{i + 1}_shape"] = settings.shapeSettings.shapePositions[i];
                 _uxf.result[$"Enc{i + 1}_respLoc"] = response.Loc;
                 _uxf.result[$"Enc{i + 1}_rt"] = notReported ? "nan" : response.RT.ToString();
             }
             
-            for (int i = 0; i != shapeSettings.count; ++i)
+            for (int i = 0; i != settings.shapeSettings.count; ++i)
             {
                 
                 ResponseShapeMetadata encodingShape = _reportedStimuli
@@ -800,7 +748,7 @@ namespace ActionSimilarity
                 _uxf.result[$"Colour{i+1}_rt"] = (reportedShape == null) ? "nan" : reportedShape.RT.ToString();
             }
             
-            for (int i = 0; i != shapeSettings.count; ++i)
+            for (int i = 0; i != settings.shapeSettings.count; ++i)
             {
                 ResponseShapeMetadata encodingShape = _reportedStimuli
                     .FirstOrDefault(item => item.ShapeIndex == i && item.EncodingIndex != -1);
@@ -949,7 +897,7 @@ namespace ActionSimilarity
              // Debug.Log($"shape pos: {shapeMetadata.}");
              
              // Destroy same colors and shapes
-             for (int i = 0; i != shapeSettings.count; ++i)
+             for (int i = 0; i != settings.shapeSettings.count; ++i)
              {
                 if (this.reportingStimuli[(shapePair.Item1, i)] != null)
                 {

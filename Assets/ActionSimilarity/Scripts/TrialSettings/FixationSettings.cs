@@ -1,14 +1,26 @@
-namespace ActionSimilarity;
+using System;
+using UnityEngine;
+using TMPro;
 
-[Serializable]
-public class FixationSettings
+
+
+namespace ActionSimilarity
 {
+
+    [Serializable]
+    public class FixationSettings
+    {
         public GameObject fixationSphere;
         [SerializeField]
         private int fixationDepth;
         public int FixationDepth => fixationDepth;
 
-        public TextMeshPro textMeshPro;
+        [HideInInspector] public TextMeshPro textMeshPro;
 
-        public float turnTime;
+        [HideInInspector] public float turnTime;
+
+        public float leftOffset;
+        public float downOffset;
+
     }
+}

@@ -47,6 +47,14 @@ namespace ActionSimilarity
         int actionPos;
         int jitters;
 
+        private bool CheckSimulating()
+        {
+            GameObject simulateObj = GameObject.Find("Simulate");
+
+            return simulateObj != null && simulateObj.activeInHierarchy;
+            
+        }
+
         public void Generate(Session session)
         {
 
@@ -64,6 +72,7 @@ namespace ActionSimilarity
             session.settings.SetValue("feedbackTime", feedbackTime);
             session.settings.SetValue("debug", debug);
             session.settings.SetValue("randomSimulationDebug", randomSimulationDebug);
+            session.settings.SetValue("simulating", CheckSimulating());
             session.settings.SetValue("triggerCode", 0);
 
             GenerateBlocks(session);
