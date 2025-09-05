@@ -1,6 +1,7 @@
 using System.Collections;
 using ActionSimilarity;
 using PBL;
+using PBL.Experiments;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -12,7 +13,7 @@ namespace PBl.Legacy
         public InputActionProperty yesAction;
         public InputActionProperty noAction;
 
-        public PBLTrial trial;
+        public PBLTrialBase trial;
 
         private ComparisonStimulus target;
 

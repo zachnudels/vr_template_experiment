@@ -29,5 +29,8 @@ namespace PBL.TrialComponents
         public List<LabelledInt> codes;
 
 
+        public int expectedResponses;
+
+
     }
 }

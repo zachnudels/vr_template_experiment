@@ -12,13 +12,10 @@ using TMPro;
 using PBL.Types;
 using PBL.TrialComponents;
 
-namespace PBL
+namespace PBL.Experiments
 {
     
-
-    
-
-    public class PBLTrial : MonoBehaviour
+    public abstract class PBLTrialBase : MonoBehaviour
     {
         public Session session;
         
@@ -27,7 +24,7 @@ namespace PBL
         
         public TextController textControllerWall;
 
-        [SerializeField] private TrialSettings settings; 
+        [SerializeField] protected TrialSettings settings; 
 
         [HideInInspector] public bool pause;
 
@@ -40,32 +37,29 @@ namespace PBL
         // public bool initializedEnvironment = false;
 
         FaceDirection faceDirection;
-        private TurnDirection _turnDirection;
+        protected TurnDirection _turnDirection;
         Transform eyes;
         string hand;
         private FixationRotator fixationRotator;
-        private bool debug;
-        private bool _randomSimulationDebug;
+        protected bool debug;
+        protected bool _randomSimulationDebug;
 
-        private Dictionary<(int, int), GameObject> reportingStimuli;
-        private int reportedIndex;
-        private UXF.Trial _uxf;
-        private float responseStartTime;
+        protected Dictionary<(int, int), GameObject> reportingStimuli;
+        protected int reportedIndex;
+        protected UXF.Trial _uxf;
+        protected float responseStartTime;
 
         bool firstTrial;
         bool sessionStart;
 
-        private string _stageName;
-        private List<ResponseShapeMetadata> _reportedStimuli;
+        protected string _stageName;
+        protected List<ResponseShapeMetadata> _reportedStimuli;
 
-        private int _n_correct;
-        private FaceDirection _start_face_direction;
+        protected int _n_correct;
+        protected FaceDirection _start_face_direction;
 
-        private GameObject _fixationSphere;
+        protected GameObject _fixationSphere;
 
-        private int _colorCode;
-
-        private int _shapeCode;
         
 
         void Awake()
@@ -145,8 +139,6 @@ namespace PBL
             settings.shapeSettings.colorCols = _uxf.settings.GetIntList("colorCols");
             settings.shapeSettings.shapeRows = _uxf.settings.GetIntList("shapeRows");
             
-            _colorCode = _uxf.settings.GetInt("cond.colorCode");
-
             _turnDirection = (TurnDirection)_uxf.settings.GetObject("turnDirection");
 
             // TODO: write results 
@@ -160,6 +152,9 @@ namespace PBL
             fixationRotator = new FixationRotator(settings.fixationSettings.turnTime);
 
         }
+
+        protected virtual void ExtractFurtherSettings(Trial _uxf)
+        {}
 
         private void SetHand()
         {
@@ -245,7 +240,7 @@ namespace PBL
         /// Rather, manipulate the methods it calls.
         /// 
         /// </summary>
-        public void BuildAndRunTrial(UXF.Trial trial)
+        public virtual void BuildAndRunTrial(UXF.Trial trial)
         {
             this._uxf = trial;
             Debug.Log("Building Trial");
@@ -259,10 +254,9 @@ namespace PBL
             // Run Trial
             StartCoroutine(RunTrial());
 
-
         }
 
-        IEnumerator RunTrial()
+        protected virtual IEnumerator RunTrial()
         {
             Debug.Log("Starting Trial");
             if (_uxf.numberInBlock == 1)
@@ -509,22 +503,11 @@ namespace PBL
 
             if (!_randomSimulationDebug)
             {
-                yield return new WaitUntil(() => reportedIndex == 2);
+                yield return new WaitUntil(() => reportedIndex == settings.expectedResponses);
             }
             else
             {
-                // foreach (Color color in settings.shapeSettings.shapeColours)
-                // {
-                // Singleton exp
-                Color color = settings.shapeSettings.shapeColours[_colorCode];
-                List<GameObject> coloredObjs = reportingStimuli.Values.Where(obj =>
-                {
-                    Renderer renderer = obj.GetComponent<Renderer>();
-                    return renderer != null && renderer.material.color == color;
-                }).ToList();
-                GameObject randomReportedObj = coloredObjs[UnityEngine.Random.Range(0, coloredObjs.Count)];
-                ReportShapeSelected(randomReportedObj, false);
-                // }
+                SimulateReporting();
             }
 
             if (this.reportingStimuli == null)
@@ -536,11 +519,7 @@ namespace PBL
 
             float endTime = Time.time;
 
-            // Singleton exp
-            foreach (GameObject stimulus in this.reportingStimuli.Values)
-            {
-                ReportShapeSelected(stimulus, true); // even though we cannot select these, report on them but set to ignore
-            }
+            ReportHook();
 
             yield return null;
             yield return null;
@@ -549,9 +528,24 @@ namespace PBL
 
             _uxf.result["Score"] = _n_correct;
             _uxf.result["RT"] = endTime - startTime;
-            
 
+        }
 
+        protected virtual void ReportHook()
+        {}
+
+        protected virtual void SimulateReporting()
+        {
+            // foreach (Color color in settings.shapeSettings.shapeColours)
+            // {
+            // List<GameObject> coloredObjs = reportingStimuli.Values.Where(obj =>
+            // {
+            //     Renderer renderer = obj.GetComponent<Renderer>();
+            //     return renderer != null && renderer.material.color == color;
+            // }).ToList();
+            // GameObject randomReportedObj = coloredObjs[UnityEngine.Random.Range(0, coloredObjs.Count)];
+            // ReportShapeSelected(randomReportedObj, false);
+            // }
         }
 
         IEnumerator Feedback()
@@ -586,7 +580,12 @@ namespace PBL
         * Instantiation methods
         */
 
-        GameObject[] InstantiateEncodingStimuli(bool active)
+        /// Called once per encoding item during instantiation.
+        /// Children can override this to capture special codes, adjust data, etc.
+        protected virtual void OnEncodingItemCreated(int i)
+        {}
+
+        protected virtual GameObject[] InstantiateEncodingStimuli(bool active)
         {
 
             GameObject[] stimuli = new GameObject[settings.shapeSettings.count];
@@ -613,11 +612,9 @@ namespace PBL
                 Vector3 scale = settings.shapeSettings.shapeScaleMap.TryGetValue(mesh.name, out var scal) ? scal : Vector3.one;
 
 
-                // Singleton exp - save correct encoding shape
-                if (settings.shapeSettings.colorPositions[i] == _colorCode)
-                {
-                    _shapeCode = settings.shapeSettings.shapePositions[i];
-                }
+                
+                
+                OnEncodingItemCreated(i);
 
 
                 // Change to x rotation since we're sideways now
@@ -636,6 +633,12 @@ namespace PBL
             }
 
             return stimuli;
+        }
+
+        protected virtual Color SetColor(int i)
+        {
+            return settings.shapeSettings.shapeColours[i];
+
         }
 
         Dictionary<(int, int), GameObject> InstantiateReportStimuli()
@@ -658,8 +661,7 @@ namespace PBL
                     // Debug.Log($"Shape pos: {posIndex} colorI: {color_i}, shape_i: {shape_i}");
 
                     // Color color = settings.shapeSettings.shapeColours[color_i];
-                    // Singleton exp
-                    Color color = color_i == _colorCode ? settings.shapeSettings.shapeColours[color_i] : Color.gray;
+                    Color color = SetColor(color_i);
 
                     Mesh mesh = settings.shapeSettings.shapeMeshes[shape_i];
                     Vector3 rotation = settings.shapeSettings.reportingShapeRotationMap.TryGetValue(mesh.name, out var rot) ? rot : Vector3.zero;
@@ -726,6 +728,22 @@ namespace PBL
             StopAllCoroutines();
         }
 
+        protected virtual string ReportCorrectEnc(int i, bool notReported)
+        {
+            // Check what it is otherwise
+            return "nan";
+        }
+
+        protected virtual (string, ResponseShapeMetadata, bool) ReportCorrectColor(int i, ResponseShapeMetadata encodingShape)
+        {//TODO See what it is normally
+            return ("nan", null, false);
+        }
+
+        protected virtual string ReportCorrectShape(int i, bool notReported)
+        {
+            return "nan";
+        }//TODO See what it is normally
+
         void LogResults()
         {
             
@@ -740,20 +758,8 @@ namespace PBL
                 }
                 bool notReported = response.RT == -1;
 
-                // Single color specific. Only the specific chosen color can be reported on 
-                bool canBeReported = settings.shapeSettings.colorPositions[i] == _colorCode;
-                Debug.Log($"Can be reported :{canBeReported}, colorCode: {settings.shapeSettings.colorPositions[i]}");
-                string correct = "nan";
-                if (canBeReported && notReported)
-                {
-                    correct = "0";
-                } else if (canBeReported && !notReported) {
-                    correct = "1";
-                }
-
-
                 _uxf.result[$"Enc{i + 1}_rank"] = notReported ? "nan" : response.ReportedIndex.ToString();
-                _uxf.result[$"Enc{i + 1}_correct"] = correct;
+                _uxf.result[$"Enc{i + 1}_correct"] = ReportCorrectEnc(i, notReported);
                 _uxf.result[$"Enc{i + 1}_colour"] = settings.shapeSettings.colorPositions[i];
                 _uxf.result[$"Enc{i + 1}_shape"] = settings.shapeSettings.shapePositions[i];
                 _uxf.result[$"Enc{i + 1}_respLoc"] = response.Loc;
@@ -762,10 +768,6 @@ namespace PBL
             
             for (int i = 0; i != settings.shapeSettings.count; ++i)
             {
-
-                // Single color specific. Only the specific chosen color can be reported on 
-                bool canBeReported = i == _colorCode;
-                
                 ResponseShapeMetadata encodingShape = _reportedStimuli
                     .FirstOrDefault(item => item.ColorIndex == i && item.EncodingIndex != -1);
                 if (encodingShape == null)
@@ -773,31 +775,15 @@ namespace PBL
                     throw new UnityException($"Could not find encoding stimuli with color index {i}");
                 }
 
-                 // Single color specific. Only the specific chosen color can be reported on 
-                ResponseShapeMetadata reportedShape = _reportedStimuli
-                    .FirstOrDefault(item => item.ColorIndex == i && item.RT != -1);
-                if (reportedShape == null && canBeReported)
-                {
-                    throw new UnityException($"Could not find reported stimuli with color index {i}");
-                }
-                bool notReported = reportedShape == encodingShape;
-
-                string correct = "nan";
-                if (canBeReported && notReported)
-                {
-                    correct = "0";
-                } else if (canBeReported && !notReported) {
-                    correct = "1";
-                }
-
+                (string correct, ResponseShapeMetadata reportedShape, bool notReported) = ReportCorrectColor(i, encodingShape);
 
                 _uxf.result[$"Colour{i+1}_correct"] = correct;
                 _uxf.result[$"Colour{i+1}_encLoc"] = encodingShape.EncodingIndex;
                 _uxf.result[$"Colour{i+1}_encShape"] = encodingShape.ShapeIndex;
-                _uxf.result[$"Colour{i+1}_respLoc"] = (reportedShape == null) ? "nan" : reportedShape.Loc.ToString();
-                _uxf.result[$"Colour{i+1}_respShape"] = (reportedShape == null) ? "nan" : reportedShape.ShapeIndex.ToString();
-                _uxf.result[$"Colour{i+1}_respRank"] = (reportedShape == null) ? "nan" : reportedShape.ReportedIndex.ToString();
-                _uxf.result[$"Colour{i+1}_rt"] = (reportedShape == null) ? "nan" : reportedShape.RT.ToString();
+                _uxf.result[$"Colour{i+1}_respLoc"] = notReported ? "nan" : reportedShape.Loc.ToString();
+                _uxf.result[$"Colour{i+1}_respShape"] = notReported ? "nan" : reportedShape.ShapeIndex.ToString();
+                _uxf.result[$"Colour{i+1}_respRank"] = notReported ? "nan" : reportedShape.ReportedIndex.ToString();
+                _uxf.result[$"Colour{i+1}_rt"] = notReported ? "nan" : reportedShape.RT.ToString();
             }
             
             for (int i = 0; i != settings.shapeSettings.count; ++i)
@@ -809,59 +795,24 @@ namespace PBL
                     throw new UnityException($"Could not find encoding stimuli with shape index {i}");
                 }
                 
+                
                 ResponseShapeMetadata reportedShape = _reportedStimuli
                     .FirstOrDefault(item => item.ShapeIndex == i && item.RT != -1);
-                if (reportedShape == null)
-                {
-                    // throw new UnityException($"Could not find reported stimuli with shape index {i}");
-                    // continue;
-                    reportedShape = null;
-                }
+
                 bool notReported = reportedShape != null && reportedShape == encodingShape;
-
                 
-                // Single color specific. Only the specific chosen color can be reported on 
-                bool canBeReported = i == _shapeCode;
-                string correct = "nan";
-                if (canBeReported && notReported)
-                {
-                    correct = "0";
-                } else if (canBeReported && !notReported) {
-                    correct = "1";
-                }
-
-                _uxf.result[$"Shape{i+1}_correct"] = correct;
+                _uxf.result[$"Shape{i+1}_correct"] = ReportCorrectShape(i, notReported);
                 _uxf.result[$"Shape{i+1}_encLoc"] = encodingShape.EncodingIndex;
                 _uxf.result[$"Shape{i+1}_encColour"] = encodingShape.ColorIndex;
                 
-                _uxf.result[$"Shape{i+1}_respLoc"] = reportedShape == null ? "nan" : reportedShape.Loc.ToString();
-                _uxf.result[$"Shape{i+1}_respColour"] = reportedShape == null ? "nan" : reportedShape.ColorIndex.ToString();
-                _uxf.result[$"Shape{i+1}_respRank"] = reportedShape == null ? "nan" : reportedShape.ReportedIndex.ToString();
-                _uxf.result[$"Shape{i+1}_rt"] = reportedShape == null ? "nan" : reportedShape.RT.ToString();
+                _uxf.result[$"Shape{i+1}_respLoc"] = notReported ? "nan" : reportedShape.Loc.ToString();
+                _uxf.result[$"Shape{i+1}_respColour"] = notReported ? "nan" : reportedShape.ColorIndex.ToString();
+                _uxf.result[$"Shape{i+1}_respRank"] = notReported ? "nan" : reportedShape.ReportedIndex.ToString();
+                _uxf.result[$"Shape{i+1}_rt"] = notReported ? "nan" : reportedShape.RT.ToString();
             }
             
         }
         
-         public static GameObject InstantiateObjectWithMesh(GameObject prefab,
-             Transform transform,
-             Mesh mesh,
-             Vector3 position,
-             Vector3 rotation,
-             string location)
-         {
-
-             //prefab.GetComponent<Stimulus>().session = session;
-             //prefab.GetComponent<Stimulus>().location = location;
-
-             GameObject gameObject = Instantiate(
-                 prefab,
-                 position,
-                 Quaternion.Euler(rotation),
-                 transform);
-             gameObject.GetComponent<MeshFilter>().mesh = mesh;
-             //gameObject.transform.localScale = new Vector3(2f, 2f, 2f);
-             return gameObject;
-         }
          
          GameObject InstantiateObjectWithMeshAndColor(GameObject prefab,
              Mesh mesh,
@@ -909,12 +860,6 @@ namespace PBL
 
          public void ReportShapeSelected(GameObject selectedShape, bool ignoring)
          {
-            
-            // Single color specific 
-            if (selectedShape == null || selectedShape.GetComponent<Renderer>().material.color != settings.shapeSettings.shapeColours[_colorCode])
-            {
-                return;
-            } 
              // Determine reaction time
              float currentTime = Time.time;
              int reactionTime = (int)((currentTime - responseStartTime) * 1000);
@@ -952,7 +897,6 @@ namespace PBL
             }
             else
             {
-                // Specific to singleton - logging nans for other shapes in report array
                 // Log everything to the results dictionary
                 foreach (KeyValuePair<string, string> kvp in shapeMetadata.ToDictionary(reportedIndex))
                 {
@@ -960,7 +904,6 @@ namespace PBL
                 }
                 reportedIndex++;
             }
-             
              
              Tuple<int, int> shapePair = shapeMetadata.GetShapePair();
              // Debug.Log($"shape pos: {shapeMetadata.}");

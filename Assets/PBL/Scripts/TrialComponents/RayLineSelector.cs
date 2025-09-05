@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 using ActionSimilarity;
-
+using PBL.Experiments;
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
 
@@ -23,7 +23,7 @@ namespace PBL.TrialComponents
         public float hoverThreshold = 0.5f;
         public float rayLength = 10f;
         public LayerMask shapeLayer;
-        public PBLTrial trial;
+        public PBLTrialBase trial;
 
         private GameObject currentTarget;
         private float hoverTime = 0f;
