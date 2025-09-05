@@ -2,25 +2,23 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-
+using ActionSimilarity;
+using PBL.DataHandler;
 using UnityEngine;
 using UnityEngine.Serialization;
 using UnityEngine.UIElements;
 using UXF;
 using TMPro;
+using PBL.Types;
+using PBL.TrialComponents;
 
-
-namespace ActionSimilarity
+namespace PBL
 {
     
-    public enum FaceDirection
-    {
-        Front = 1,
-        Back = -1,
-    }
+
     
 
-    public class Trial : MonoBehaviour
+    public class PBLTrial : MonoBehaviour
     {
         public Session session;
         
@@ -28,7 +26,6 @@ namespace ActionSimilarity
         private bool simulating; // from exp
         
         public TextController textControllerWall;
-
 
         [SerializeField] private TrialSettings settings; 
 
@@ -47,7 +44,6 @@ namespace ActionSimilarity
         Transform eyes;
         string hand;
         private FixationRotator fixationRotator;
-        DataProcessing data;
         private bool debug;
         private bool _randomSimulationDebug;
 
@@ -70,11 +66,7 @@ namespace ActionSimilarity
         private int _colorCode;
 
         private int _shapeCode;
-
-        public event Action<string> StageChanged;
-
-
-
+        
 
         void Awake()
         {
@@ -153,13 +145,13 @@ namespace ActionSimilarity
             settings.shapeSettings.colorCols = _uxf.settings.GetIntList("colorCols");
             settings.shapeSettings.shapeRows = _uxf.settings.GetIntList("shapeRows");
             
-            _colorCode = _uxf.settings.GetInt("colorCode");
+            _colorCode = _uxf.settings.GetInt("cond.colorCode");
 
             _turnDirection = (TurnDirection)_uxf.settings.GetObject("turnDirection");
 
             // TODO: write results 
 
-            _uxf.result["ConditionCode"] = _turnDirection == TurnDirection.Left ? 1 : 2;
+            // _uxf.result["ConditionCode"] = _turnDirection == TurnDirection.Left ? 1 : 2;
             _uxf.result["ConditionTurn"] = _turnDirection.ToString().ToLower();
             _uxf.result["HeightOffset"] = eyes.position.y;
             _uxf.result["Facing"] = faceDirection.ToString().ToLower();
@@ -200,10 +192,7 @@ namespace ActionSimilarity
             //bottomDone = false;
 
             Debug.Log("Initialize Trial");
-
-
-            data = (DataProcessing)_uxf.settings.GetObject("data");
-
+            
             //actionsDone = false;
             //showingTarget = false;
             pause = false;
@@ -412,8 +401,6 @@ namespace ActionSimilarity
                             + " \n\n Press any thumb button when you're ready to start the next block (calibration first again ;) )");
 
             yield return new WaitForSeconds(3f);
-            data.reset(session.CurrentBlock.trials.Count);
-
             pause = true;
             yield return new WaitUntil(() => !pause);
 

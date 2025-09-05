@@ -1,14 +1,11 @@
 using Unity.Mathematics;
 
 using UnityEngine;
+using PBL.Types;
 
 namespace ActionSimilarity
 {
-    public enum TurnDirection
-    {
-        Left = -1,
-        Right = 1,
-    }
+
     
     public class FixationRotator
     {

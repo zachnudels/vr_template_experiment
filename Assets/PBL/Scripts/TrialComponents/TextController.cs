@@ -1,14 +1,16 @@
 
 using UnityEngine;
 using TMPro;
+using PBL.Types;
 
-namespace ActionSimilarity
+
+namespace PBL.TrialComponents
 {
     public class TextController : MonoBehaviour
     {
         
         public TextMeshPro textMesh;
-        public Experiment experiment;
+        public PBLExperiment experiment;
         Vector3 _frontWallPosition = new Vector3(0f, 2f, 3.9f);
         Vector3 _frontWallRotation = new Vector3(0f, 0f, 0f);
         Vector3 _backWallPosition = new Vector3(0f, 2f, -3.9f);

@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using ActionSimilarity;
+using PBL;
 
 using UXF;
 using ViveSR.anipal.Eye;
@@ -31,7 +31,7 @@ public class EyeTracker : UXF.Tracker
     // [Tooltip("Right hand/controller transform (assign in Inspector)")]
     public Transform rightHandTf;
     // [Tooltip("Fixation target transform (assign at trial start if dynamic)")]
-    public ActionSimilarity.Trial trial;
+    public PBLTrial trial;
 
     private Transform fixationTf;
 

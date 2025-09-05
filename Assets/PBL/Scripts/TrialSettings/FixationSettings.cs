@@ -4,7 +4,7 @@ using TMPro;
 
 
 
-namespace ActionSimilarity
+namespace PBL.TrialComponents
 {
 
     [Serializable]

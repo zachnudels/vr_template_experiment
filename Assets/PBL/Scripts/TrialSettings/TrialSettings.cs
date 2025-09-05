@@ -2,8 +2,9 @@ using UnityEngine;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using PBL.Types;
 
-namespace ActionSimilarity
+namespace PBL.TrialComponents
 {
 
     [CreateAssetMenu(menuName = "Trials/Trial Settings")]
@@ -25,7 +26,7 @@ namespace ActionSimilarity
         // of the stage
         // """)
         //  ]
-        public List<CodeDictionary> codes;
+        public List<LabelledInt> codes;
 
 
     }

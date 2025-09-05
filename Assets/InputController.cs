@@ -4,11 +4,11 @@ using UnityEngine;
 //using UXF;
 
 
-namespace ActionSimilarity{
+namespace PBL{
     public class InputController : MonoBehaviour {
 
         //public Session session;
-        public Trial trial;
+        public PBLTrial trial;
 
         // Start is called before the first frame update
         void Start() {

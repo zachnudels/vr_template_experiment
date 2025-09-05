@@ -3,9 +3,10 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using PBL.Types;
 
 
-namespace ActionSimilarity
+namespace PBL.TrialComponents
 {
 
     [Serializable]
@@ -16,9 +17,9 @@ namespace ActionSimilarity
         public GameObject reportingShape;
         public Mesh[] shapeMeshes;
         public Color[] shapeColours;
-        public List<Vector3Dictionary> reportingShapeRotations;
-        public List<Vector3Dictionary> encodingShapeRotations;
-        public List<Vector3Dictionary> shapeScales;
+        public List<LabelledVector3> reportingShapeRotations;
+        public List<LabelledVector3> encodingShapeRotations;
+        public List<LabelledVector3> shapeScales;
         public float[] shapeSpacing;
         public float reportingShapeScale;
 

@@ -1,8 +1,10 @@
 using System.Collections;
+using ActionSimilarity;
+using PBL;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-namespace ActionSimilarity
+namespace PBl.Legacy
 {
     public class Actions : MonoBehaviour
     {
@@ -10,7 +12,7 @@ namespace ActionSimilarity
         public InputActionProperty yesAction;
         public InputActionProperty noAction;
 
-        public Trial trial;
+        public PBLTrial trial;
 
         private ComparisonStimulus target;
 

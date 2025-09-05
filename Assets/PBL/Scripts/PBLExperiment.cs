@@ -5,29 +5,29 @@ using System.Linq;
 using System;
 using System.IO;
 using System.Runtime.InteropServices;
-
+using PBL.DataHandler;
+using PBL.Types;
 using UnityEngine.Serialization;
 
 using UXF;
 
-
-namespace ActionSimilarity
+namespace PBL
 {
 
-    public class Experiment : MonoBehaviour
+    public class PBLExperiment : MonoBehaviour
     {
 
         public float ITI;
-        public float actionTime;
-        public float presentationTime;
+        // public float actionTime;
+        // public float presentationTime;
 
         public float turnTime;
 
-        public float delayTime;
-        public float cueTime;
-        public float reportTime;
+        // public float delayTime;
+        // public float cueTime;
+        // public float reportTime;
 
-        public float feedbackTime;
+        // public float feedbackTime;
         
         public float endSessionTime;
 
@@ -37,18 +37,21 @@ namespace ActionSimilarity
         public int numberOfShapes;
         public int numberOfColors;
 
-        public int condition;
+        // public int condition;
 
         public bool debug;
         public bool randomSimulationDebug;
 
 
-        int sessionNumber;
-        int actionPos;
-        int jitters;
+        // int sessionNumber;
+        // int actionPos;
+        // int jitters;
         
-        public int colorCode;
+        
+        [SerializeField] List<LabelledInt> conditions;
 
+        
+        // public int colorCode;
 
         private bool CheckSimulating()
         {
@@ -62,31 +65,31 @@ namespace ActionSimilarity
         {
 
             // Calculate internal variables
-            sessionNumber = session.number - 1; // Because UXF doesn't allow 0
+            // sessionNumber = session.number - 1; // Because UXF doesn't allow 0
 
             // Set all public experimental variable settings
             session.settings.SetValue("ITI", ITI);
-            session.settings.SetValue("actionTime", actionTime);
-            session.settings.SetValue("presentationTime", presentationTime);
+            // session.settings.SetValue("actionTime", actionTime);
+            // session.settings.SetValue("presentationTime", presentationTime);
             session.settings.SetValue("turnTime", turnTime);
-            session.settings.SetValue("delayTime", delayTime);
-            session.settings.SetValue("cueTime", cueTime);
-            session.settings.SetValue("reportTime", reportTime);
-            session.settings.SetValue("feedbackTime", feedbackTime);
+            // session.settings.SetValue("delayTime", delayTime);
+            // session.settings.SetValue("cueTime", cueTime);
+            // session.settings.SetValue("reportTime", reportTime);
+            // session.settings.SetValue("feedbackTime", feedbackTime);
             session.settings.SetValue("debug", debug);
             session.settings.SetValue("randomSimulationDebug", randomSimulationDebug);
             session.settings.SetValue("simulating", CheckSimulating());
             session.settings.SetValue("triggerCode", 0);
-            session.settings.SetValue("colorCode", colorCode);
+            // session.settings.SetValue("colorCode", colorCode);
 
 
             GenerateBlocks(session);
 
             Debug.Log($"Created {session.Trials.Count()} trials");
 
-            session.settings.SetValue(
-                "data",
-                new DataProcessing(actionPos, session.blocks[0].trials.Count));
+            // session.settings.SetValue(
+            //     "data",
+            //     new DataProcessing(actionPos, session.blocks[0].trials.Count));
             session.FirstTrial.Begin();
         }
 
@@ -124,8 +127,7 @@ namespace ActionSimilarity
                 }
             }
         }
-
-
+        
         void GenerateBlocks(Session session)
         {
             Block[] blocks = new Block[numberOfBlocks];
@@ -146,6 +148,11 @@ namespace ActionSimilarity
 
             int trialsPerBlock = shapePositions.Count;
             Debug.Log($"Trials per block: {trialsPerBlock}");
+
+            List<Dictionary<string, int>> conditionCombos = CartesianProduct(conditions);
+            SaveConditions("/Users/zach/2025_RA/freek/data/test/conditionCombos.csv", conditionCombos);
+            List<Dictionary<string, int>> blockConditions = ExpandToTrials(conditionCombos, trialsPerBlock);
+
             
             // Generate random list of targets and distractors
             List<List<int>> colorCols = GetNPermutations(numberOfColors, repeatsPerBlock);
@@ -173,14 +180,20 @@ namespace ActionSimilarity
                 shapeRows.Shuffle();
                 turnsFront.Shuffle();
                 turnsBack.Shuffle();
+                blockConditions.Shuffle();
                 
                 for (int i = 0; i < trialsPerBlock; i++)
                 {
-                    UXF.Trial newTrial = blocks[blockNumber].CreateTrial();
+                    Trial newTrial = blocks[blockNumber].CreateTrial();
                     newTrial.settings.SetValue("shapePositions", shapePositions[i]);
                     newTrial.settings.SetValue("colorPositions", colorPositions[i]);
                     newTrial.settings.SetValue("shapeRows", colorCols[i]);
                     newTrial.settings.SetValue("colorCols", shapeRows[i]);
+                    foreach (var kv in blockConditions[i])
+                    {
+                        newTrial.settings.SetValue($"cond.{kv.Key}", kv.Value);
+                    }
+                    
                     if (i % 2 == 0)
                     { // facing front
                         newTrial.settings.SetValue("turnDirection", turnsFront[(int)(i / 2)]);
@@ -195,7 +208,9 @@ namespace ActionSimilarity
                 // start += trialsPerBlock;
             }
 
-            // SaveCSV("C:\\Users\\ZachPBL\\Desktop\\shapePoses.csv", turns);
+            // SaveConditions("C:\\Users\\ZachPBL\\Desktop\\shapePoses.csv", blockConditions);
+            SaveConditions("/Users/zach/2025_RA/freek/data/test/conditionCombos.csv", blockConditions);
+            
         }
         
         public static List<List<int>> WithinBlockShuffling(int numberOfItems, int repeats)
@@ -246,6 +261,87 @@ namespace ActionSimilarity
                 (list[start], list[i]) = (list[i], list[start]);  // swap
                 Permute(list, start + 1, result);
                 (list[start], list[i]) = (list[i], list[start]);  // backtrack
+            }
+        }
+        
+        List<Dictionary<string, int>> CartesianProduct(List<LabelledInt> conditionDefs)
+        {
+            // Start with one "empty assignment"
+            List<Dictionary<string, int>> result = new List<Dictionary<string, int>>
+            {
+                new Dictionary<string, int>()
+            };
+
+            // For each condition definition…
+            foreach (LabelledInt def in conditionDefs)
+            {
+                List<Dictionary<string, int>> next = new List<Dictionary<string, int>>();
+
+                // Expand current partial assignments with all possible levels of this condition
+                foreach (Dictionary<string, int> partial in result)
+                {
+                    for (int level = 0; level < def.value; level++)
+                    {
+                        Dictionary<string, int> newAssignment = new Dictionary<string, int>(partial);
+                        newAssignment[def.key] = level;
+                        next.Add(newAssignment);
+                    }
+                }
+
+                result = next;
+            }
+
+            return result;
+        }
+        
+        List<Dictionary<string, int>> ExpandToTrials(
+            List<Dictionary<string, int>> combos,
+            int nTrials)
+        {
+            int nCombos = combos.Count;
+
+            if (nTrials % nCombos != 0)
+            {
+                throw new System.Exception(
+                    $"Number of trials ({nTrials}) is not a multiple of condition cells ({nCombos}). " +
+                    "Adjust nTrials or condition definitions."
+                );
+            }
+
+            int repeats = nTrials / nCombos;
+            var expanded = new List<Dictionary<string, int>>(nTrials);
+
+            for (int r = 0; r < repeats; r++)
+            {
+                foreach (var combo in combos)
+                {
+                    // Clone so each trial gets its own dictionary
+                    expanded.Add(new Dictionary<string, int>(combo));
+                }
+            }
+
+            return expanded;
+        }
+        
+        public static void SaveConditions(string path, List<Dictionary<string, int>> trials)
+        {
+            if (trials == null || trials.Count == 0)
+                throw new System.Exception("No trials to export.");
+
+            // Collect all condition keys (columns)
+            var keys = trials[0].Keys.ToList();
+
+            using (var writer = new StreamWriter(path, false))
+            {
+                // Header row
+                writer.WriteLine(string.Join(",", keys));
+
+                // One row per trial
+                for (int i = 0; i < trials.Count; i++)
+                {
+                    var row = keys.Select(k => trials[i][k].ToString());
+                    writer.WriteLine(string.Join(",", row));
+                }
             }
         }
         
