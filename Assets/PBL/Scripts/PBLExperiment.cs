@@ -27,7 +27,7 @@ namespace PBL
         // public float cueTime;
         // public float reportTime;
 
-        // public float feedbackTime;
+        public float feedbackTime;
         
         public float endSessionTime;
 
@@ -75,7 +75,7 @@ namespace PBL
             // session.settings.SetValue("delayTime", delayTime);
             // session.settings.SetValue("cueTime", cueTime);
             // session.settings.SetValue("reportTime", reportTime);
-            // session.settings.SetValue("feedbackTime", feedbackTime);
+            session.settings.SetValue("feedbackTime", feedbackTime);
             session.settings.SetValue("debug", debug);
             session.settings.SetValue("randomSimulationDebug", randomSimulationDebug);
             session.settings.SetValue("simulating", CheckSimulating());

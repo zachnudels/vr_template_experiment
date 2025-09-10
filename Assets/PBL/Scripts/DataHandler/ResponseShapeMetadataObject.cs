@@ -88,7 +88,7 @@ namespace PBL.DataHandler
 
         public Tuple<int, int> GetShapePair()
         {
-            Debug.Log($"{this.colorIndex}, {this.shapeIndex}");
+            // Debug.Log($"{this.colorIndex}, {this.shapeIndex}");
             return new Tuple<int, int>(this.colorIndex, this.shapeIndex);
         }
 

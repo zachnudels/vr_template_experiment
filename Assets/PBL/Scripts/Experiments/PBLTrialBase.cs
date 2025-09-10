@@ -283,12 +283,7 @@ namespace PBL.Experiments
             LogResults();
 
             yield return RunStage(Feedback);
-
-            if (_uxf == session.CurrentBlock.lastTrial)
-            {
-                yield return RunStage(Break);
-            }
-
+            
             if (_uxf == session.LastTrial)
             {
                 yield return RunStage(EndSession);
@@ -392,7 +387,7 @@ namespace PBL.Experiments
             _fixationSphere.SetActive(false);
             textControllerWall.Write("Well done! Time to take a well deserved break"
                             + " \n\n Are you standing on the line?"
-                            + " \n\n Press any thumb button when you're ready to start the next block (calibration first again ;) )");
+                            + " \n\n Pull the trigger when you're ready to start the next block (calibration first again ;) )");
 
             yield return new WaitForSeconds(3f);
             pause = true;
@@ -434,7 +429,7 @@ namespace PBL.Experiments
                 
                 if (!triggerSent && elapsed >= halfwayTime)
                 {
-                    Debug.Log(fixationRotator.LogString());
+                    // Debug.Log(fixationRotator.LogString());
                     setTrigger(codeMap["halfway_turn"]);
                     triggerSent = true;
                     StartCoroutine(ShowEncodingShapesForOneFrame(stimuli));
@@ -457,8 +452,8 @@ namespace PBL.Experiments
             // Debug.Log(settings.fixationSettings.fixationSphere.transform.position);
             for (int i = 0; i != stimuli.Length; ++i)
             {
-                Debug.Log($"{faceDirection}, {_turnDirection}");
-                Debug.Log(settings.shapeSettings.encodingShapePositions[i]);
+                // Debug.Log($"{faceDirection}, {_turnDirection}");
+                // Debug.Log(settings.shapeSettings.encodingShapePositions[i]);
 
                 Vector3 position = settings.shapeSettings.encodingShapePositions[i]
                                    + _fixationSphere.transform.position;
@@ -598,21 +593,22 @@ namespace PBL.Experiments
 
             for (int i = 0; i < settings.shapeSettings.count; i++)
             {
-                Debug.Log($"i: {i}, colorIndex: {settings.shapeSettings.colorPositions[i]}, meshIndex: {settings.shapeSettings.shapePositions[i]}");
+                // Debug.Log($"i: {i}, colorIndex: {settings.shapeSettings.colorPositions[i]}, meshIndex: {settings.shapeSettings.shapePositions[i]}");
 
                 if (settings.shapeSettings.colorPositions[i] >= settings.shapeSettings.shapeColours.Length)
+                {
                     Debug.Log($"Invalid color index {settings.shapeSettings.colorPositions[i]} at i={i}");
+                }
 
                 if (settings.shapeSettings.shapePositions[i] >= settings.shapeSettings.shapeMeshes.Length)
+                {
                     Debug.Log($"Invalid mesh index {settings.shapeSettings.shapePositions[i]} at i={i}");
+                }
                 
                 Color color = settings.shapeSettings.shapeColours[settings.shapeSettings.colorPositions[i]];
                 Mesh mesh = settings.shapeSettings.shapeMeshes[settings.shapeSettings.shapePositions[i]];
                 Vector3 rotation = settings.shapeSettings.encodingShapeRotationMap.TryGetValue(mesh.name, out var rot) ? rot : Vector3.zero;
                 Vector3 scale = settings.shapeSettings.shapeScaleMap.TryGetValue(mesh.name, out var scal) ? scal : Vector3.one;
-
-
-                
                 
                 OnEncodingItemCreated(i);
 
@@ -780,10 +776,10 @@ namespace PBL.Experiments
                 _uxf.result[$"Colour{i+1}_correct"] = correct;
                 _uxf.result[$"Colour{i+1}_encLoc"] = encodingShape.EncodingIndex;
                 _uxf.result[$"Colour{i+1}_encShape"] = encodingShape.ShapeIndex;
-                _uxf.result[$"Colour{i+1}_respLoc"] = notReported ? "nan" : reportedShape.Loc.ToString();
-                _uxf.result[$"Colour{i+1}_respShape"] = notReported ? "nan" : reportedShape.ShapeIndex.ToString();
-                _uxf.result[$"Colour{i+1}_respRank"] = notReported ? "nan" : reportedShape.ReportedIndex.ToString();
-                _uxf.result[$"Colour{i+1}_rt"] = notReported ? "nan" : reportedShape.RT.ToString();
+                _uxf.result[$"Colour{i+1}_respLoc"] = (reportedShape == null) ? "nan" : reportedShape.Loc.ToString();
+                _uxf.result[$"Colour{i+1}_respShape"] = (reportedShape == null) ? "nan" : reportedShape.ShapeIndex.ToString();
+                _uxf.result[$"Colour{i+1}_respRank"] = (reportedShape == null) ? "nan" : reportedShape.ReportedIndex.ToString();
+                _uxf.result[$"Colour{i+1}_rt"] = (reportedShape == null) ? "nan" : reportedShape.RT.ToString();
             }
             
             for (int i = 0; i != settings.shapeSettings.count; ++i)
@@ -805,10 +801,10 @@ namespace PBL.Experiments
                 _uxf.result[$"Shape{i+1}_encLoc"] = encodingShape.EncodingIndex;
                 _uxf.result[$"Shape{i+1}_encColour"] = encodingShape.ColorIndex;
                 
-                _uxf.result[$"Shape{i+1}_respLoc"] = notReported ? "nan" : reportedShape.Loc.ToString();
-                _uxf.result[$"Shape{i+1}_respColour"] = notReported ? "nan" : reportedShape.ColorIndex.ToString();
-                _uxf.result[$"Shape{i+1}_respRank"] = notReported ? "nan" : reportedShape.ReportedIndex.ToString();
-                _uxf.result[$"Shape{i+1}_rt"] = notReported ? "nan" : reportedShape.RT.ToString();
+                _uxf.result[$"Shape{i+1}_respLoc"] = (reportedShape == null) ? "nan" : reportedShape.Loc.ToString();
+                _uxf.result[$"Shape{i+1}_respColour"] = (reportedShape == null) ? "nan" : reportedShape.ColorIndex.ToString();
+                _uxf.result[$"Shape{i+1}_respRank"] = (reportedShape == null) ? "nan" : reportedShape.ReportedIndex.ToString();
+                _uxf.result[$"Shape{i+1}_rt"] = (reportedShape == null) ? "nan" : reportedShape.RT.ToString();
             }
             
         }
@@ -879,6 +875,7 @@ namespace PBL.Experiments
                 shapeMetadata.Processed = true;
                 shapeMetadata.RT = reactionTime;
                 shapeMetadata.ReportedIndex = reportedIndex;
+                Debug.Log($"encodingIndex = {shapeMetadata.EncodingIndex}");
                 Debug.Log($"Adding {shapeMetadata.Correct} to _n_correct = {_n_correct}");
 
                 setTrigger(codeMap["answer_i"] + ((reportedIndex-1) * 100));

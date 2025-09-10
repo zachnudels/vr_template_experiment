@@ -16,28 +16,37 @@ namespace PBL.Experiments
         {
             _colorCode = _uxf.settings.GetInt("cond.colorCode");
         }
-        
-        protected override void ReportHook()
+
+        private List<GameObject> FindColoredReportingStimuli()
         {
-            // Singleton exp
-            // TODO Actually choose three random ones that haven't yet been chosen 
-            foreach (GameObject stimulus in this.reportingStimuli.Values)
-            {
-                ReportShapeSelected(stimulus, true); // even though we cannot select these, report on them but set to ignore
-            }
-        }
-        
-        protected override void SimulateReporting()
-        {
-            // foreach (Color color in settings.shapeSettings.shapeColours)
-            // {
-            // Singleton exp
             Color color = settings.shapeSettings.shapeColours[_colorCode];
             List<GameObject> coloredObjs = reportingStimuli.Values.Where(obj =>
             {
                 Renderer renderer = obj.GetComponent<Renderer>();
                 return renderer != null && renderer.material.color == color;
             }).ToList();
+
+            return coloredObjs;
+        }
+        
+        protected override void ReportHook()
+        {
+            // Singleton exp
+            // TODO Actually choose three random ones that haven't yet been chosen 
+            
+            foreach (GameObject stimulus in FindColoredReportingStimuli())
+            {
+                ReportShapeSelected(stimulus, true); // even though we cannot select these, report on them but set to ignore
+            }
+        }
+        
+        
+        protected override void SimulateReporting()
+        {
+            // foreach (Color color in settings.shapeSettings.shapeColours)
+            // {
+            // Singleton exp
+            List<GameObject> coloredObjs = FindColoredReportingStimuli();
             GameObject randomReportedObj = coloredObjs[UnityEngine.Random.Range(0, coloredObjs.Count)];
             ReportShapeSelected(randomReportedObj, false);
             // }
@@ -65,7 +74,7 @@ namespace PBL.Experiments
             // Check what it is otherwise
             // Single color specific. Only the specific chosen color can be reported on
             bool canBeReported = settings.shapeSettings.colorPositions[i] == _colorCode;
-            Debug.Log($"Can be reported :{canBeReported}, code: {settings.shapeSettings.colorPositions[i]}");
+            // Debug.Log($"Can be reported :{canBeReported}, code: {settings.shapeSettings.colorPositions[i]}");
             string correct = "nan";
             if (canBeReported && notReported)
             {
