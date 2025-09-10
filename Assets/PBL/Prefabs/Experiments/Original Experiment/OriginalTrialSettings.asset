@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: cba9d9c7155743e986e6e6e026736244, type: 3}
-  m_Name: SingletonTrialSettings
+  m_Name: OriginalTrialSettings
   m_EditorClassIdentifier: 
   shapeSettings:
     count: 4
@@ -107,4 +107,4 @@ MonoBehaviour:
     value: 600
   - key: end_answer
     value: 1000
-  expectedResponses: 1
+  expectedResponses: 4

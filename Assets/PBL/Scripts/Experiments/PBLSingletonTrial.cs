@@ -31,9 +31,6 @@ namespace PBL.Experiments
         
         protected override void ReportHook()
         {
-            // Singleton exp
-            // TODO Actually choose three random ones that haven't yet been chosen 
-            
             foreach (GameObject stimulus in FindColoredReportingStimuli())
             {
                 ReportShapeSelected(stimulus, true); // even though we cannot select these, report on them but set to ignore
@@ -43,20 +40,15 @@ namespace PBL.Experiments
         
         protected override void SimulateReporting()
         {
-            // foreach (Color color in settings.shapeSettings.shapeColours)
-            // {
-            // Singleton exp
             List<GameObject> coloredObjs = FindColoredReportingStimuli();
             GameObject randomReportedObj = coloredObjs[UnityEngine.Random.Range(0, coloredObjs.Count)];
             ReportShapeSelected(randomReportedObj, false);
-            // }
         }
         
         /// Called once per encoding item during instantiation.
         /// Children can override this to capture special codes, adjust data, etc.
         protected override void OnEncodingItemCreated(int i)
         {
-            // Singleton exp - save correct encoding shape
             if (settings.shapeSettings.colorPositions[i] == _colorCode)
             {
                 _shapeCode = settings.shapeSettings.shapePositions[i];

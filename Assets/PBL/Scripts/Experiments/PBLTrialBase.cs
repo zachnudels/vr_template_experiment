@@ -656,7 +656,6 @@ namespace PBL.Experiments
                     int shape_i = settings.shapeSettings.colorCols[shapeCol];
                     // Debug.Log($"Shape pos: {posIndex} colorI: {color_i}, shape_i: {shape_i}");
 
-                    // Color color = settings.shapeSettings.shapeColours[color_i];
                     Color color = SetColor(color_i);
 
                     Mesh mesh = settings.shapeSettings.shapeMeshes[shape_i];
