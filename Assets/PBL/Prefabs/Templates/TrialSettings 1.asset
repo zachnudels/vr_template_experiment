@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: cba9d9c7155743e986e6e6e026736244, type: 3}
-  m_Name: TrialSettings
+  m_Name: TrialSettings 1
   m_EditorClassIdentifier: 
   shapeSettings:
     count: 4

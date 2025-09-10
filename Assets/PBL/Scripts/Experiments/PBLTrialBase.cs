@@ -498,7 +498,7 @@ namespace PBL.Experiments
 
             if (!_randomSimulationDebug)
             {
-                yield return new WaitUntil(() => reportedIndex == settings.expectedResponses);
+                yield return new WaitUntil(() => reportedIndex == settings.expectedResponses + 1);
             }
             else
             {
