@@ -18,52 +18,40 @@ MonoBehaviour:
     reportingShape: {fileID: 2349023219368754960, guid: 5dc6d6b33d657487abafb9a9a34220c1, type: 3}
     shapeMeshes:
     - {fileID: 4300000, guid: 3244a9e53131d4d2c88f07faef7e6214, type: 2}
-    - {fileID: 587366007896238738, guid: c3a8239c7c4be446a96a9e059dd54638, type: 3}
-    - {fileID: 587366007896238738, guid: 62bb7e145983e42cf97aaad9a0e73a69, type: 3}
-    - {fileID: 587366007896238738, guid: 21c4d7bbe46dc4716868102dbdd9f9dc, type: 3}
+    - {fileID: 4300000, guid: 0c2163a03fae64e28924a89a8d40b016, type: 2}
+    - {fileID: 4300000, guid: ecab2fb910be5464c8f59dd8141c71d7, type: 2}
+    - {fileID: 4300000, guid: 9185df5c21e15405e82053b64ee39ade, type: 2}
     shapeColours:
     - {r: 0, g: 1, b: 1, a: 0}
     - {r: 0, g: 1, b: 0, a: 0}
     - {r: 1, g: 1, b: 0, a: 0}
     - {r: 1, g: 0, b: 1, a: 0}
     reportingShapeRotations:
-    - key: Cube
-      value: {x: 0, y: 0, z: 0}
-    - key: Diamond2
-      value: {x: -90, y: 0, z: 180}
-    - key: Star1
-      value: {x: -90, y: 0, z: 0}
-    - key: Sphere
-      value: {x: 0, y: 0, z: 0}
+    - {x: 0, y: 0, z: 0}
+    - {x: 0, y: 0, z: 0}
+    - {x: 0, y: 0, z: 0}
+    - {x: 0, y: 0, z: 0}
     encodingShapeRotations:
-    - key: Cube
-      value: {x: 0, y: 90, z: 0}
-    - key: Diamond2
-      value: {x: -90, y: 90, z: 0}
-    - key: Star1
-      value: {x: -90, y: 90, z: 0}
-    - key: Sphere
-      value: {x: 0, y: 90, z: 0}
+    - {x: 0, y: 90, z: 0}
+    - {x: 0, y: 90, z: 0}
+    - {x: 0, y: 90, z: 0}
+    - {x: 0, y: 90, z: 0}
     shapeScales:
-    - key: Cube
-      value: {x: 0.1, y: 0.1, z: 0.1}
-    - key: Diamond2
-      value: {x: 0.1, y: 0.2, z: 0.1}
-    - key: Star1
-      value: {x: 0.1, y: 0.1, z: 0.1}
-    - key: Sphere
-      value: {x: 0.12, y: 0.12, z: 0.12}
+    - {x: 2.6, y: 2.6, z: 2.6}
+    - {x: 2.6, y: 2.6, z: 2.6}
+    - {x: 2.6, y: 2.6, z: 2.6}
+    - {x: 2.6, y: 2.6, z: 2.6}
     shapeSpacing:
     - 0.1
     - 0.3
     reportingShapeScale: 0.875
     encodingShapePositions:
-    - {x: 0, y: 0, z: -0.3}
-    - {x: 0, y: 0, z: -0.1}
-    - {x: 0, y: 0, z: 0.1}
     - {x: 0, y: 0, z: 0.3}
-    shapePositions: 03000000020000000100000000000000
-    colorPositions: 02000000030000000100000000000000
+    - {x: 0, y: 0, z: 0.1}
+    - {x: 0, y: 0, z: -0.1}
+    - {x: 0, y: 0, z: -0.3}
+    shapePositions: 00000000020000000300000001000000
+    colorPositions: 00000000020000000100000003000000
     reportingShapePositions:
     - {x: -0.3, y: -0.3, z: 0}
     - {x: -0.1, y: -0.3, z: 0}
@@ -81,8 +69,8 @@ MonoBehaviour:
     - {x: -0.1, y: 0.3, z: 0}
     - {x: 0.1, y: 0.3, z: 0}
     - {x: 0.3, y: 0.3, z: 0}
-    shapeRows: 02000000000000000100000003000000
-    colorCols: 03000000020000000100000000000000
+    shapeRows: 03000000000000000200000001000000
+    colorCols: 00000000010000000200000003000000
   fixationSettings:
     fixationSphere: {fileID: 1166504846522755356, guid: a4dbc45cbdf47c747983ebd76fd06e05, type: 3}
     fixationDepth: 2

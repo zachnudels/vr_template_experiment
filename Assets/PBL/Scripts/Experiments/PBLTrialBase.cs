@@ -604,12 +604,12 @@ namespace PBL.Experiments
                 {
                     Debug.Log($"Invalid mesh index {settings.shapeSettings.shapePositions[i]} at i={i}");
                 }
-                
+
                 Color color = settings.shapeSettings.shapeColours[settings.shapeSettings.colorPositions[i]];
                 Mesh mesh = settings.shapeSettings.shapeMeshes[settings.shapeSettings.shapePositions[i]];
                 Vector3 rotation = settings.shapeSettings.encodingShapeRotationMap.TryGetValue(mesh.name, out var rot) ? rot : Vector3.zero;
                 Vector3 scale = settings.shapeSettings.shapeScaleMap.TryGetValue(mesh.name, out var scal) ? scal : Vector3.one;
-                
+
                 OnEncodingItemCreated(i);
 
 
@@ -624,8 +624,10 @@ namespace PBL.Experiments
                     rotation,
                     color,
                     active,
-                    scale 
+                    scale
                );
+               Debug.Log($"Encoding object {i} world bounds size: {stimuli[i].GetComponent<Renderer>().bounds.size}, center: {stimuli[i].GetComponent<Renderer>().bounds.center}");
+
             }
 
             return stimuli;

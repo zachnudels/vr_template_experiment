@@ -17,9 +17,9 @@ namespace PBL.TrialComponents
         public GameObject reportingShape;
         public Mesh[] shapeMeshes;
         public Color[] shapeColours;
-        public List<LabelledVector3> reportingShapeRotations;
-        public List<LabelledVector3> encodingShapeRotations;
-        public List<LabelledVector3> shapeScales;
+        public List<Vector3> reportingShapeRotations;
+        public List<Vector3> encodingShapeRotations;
+        public List<Vector3> shapeScales;
         public float[] shapeSpacing;
         public float reportingShapeScale;
 
@@ -51,9 +51,12 @@ namespace PBL.TrialComponents
                 throw new UnityException("reportingShapes must be square of other values!");
             }
 
-            reportingShapeRotationMap = reportingShapeRotations.ToDictionary(e => e.key, e => e.value);
-            encodingShapeRotationMap = encodingShapeRotations.ToDictionary(e => e.key, e => e.value);
-            shapeScaleMap = shapeScales.ToDictionary(e => e.key, e => e.value);
+            reportingShapeRotationMap = shapeMeshes.Zip(reportingShapeRotations, (m, v) => new { m, v })
+                                                   .ToDictionary(x => x.m.name, x => x.v);
+            encodingShapeRotationMap = shapeMeshes.Zip(encodingShapeRotations, (m, v) => new { m, v })
+                                                   .ToDictionary(x => x.m.name, x => x.v);
+            shapeScaleMap = shapeMeshes.Zip(shapeScales, (m, v) => new { m, v })
+                                                   .ToDictionary(x => x.m.name, x => x.v);
 
         }
 
