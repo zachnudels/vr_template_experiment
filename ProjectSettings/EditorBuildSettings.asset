@@ -9,7 +9,7 @@ EditorBuildSettings:
     path: Assets/ViveSR/Scenes/Eye/EyeSample.unity
     guid: 442215360aef07847ac6dc9a96f5c584
   - enabled: 1
-    path: Assets/VRscene.unity
+    path: Assets/PBL/Scenes/ShiftedExperiment.unity
     guid: 25c3694fa26df3c47894819b0baa533f
   m_configObjects:
     Unity.XR.Oculus.Settings: {fileID: 11400000, guid: 1c4a31d5e71919f4eb5873282793d28f, type: 2}

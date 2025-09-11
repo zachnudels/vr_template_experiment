@@ -534,16 +534,16 @@ namespace PBL.Experiments
 
         protected virtual void SimulateReporting()
         {
-            // foreach (Color color in settings.shapeSettings.shapeColours)
-            // {
-            // List<GameObject> coloredObjs = reportingStimuli.Values.Where(obj =>
-            // {
-            //     Renderer renderer = obj.GetComponent<Renderer>();
-            //     return renderer != null && renderer.material.color == color;
-            // }).ToList();
-            // GameObject randomReportedObj = coloredObjs[UnityEngine.Random.Range(0, coloredObjs.Count)];
-            // ReportShapeSelected(randomReportedObj, false);
-            // }
+            foreach (Color color in settings.shapeSettings.shapeColours)
+            {
+                List<GameObject> coloredObjs = reportingStimuli.Values.Where(obj =>
+                {
+                    Renderer renderer = obj.GetComponent<Renderer>();
+                    return renderer != null && renderer.material.color == color;
+                }).ToList();
+                GameObject randomReportedObj = coloredObjs[UnityEngine.Random.Range(0, coloredObjs.Count)];
+                ReportShapeSelected(randomReportedObj, false);
+            }
         }
 
         IEnumerator Feedback()
@@ -580,7 +580,7 @@ namespace PBL.Experiments
 
         /// Called once per encoding item during instantiation.
         /// Children can override this to capture special codes, adjust data, etc.
-        protected virtual void OnEncodingItemCreated(int i)
+        protected virtual void OnEncodingItemCreated(int i, GameObject[] stimuli)
         {}
 
         protected virtual GameObject[] InstantiateEncodingStimuli(bool active)
@@ -613,9 +613,6 @@ namespace PBL.Experiments
                 Vector3 rotation = settings.shapeSettings.encodingShapeRotationMap.TryGetValue(mesh.name, out var rot) ? rot : Vector3.zero;
                 Vector3 scale = settings.shapeSettings.shapeScaleMap.TryGetValue(mesh.name, out var scal) ? scal : Vector3.one;
 
-                OnEncodingItemCreated(i);
-
-
                 // Change to x rotation since we're sideways now
                 // Debug.Log(faceDirection.ToString() + " " + _turnDirection.ToString());
                 // rotation = new Vector3(rotation.z, rotation.y, rotation.x);
@@ -628,19 +625,24 @@ namespace PBL.Experiments
                     color,
                     active,
                     scale
-               );
-               Debug.Log($"Encoding object {i} world bounds size: {stimuli[i].GetComponent<Renderer>().bounds.size}, center: {stimuli[i].GetComponent<Renderer>().bounds.center}");
+                );
+
+                OnEncodingItemCreated(i, stimuli);
+
+                Debug.Log($"Encoding object {i} world bounds size: {stimuli[i].GetComponent<Renderer>().bounds.size}, center: {stimuli[i].GetComponent<Renderer>().bounds.center}");
 
             }
 
             return stimuli;
         }
 
+        
         protected virtual Color SetColor(int i)
         {
-            return settings.shapeSettings.shapeColours[i];
-
+            Color color = settings.shapeSettings.shapeColours[i];
+            return color;
         }
+        
 
         Dictionary<(int, int), GameObject> InstantiateReportStimuli()
         {
@@ -731,18 +733,63 @@ namespace PBL.Experiments
         protected virtual string ReportCorrectEnc(int i, bool notReported)
         {
             // Check what it is otherwise
-            return "nan";
+            // Single color specific. Only the specific chosen color can be reported on
+            bool canBeReported = settings.shapeSettings.colorPositions[i] == 0;
+            // Debug.Log($"Can be reported :{canBeReported}, code: {settings.shapeSettings.colorPositions[i]}");
+            string correct = "nan";
+            if (canBeReported && notReported)
+            {
+                correct = "0";
+            } else if (canBeReported) {
+                correct = "1";
+            }
+            
+            return correct;
         }
 
+
+       
         protected virtual (string, ResponseShapeMetadata, bool) ReportCorrectColor(int i, ResponseShapeMetadata encodingShape)
-        {//TODO See what it is normally
-            return ("nan", null, false);
+        {
+            // //TODO See what it is normally
+            bool canBeReported = i == 0;
+            // Single color specific. Only the specific chosen color can be reported on 
+            ResponseShapeMetadata reportedShape = _reportedStimuli
+                .FirstOrDefault(item => item.ColorIndex == i && item.RT != -1);
+            if (reportedShape == null && canBeReported)
+            {
+                throw new UnityException($"Could not find reported stimuli with color index {i}");
+            }
+            bool notReported = reportedShape == encodingShape;
+            
+            string correct = "nan";
+            if (canBeReported && notReported)
+            {
+                correct = "0";
+            } else if (canBeReported) {
+                correct = "1";
+            }
+            
+            return (correct, reportedShape, notReported);
         }
 
         protected virtual string ReportCorrectShape(int i, bool notReported)
         {
-            return "nan";
-        }//TODO See what it is normally
+                
+            // Single color specific. Only the specific chosen color can be reported on 
+                
+            bool canBeReported = i == 0;
+            string correct = "nan";
+            if (canBeReported && notReported)
+            {
+                correct = "0";
+            } else if (canBeReported) {
+                correct = "1";
+            }
+            
+            return correct;
+        }
+
 
         void LogResults()
         {

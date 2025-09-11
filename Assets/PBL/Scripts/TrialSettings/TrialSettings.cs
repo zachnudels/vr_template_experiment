@@ -6,7 +6,6 @@ using PBL.Types;
 
 namespace PBL.TrialComponents
 {
-
     [CreateAssetMenu(menuName = "Trials/Trial Settings")]
     public class TrialSettings : ScriptableObject
     {
@@ -27,9 +26,6 @@ namespace PBL.TrialComponents
         // """)
         //  ]
         public List<LabelledInt> codes;
-
-        [Header("Conditions")]
-        public int colorCode;
 
 
         public int expectedResponses;

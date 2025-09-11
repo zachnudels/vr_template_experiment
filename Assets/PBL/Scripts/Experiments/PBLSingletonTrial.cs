@@ -9,13 +9,14 @@ namespace PBL.Experiments
     public class PBLSingletonTrial : PBLTrialBase
     {
         
-        protected int _colorCode;
+        // public int colorCode;
+        [SerializeField] protected int _colorCode;
         protected int _shapeCode;
         
         protected override void ExtractFurtherSettings()
         {
-            _colorCode = settings.colorCode; 
-            Debug.Log(_colorCode);
+            // _colorCode = colorCode; 
+            // Debug.Log(_colorCode);
         }
 
         private List<GameObject> FindColoredReportingStimuli()
@@ -72,7 +73,7 @@ namespace PBL.Experiments
         
         /// Called once per encoding item during instantiation.
         /// Children can override this to capture special codes, adjust data, etc.
-        protected override void OnEncodingItemCreated(int i)
+        protected override void OnEncodingItemCreated(int i, GameObject[] stimuli)
         {
             if (settings.shapeSettings.colorPositions[i] == _colorCode)
             {
