@@ -445,7 +445,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1707266662751158, guid: f676e25d0fcd1ec4fa22af3017316de9, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4879914434278830, guid: f676e25d0fcd1ec4fa22af3017316de9, type: 3}
       propertyPath: m_RootOrder
@@ -1125,7 +1125,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &267511584
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2378,7 +2378,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2331056656837139034, guid: aa9ff2b7bd7354c6792a1d6536c8d833, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: aa9ff2b7bd7354c6792a1d6536c8d833, type: 3}
@@ -4115,7 +4115,7 @@ PrefabInstance:
     - target: {fileID: 3461011991682098533, guid: b3d06a7f7928c4d91b42da4da74be731, type: 3}
       propertyPath: trial
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 1832201332}
     - target: {fileID: 3461011991682098533, guid: b3d06a7f7928c4d91b42da4da74be731, type: 3}
       propertyPath: m_Enabled
       value: 1
@@ -6112,7 +6112,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2778543464225218082, guid: 175b37527b55d4dda944c4f76b1d1b5c, type: 3}
       propertyPath: randomSimulationDebug
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2778543464225218083, guid: 175b37527b55d4dda944c4f76b1d1b5c, type: 3}
       propertyPath: m_Name
