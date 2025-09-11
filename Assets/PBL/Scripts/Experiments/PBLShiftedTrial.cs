@@ -19,6 +19,7 @@ namespace PBL.Experiments
         {
             int shiftI = _uxf.settings.GetInt("cond.Shift");
             _shift = shifts[shiftI];
+            _uxf.result["shift"] = _shift;
             // _colorCode = settings.colorCode; 
             // Debug.Log(_colorCode);
         }

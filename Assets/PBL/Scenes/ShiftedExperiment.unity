@@ -445,7 +445,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1707266662751158, guid: f676e25d0fcd1ec4fa22af3017316de9, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4879914434278830, guid: f676e25d0fcd1ec4fa22af3017316de9, type: 3}
       propertyPath: m_RootOrder
@@ -1129,7 +1129,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &267511584
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1149,7 +1149,7 @@ MonoBehaviour:
   session: {fileID: 680128612}
   cam: {fileID: 147164502}
   rightHandTf: {fileID: 867251868}
-  trial: {fileID: 6709918544949490037}
+  trial: {fileID: 0}
   maxFocusDistance: 100
   focusMask:
     serializedVersion: 2
@@ -2382,7 +2382,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2331056656837139034, guid: aa9ff2b7bd7354c6792a1d6536c8d833, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: aa9ff2b7bd7354c6792a1d6536c8d833, type: 3}
@@ -4055,7 +4055,7 @@ PrefabInstance:
     - target: {fileID: 3461011991241518116, guid: b3d06a7f7928c4d91b42da4da74be731, type: 3}
       propertyPath: trial
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 6709918544949490037}
     - target: {fileID: 3461011991241518116, guid: b3d06a7f7928c4d91b42da4da74be731, type: 3}
       propertyPath: m_Enabled
       value: 1
@@ -5619,6 +5619,18 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2778543464225218082, guid: 175b37527b55d4dda944c4f76b1d1b5c, type: 3}
+      propertyPath: conditions.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2778543464225218082, guid: 175b37527b55d4dda944c4f76b1d1b5c, type: 3}
+      propertyPath: conditions.Array.data[0].key
+      value: Shift
+      objectReference: {fileID: 0}
+    - target: {fileID: 2778543464225218082, guid: 175b37527b55d4dda944c4f76b1d1b5c, type: 3}
+      propertyPath: conditions.Array.data[0].value
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 2778543464225218083, guid: 175b37527b55d4dda944c4f76b1d1b5c, type: 3}
       propertyPath: m_Name
       value: Experiment
@@ -6081,7 +6093,7 @@ PrefabInstance:
     - target: {fileID: 610433892496521804, guid: 959eb7e12e08299478ed8f370c0d262f, type: 3}
       propertyPath: experiment
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 2022464606}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 959eb7e12e08299478ed8f370c0d262f, type: 3}
 --- !u!1001 &6309794100549128074
@@ -6167,11 +6179,11 @@ PrefabInstance:
       objectReference: {fileID: 1818662100}
     - target: {fileID: 3062229373507668283, guid: 5186b3442412cb942b61ee330b89ae77, type: 3}
       propertyPath: shifts.Array.data[0]
-      value: -0.2
+      value: -0.4
       objectReference: {fileID: 0}
     - target: {fileID: 3062229373507668283, guid: 5186b3442412cb942b61ee330b89ae77, type: 3}
       propertyPath: shifts.Array.data[2]
-      value: 0.2
+      value: 0.4
       objectReference: {fileID: 0}
     - target: {fileID: 7068990327647525537, guid: 5186b3442412cb942b61ee330b89ae77, type: 3}
       propertyPath: m_Name
