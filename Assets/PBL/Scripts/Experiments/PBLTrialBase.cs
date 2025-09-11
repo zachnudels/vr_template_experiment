@@ -829,13 +829,32 @@ namespace PBL.Experiments
                  position,
                  Quaternion.Euler(rotation),
                  this.transform);
+            
              gameObject.GetComponent<MeshFilter>().mesh = mesh;
              gameObject.GetComponent<Renderer>().material.color = color;
              //gameObject.transform.localScale = new Vector3(2f, 2f, 2f);
              gameObject.SetActive(active);
+             
              gameObject.transform.localScale = localScale;
+             FitBoxToMesh(gameObject);
              return gameObject;
          }
+         
+         public static void FitBoxToMesh(GameObject go)
+         {
+             var mf  = go.GetComponent<MeshFilter>();
+             var boxes = go.GetComponentsInChildren<BoxCollider>(true);
+             foreach (var box in boxes)
+             {
+                 if (!mf || !box || mf.sharedMesh == null) return;
+
+                 // Mesh bounds are in the mesh's LOCAL space, perfect for the collider's local size/center
+                 var mb = mf.sharedMesh.bounds;
+                 box.center = mb.center;
+                 box.size = mb.size;
+             }
+         }
+
 
          GameObject InstantiateObject(GameObject prefab,
              Vector3 position,
