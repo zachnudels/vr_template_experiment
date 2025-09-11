@@ -28,6 +28,9 @@ namespace PBL.TrialComponents
         //  ]
         public List<LabelledInt> codes;
 
+        [Header("Conditions")]
+        public int colorCode;
+
 
         public int expectedResponses;
 

@@ -1145,7 +1145,7 @@ MonoBehaviour:
   session: {fileID: 680128612}
   cam: {fileID: 147164502}
   rightHandTf: {fileID: 867251868}
-  trial: {fileID: 0}
+  trial: {fileID: 1832201332}
   maxFocusDistance: 100
   focusMask:
     serializedVersion: 2
@@ -6107,7 +6107,23 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 2778543464225218082, guid: 175b37527b55d4dda944c4f76b1d1b5c, type: 3}
+      propertyPath: ITI
+      value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 2778543464225218082, guid: 175b37527b55d4dda944c4f76b1d1b5c, type: 3}
       propertyPath: debug
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2778543464225218082, guid: 175b37527b55d4dda944c4f76b1d1b5c, type: 3}
+      propertyPath: turnTime
+      value: 2.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 2778543464225218082, guid: 175b37527b55d4dda944c4f76b1d1b5c, type: 3}
+      propertyPath: feedbackTime
+      value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 2778543464225218082, guid: 175b37527b55d4dda944c4f76b1d1b5c, type: 3}
+      propertyPath: conditions.Array.size
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2778543464225218082, guid: 175b37527b55d4dda944c4f76b1d1b5c, type: 3}
@@ -6116,7 +6132,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2778543464225218082, guid: 175b37527b55d4dda944c4f76b1d1b5c, type: 3}
       propertyPath: conditions.Array.data[0].value
-      value: 3
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2778543464225218083, guid: 175b37527b55d4dda944c4f76b1d1b5c, type: 3}
       propertyPath: m_Name

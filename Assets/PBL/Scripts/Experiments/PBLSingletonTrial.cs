@@ -12,19 +12,42 @@ namespace PBL.Experiments
         protected int _colorCode;
         protected int _shapeCode;
         
-        protected override void ExtractFurtherSettings(Trial _uxf)
+        protected override void ExtractFurtherSettings()
         {
-            _colorCode = _uxf.settings.GetInt("cond.colorCode");
+            _colorCode = settings.colorCode; 
+            Debug.Log(_colorCode);
         }
 
         private List<GameObject> FindColoredReportingStimuli()
         {
             Color color = settings.shapeSettings.shapeColours[_colorCode];
-            List<GameObject> coloredObjs = reportingStimuli.Values.Where(obj =>
+            var coloredObjs = new List<GameObject>();
+            foreach (var stimulus in reportingStimuli.Values)
             {
-                Renderer renderer = obj.GetComponent<Renderer>();
-                return renderer != null && renderer.material.color == color;
-            }).ToList();
+                if (!stimulus)
+                {
+                    continue;
+                }
+                if (!stimulus.TryGetComponent(out Renderer rend))
+                {
+                    continue;
+                }
+                var mat = rend.sharedMaterial;
+                if (!mat)
+                {
+                    continue;
+                }
+                if (mat.color == color)
+                {
+                    coloredObjs.Add(stimulus);
+                }
+
+            }
+            // List<GameObject> coloredObjs = reportingStimuli.Values.Where(obj =>
+            // {
+            //     Renderer renderer = obj.GetComponent<Renderer>();
+            //     return renderer != null && renderer.material.color == color;
+            // }).ToList();
 
             return coloredObjs;
         }

@@ -148,12 +148,14 @@ namespace PBL.Experiments
             _uxf.result["HeightOffset"] = eyes.position.y;
             _uxf.result["Facing"] = faceDirection.ToString().ToLower();
 
+            ExtractFurtherSettings();
+
             settings.fixationSettings.turnTime = _uxf.settings.GetFloat("turnTime");
             fixationRotator = new FixationRotator(settings.fixationSettings.turnTime);
 
         }
 
-        protected virtual void ExtractFurtherSettings(Trial _uxf)
+        protected virtual void ExtractFurtherSettings()
         {}
 
         private void SetHand()
@@ -429,6 +431,7 @@ namespace PBL.Experiments
                 
                 if (!triggerSent && elapsed >= halfwayTime)
                 {
+                    
                     // Debug.Log(fixationRotator.LogString());
                     setTrigger(codeMap["halfway_turn"]);
                     triggerSent = true;
@@ -514,10 +517,11 @@ namespace PBL.Experiments
 
             float endTime = Time.time;
 
+            yield return null;
+            
+            
             ReportHook();
 
-            yield return null;
-            yield return null;
 
             _fixationSphere.SetActive(true);
 
