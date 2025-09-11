@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: cba9d9c7155743e986e6e6e026736244, type: 3}
-  m_Name: SingletonTrialSettings
+  m_Name: CubeyShapesSngletonTrialSettings
   m_EditorClassIdentifier: 
   shapeSettings:
     count: 4
@@ -28,23 +28,23 @@ MonoBehaviour:
     - {r: 1, g: 0, b: 1, a: 0}
     reportingShapeRotations:
     - {x: 0, y: 0, z: 0}
-    - {x: -90, y: 0, z: 180}
-    - {x: -90, y: 0, z: 0}
+    - {x: 0, y: 0, z: 0}
+    - {x: 0, y: 0, z: 0}
     - {x: 0, y: 0, z: 0}
     encodingShapeRotations:
-    - {x: 0, y: 90, z: 0}
-    - {x: -90, y: 90, z: 0}
-    - {x: -90, y: 90, z: 0}
-    - {x: 0, y: 90, z: 0}
+    - {x: 0, y: 0, z: 0}
+    - {x: 0, y: 0, z: 0}
+    - {x: 0, y: 0, z: 0}
+    - {x: 0, y: 0, z: 0}
     shapeScales:
-    - {x: 0.1, y: 0.1, z: 0.1}
-    - {x: 0.1, y: 0.2, z: 0.1}
-    - {x: 0.1, y: 0.1, z: 0.1}
-    - {x: 0.12, y: 0.12, z: 0.12}
+    - {x: 2.6, y: 2.6, z: 2.6}
+    - {x: 2.6, y: 2.6, z: 2.6}
+    - {x: 2.6, y: 2.6, z: 2.6}
+    - {x: 2.6, y: 2.6, z: 2.6}
     shapeSpacing:
     - 0.1
     - 0.3
-    reportingShapeScale: 0.875
+    reportingShapeScale: 0.95
     encodingShapePositions:
     - {x: 0, y: 0, z: 0.3}
     - {x: 0, y: 0, z: 0.1}

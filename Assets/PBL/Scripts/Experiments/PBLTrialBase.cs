@@ -508,6 +508,8 @@ namespace PBL.Experiments
                 SimulateReporting();
             }
 
+            ReportHook();
+
             if (this.reportingStimuli == null)
             {
                 yield break;
@@ -520,9 +522,6 @@ namespace PBL.Experiments
             yield return null;
             
             
-            ReportHook();
-
-
             _fixationSphere.SetActive(true);
 
             _uxf.result["Score"] = _n_correct;

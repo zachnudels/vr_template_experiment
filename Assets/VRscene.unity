@@ -6046,6 +6046,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 680128612}
     - target: {fileID: 1806285732881088717, guid: c8922634eb2154a9cab26a6ddc6604d7, type: 3}
+      propertyPath: settings
+      value: 
+      objectReference: {fileID: 11400000, guid: 57e6ab7cc92dc1b4ca7d26bc06e931a7, type: 2}
+    - target: {fileID: 1806285732881088717, guid: c8922634eb2154a9cab26a6ddc6604d7, type: 3}
       propertyPath: textControllerWall
       value: 
       objectReference: {fileID: 1818662100}

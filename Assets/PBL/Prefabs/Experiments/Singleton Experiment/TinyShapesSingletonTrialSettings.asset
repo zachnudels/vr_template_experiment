@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: cba9d9c7155743e986e6e6e026736244, type: 3}
-  m_Name: SingletonTrialSettings
+  m_Name: TinyShapesSingletonTrialSettings
   m_EditorClassIdentifier: 
   shapeSettings:
     count: 4
@@ -37,21 +37,21 @@ MonoBehaviour:
     - {x: -90, y: 90, z: 0}
     - {x: 0, y: 90, z: 0}
     shapeScales:
-    - {x: 0.1, y: 0.1, z: 0.1}
-    - {x: 0.1, y: 0.2, z: 0.1}
-    - {x: 0.1, y: 0.1, z: 0.1}
-    - {x: 0.12, y: 0.12, z: 0.12}
+    - {x: 0.025, y: 0.025, z: 0.025}
+    - {x: 0.025, y: 0.05, z: 0.025}
+    - {x: 0.025, y: 0.025, z: 0.025}
+    - {x: 0.03, y: 0.03, z: 0.03}
     shapeSpacing:
     - 0.1
     - 0.3
-    reportingShapeScale: 0.875
+    reportingShapeScale: 3.5
     encodingShapePositions:
     - {x: 0, y: 0, z: 0.3}
     - {x: 0, y: 0, z: 0.1}
     - {x: 0, y: 0, z: -0.1}
     - {x: 0, y: 0, z: -0.3}
-    shapePositions: 02000000000000000100000003000000
-    colorPositions: 03000000000000000100000002000000
+    shapePositions: 01000000020000000300000000000000
+    colorPositions: 01000000020000000000000003000000
     reportingShapePositions:
     - {x: -0.3, y: -0.3, z: 0}
     - {x: -0.1, y: -0.3, z: 0}
@@ -69,8 +69,8 @@ MonoBehaviour:
     - {x: -0.1, y: 0.3, z: 0}
     - {x: 0.1, y: 0.3, z: 0}
     - {x: 0.3, y: 0.3, z: 0}
-    shapeRows: 00000000020000000100000003000000
-    colorCols: 00000000010000000300000002000000
+    shapeRows: 03000000020000000100000000000000
+    colorCols: 01000000000000000300000002000000
   fixationSettings:
     fixationSphere: {fileID: 1166504846522755356, guid: a4dbc45cbdf47c747983ebd76fd06e05, type: 3}
     fixationDepth: 2

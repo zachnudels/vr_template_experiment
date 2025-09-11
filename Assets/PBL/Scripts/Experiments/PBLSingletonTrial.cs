@@ -21,41 +21,43 @@ namespace PBL.Experiments
         private List<GameObject> FindColoredReportingStimuli()
         {
             Color color = settings.shapeSettings.shapeColours[_colorCode];
-            var coloredObjs = new List<GameObject>();
-            foreach (var stimulus in reportingStimuli.Values)
-            {
-                if (!stimulus)
-                {
-                    continue;
-                }
-                if (!stimulus.TryGetComponent(out Renderer rend))
-                {
-                    continue;
-                }
-                var mat = rend.sharedMaterial;
-                if (!mat)
-                {
-                    continue;
-                }
-                if (mat.color == color)
-                {
-                    coloredObjs.Add(stimulus);
-                }
-
-            }
-            // List<GameObject> coloredObjs = reportingStimuli.Values.Where(obj =>
+            // var coloredObjs = new List<GameObject>();
+            // foreach (var stimulus in reportingStimuli.Values)
             // {
-            //     Renderer renderer = obj.GetComponent<Renderer>();
-            //     return renderer != null && renderer.material.color == color;
-            // }).ToList();
+            //     if (!stimulus)
+            //     {
+            //         continue;
+            //     }
+            //     if (!stimulus.TryGetComponent(out Renderer rend))
+            //     {
+            //         continue;
+            //     }
+            //     var mat = rend.sharedMaterial;
+            //     if (!mat)
+            //     {
+            //         continue;
+            //     }
+            //     if (mat.color == color)
+            //     {
+            //         coloredObjs.Add(stimulus);
+            //     }
+
+            // }
+            List<GameObject> coloredObjs = reportingStimuli.Values.Where(obj => obj).Where(obj =>
+            {
+                Renderer renderer = obj.GetComponent<Renderer>();
+                return renderer != null && renderer.material.color == color;
+            }).ToList();
 
             return coloredObjs;
         }
         
         protected override void ReportHook()
         {
+            Debug.Log("deleting objs");
             foreach (GameObject stimulus in FindColoredReportingStimuli())
             {
+                Debug.Log("Reporting on stim");
                 ReportShapeSelected(stimulus, true); // even though we cannot select these, report on them but set to ignore
             }
         }
