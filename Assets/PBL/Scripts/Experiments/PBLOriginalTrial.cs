@@ -33,41 +33,41 @@ namespace PBL.Experiments
         {
             // Check what it is otherwise
             // Single color specific. Only the specific chosen color can be reported on
-            // bool canBeReported = settings.shapeSettings.colorPositions[i] == _colorCode;
-            // // Debug.Log($"Can be reported :{canBeReported}, code: {settings.shapeSettings.colorPositions[i]}");
-            // string correct = "nan";
-            // if (canBeReported && notReported)
-            // {
-            //     correct = "0";
-            // } else if (canBeReported) {
-            //     correct = "1";
-            // }
-            //
-            // return correct;
+            bool canBeReported = settings.shapeSettings.colorPositions[i] == 0;
+            // Debug.Log($"Can be reported :{canBeReported}, code: {settings.shapeSettings.colorPositions[i]}");
+            string correct = "nan";
+            if (canBeReported && notReported)
+            {
+                correct = "0";
+            } else if (canBeReported) {
+                correct = "1";
+            }
+            
+            return correct;
         }
 
         protected override (string, ResponseShapeMetadata, bool) ReportCorrectColor(int i, ResponseShapeMetadata encodingShape)
         {
             // //TODO See what it is normally
-            // bool canBeReported = i == _colorCode;
-            // // Single color specific. Only the specific chosen color can be reported on 
-            // ResponseShapeMetadata reportedShape = _reportedStimuli
-            //     .FirstOrDefault(item => item.ColorIndex == i && item.RT != -1);
-            // if (reportedShape == null && canBeReported)
-            // {
-            //     throw new UnityException($"Could not find reported stimuli with color index {i}");
-            // }
-            // bool notReported = reportedShape == encodingShape;
-            //
-            // string correct = "nan";
-            // if (canBeReported && notReported)
-            // {
-            //     correct = "0";
-            // } else if (canBeReported) {
-            //     correct = "1";
-            // }
-            //
-            // return (correct, reportedShape, notReported);
+            bool canBeReported = i == 0;
+            // Single color specific. Only the specific chosen color can be reported on 
+            ResponseShapeMetadata reportedShape = _reportedStimuli
+                .FirstOrDefault(item => item.ColorIndex == i && item.RT != -1);
+            if (reportedShape == null && canBeReported)
+            {
+                throw new UnityException($"Could not find reported stimuli with color index {i}");
+            }
+            bool notReported = reportedShape == encodingShape;
+            
+            string correct = "nan";
+            if (canBeReported && notReported)
+            {
+                correct = "0";
+            } else if (canBeReported) {
+                correct = "1";
+            }
+            
+            return (correct, reportedShape, notReported);
         }
 
         protected override string ReportCorrectShape(int i, bool notReported)
@@ -75,16 +75,16 @@ namespace PBL.Experiments
                 
             // Single color specific. Only the specific chosen color can be reported on 
                 
-            // bool canBeReported = i == _shapeCode;
-            // string correct = "nan";
-            // if (canBeReported && notReported)
-            // {
-            //     correct = "0";
-            // } else if (canBeReported) {
-            //     correct = "1";
-            // }
-            //
-            // return correct;
+            bool canBeReported = i == 0;
+            string correct = "nan";
+            if (canBeReported && notReported)
+            {
+                correct = "0";
+            } else if (canBeReported) {
+                correct = "1";
+            }
+            
+            return correct;
         }
     }
 }

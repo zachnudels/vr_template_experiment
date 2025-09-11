@@ -150,7 +150,7 @@ namespace PBL
             Debug.Log($"Trials per block: {trialsPerBlock}");
 
             List<Dictionary<string, int>> conditionCombos = CartesianProduct(conditions);
-            SaveConditions("/Users/zach/2025_RA/freek/data/test/conditionCombos.csv", conditionCombos);
+            // SaveConditions("/Users/zach/2025_RA/freek/data/test/conditionCombos.csv", conditionCombos);
             List<Dictionary<string, int>> blockConditions = ExpandToTrials(conditionCombos, trialsPerBlock);
 
             
@@ -209,7 +209,7 @@ namespace PBL
             }
 
             // SaveConditions("C:\\Users\\ZachPBL\\Desktop\\shapePoses.csv", blockConditions);
-            SaveConditions("/Users/zach/2025_RA/freek/data/test/conditionCombos.csv", blockConditions);
+            // SaveConditions("/Users/zach/2025_RA/freek/data/test/conditionCombos.csv", blockConditions);
             
         }
         
