@@ -17,7 +17,7 @@ MonoBehaviour:
     encodingShape: {fileID: 8165808477015924126, guid: 551e8c0cb92f89a4e906fc16ae77c09d, type: 3}
     reportingShape: {fileID: 2349023219368754960, guid: 5dc6d6b33d657487abafb9a9a34220c1, type: 3}
     shapeMeshes:
-    - {fileID: 587366007896238738, guid: bda67aa1f38984f2787c66a55fede664, type: 3}
+    - {fileID: 4300000, guid: 3244a9e53131d4d2c88f07faef7e6214, type: 2}
     - {fileID: 587366007896238738, guid: c3a8239c7c4be446a96a9e059dd54638, type: 3}
     - {fileID: 587366007896238738, guid: 62bb7e145983e42cf97aaad9a0e73a69, type: 3}
     - {fileID: 587366007896238738, guid: 21c4d7bbe46dc4716868102dbdd9f9dc, type: 3}
