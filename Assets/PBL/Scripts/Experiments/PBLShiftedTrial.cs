@@ -3,6 +3,7 @@ using System.Linq;
 using PBL.DataHandler;
 using UnityEngine;
 using UXF;
+using PBL.Types;
 
 namespace PBL.Experiments
 {
@@ -13,28 +14,29 @@ namespace PBL.Experiments
 
         [SerializeField] protected List<float> shifts;
 
-        private float _shift;
+        private float _shiftVal;
 
         protected override void ExtractFurtherSettings()
         {
             int shiftI = _uxf.settings.GetInt("cond.Shift");
-            _shift = shifts[shiftI];
-            _uxf.result["shift"] = _shift;
-            // _colorCode = settings.colorCode; 
-            // Debug.Log(_colorCode);
+            _shiftVal = shifts[shiftI];
+            string logShift = "0";
+
+            // If we are facing the front, negative z is further from us, so -shift is on far side, +ve shift is on close 
+            // Otherwise, opposite
+            if (faceDirection == FaceDirection.Front)
+            {
+                logShift = _shiftVal < 0 ? "2" : _shiftVal > 0 ? "-2" : "0";
+            }
+            else
+            {
+                logShift = _shiftVal < 0 ? "-2" : +_shiftVal > 0 ? "2": "0";
+            }
+
+            _uxf.result["shift"] = _shiftVal;
+            _shift = new Vector3(0f, 0f, _shiftVal);
+            // TODO: Do the encoding in the direction of motion
         }
-
-
-        /// Called once per encoding item during instantiation.
-        /// Children can override this to capture special codes, adjust data, etc.
-        protected override void OnEncodingItemCreated(int i, GameObject[] stimuli)
-        {
-            GameObject gameObject = stimuli[i];
-            Vector3 position = gameObject.transform.position;
-            position.z += _shift;
-            gameObject.transform.position = position;
-        }
-
 
     }
 }
