@@ -440,8 +440,8 @@ namespace PBL.Experiments
                     setTrigger(codeMap["halfway_turn"]);
                     triggerSent = true;
                     StartCoroutine(ShowEncodingShapesForOneFrame(stimuli));
-                    pause = true;
-                    yield return new WaitUntil(() => !pause);
+                    // pause = true;
+                    // yield return new WaitUntil(() => !pause);
                 }
 
                 yield return null;
@@ -472,8 +472,8 @@ namespace PBL.Experiments
 
                 gameObject.SetActive(true);
             }
-            pause = true;
-            yield return new WaitUntil(() => !pause);
+            // pause = true;
+            // yield return new WaitUntil(() => !pause);
 
             yield return new WaitForEndOfFrame();
             
