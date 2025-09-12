@@ -17,10 +17,10 @@ MonoBehaviour:
     encodingShape: {fileID: 8165808477015924126, guid: 551e8c0cb92f89a4e906fc16ae77c09d, type: 3}
     reportingShape: {fileID: 2349023219368754960, guid: 5dc6d6b33d657487abafb9a9a34220c1, type: 3}
     shapeMeshes:
-    - {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
-    - {fileID: 4300000, guid: f220f0129a851fb47b7c6f7520c3af84, type: 2}
-    - {fileID: 4300000, guid: 872dd844c7b9bb643944e608d8796697, type: 2}
-    - {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
+    - {fileID: 4300000, guid: c5153931308e1e3448b210f4cc21044a, type: 2}
+    - {fileID: 4300000, guid: 974c14a186c8aa745a5f62647efb191b, type: 2}
+    - {fileID: 4300000, guid: 8bfc91be0bf00e145abc725b64de99b6, type: 2}
+    - {fileID: 4300000, guid: 394a04f041251a347a6037b8d377a5ed, type: 2}
     shapeColours:
     - {r: 0, g: 1, b: 1, a: 0}
     - {r: 0, g: 1, b: 0, a: 0}
@@ -50,8 +50,8 @@ MonoBehaviour:
     - {x: 0, y: 0, z: 0.1}
     - {x: 0, y: 0, z: -0.1}
     - {x: 0, y: 0, z: -0.3}
-    shapePositions: 02000000000000000100000003000000
-    colorPositions: 03000000000000000100000002000000
+    shapePositions: 01000000020000000300000000000000
+    colorPositions: 03000000010000000000000002000000
     reportingShapePositions:
     - {x: -0.3, y: -0.3, z: 0}
     - {x: -0.1, y: -0.3, z: 0}
@@ -69,8 +69,8 @@ MonoBehaviour:
     - {x: -0.1, y: 0.3, z: 0}
     - {x: 0.1, y: 0.3, z: 0}
     - {x: 0.3, y: 0.3, z: 0}
-    shapeRows: 00000000020000000100000003000000
-    colorCols: 00000000010000000300000002000000
+    shapeRows: 01000000000000000300000002000000
+    colorCols: 01000000000000000200000003000000
   fixationSettings:
     fixationSphere: {fileID: 1166504846522755356, guid: a4dbc45cbdf47c747983ebd76fd06e05, type: 3}
     fixationDepth: 2
@@ -95,5 +95,4 @@ MonoBehaviour:
     value: 600
   - key: end_answer
     value: 1000
-  colorCode: 0
   expectedResponses: 1

@@ -26,14 +26,15 @@ namespace PBL.Experiments
             // Otherwise, opposite
             if (faceDirection == FaceDirection.Front)
             {
-                logShift = _shiftVal < 0 ? "2" : _shiftVal > 0 ? "-2" : "0";
+                logShift = _shiftVal < 0 ? "far" : _shiftVal > 0 ? "close" : "0";
             }
             else
             {
-                logShift = _shiftVal < 0 ? "-2" : +_shiftVal > 0 ? "2": "0";
+                logShift = _shiftVal < 0 ? "close" : +_shiftVal > 0 ? "far": "0";
             }
+            Debug.Log(logShift);
 
-            _uxf.result["shift"] = _shiftVal;
+            _uxf.result["shift"] = logShift;
             _shift = new Vector3(0f, 0f, _shiftVal);
             // TODO: Do the encoding in the direction of motion
         }
