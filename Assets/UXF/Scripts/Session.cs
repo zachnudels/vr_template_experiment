@@ -693,7 +693,7 @@ namespace UXF
             }
         }
 
-        void SaveResults()
+        public void SaveResults()
         {
             // generate list of all headers possible
             // hashset keeps unique set of keys

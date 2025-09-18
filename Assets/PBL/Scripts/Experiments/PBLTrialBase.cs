@@ -297,8 +297,10 @@ namespace PBL.Experiments
 
             if (_uxf == session.CurrentBlock.lastTrial)
             {
+                session.SaveResults();
                 yield return RunStage(Break);
             }
+            
 
             session.CurrentTrial.End();
             session.NextTrial.Begin();
