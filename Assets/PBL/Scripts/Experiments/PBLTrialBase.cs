@@ -135,27 +135,7 @@ namespace PBL.Experiments
             _randomSimulationDebug = _uxf.settings.GetBool("randomSimulationDebug");
             simulating = _uxf.settings.GetBool("simulating");
 
-
-            settings.shapeSettings.shapePositions = _uxf.settings.GetIntList("shapePositions");
-            settings.shapeSettings.colorPositions = _uxf.settings.GetIntList("colorPositions");
-            settings.shapeSettings.colorCols = _uxf.settings.GetIntList("colorCols");
-            settings.shapeSettings.shapeRows = _uxf.settings.GetIntList("shapeRows");
-            
-            _turnDirection = (TurnDirection)_uxf.settings.GetObject("turnDirection");
-
-            // TODO: write results 
-
-            // _uxf.result["ConditionCode"] = _turnDirection == TurnDirection.Left ? 1 : 2;
-            _uxf.result["ConditionTurn"] = _turnDirection.ToString().ToLower();
-            _uxf.result["HeightOffset"] = eyes.position.y;
-            _uxf.result["Facing"] = faceDirection.ToString().ToLower();
-
-            _shift = Vector3.zero;
-
             ExtractFurtherSettings();
-
-            settings.fixationSettings.turnTime = _uxf.settings.GetFloat("turnTime");
-            fixationRotator = new FixationRotator(settings.fixationSettings.turnTime);
 
         }
 
@@ -188,48 +168,25 @@ namespace PBL.Experiments
         private void InitializeTrial()
         {
 
-
-            //topDone = false;
-            //bottomDone = false;
-
             Debug.Log("Initialize Trial");
             
-            //actionsDone = false;
-            //showingTarget = false;
             pause = false;
             firstTrial = false;
             sessionStart = false;
 
-            // Change which way we are facing
-            faceDirection = _uxf.number % 2 == 0 ? FaceDirection.Back : FaceDirection.Front;
-            _start_face_direction = faceDirection;
+            // _reportedStimuli = new List<ResponseShapeMetadata>();
 
-            // If we are facing the front, negative z is further from us, so go from biggest to smallest 
-            // Otherwise, go from smallest (negative) to biggest
-            if (faceDirection == FaceDirection.Front)
-            {
-                Array.Sort(settings.shapeSettings.encodingShapePositions, (a, b) => b.z.CompareTo(a.z));
-            }
-            else
-            {
-                Array.Sort(settings.shapeSettings.encodingShapePositions, (a, b) => a.z.CompareTo(b.z));
-            }
+            // reportedIndex = 1;
 
-            textControllerWall.ChangeWall(faceDirection);
-
-            _reportedStimuli = new List<ResponseShapeMetadata>();
-
-            reportedIndex = 1;
-
-            _n_correct = 0;
+            // _n_correct = 0;
         }
 
 
         public void setTrigger(int code = 0)
         {
-            int turnCondition = (_turnDirection == TurnDirection.Left) ? 0 : 1;
-            int faceCondition = (_start_face_direction == FaceDirection.Front) ? 0 : 1;
-            code += faceCondition * 2 + turnCondition + 1;
+            // int turnCondition = (_turnDirection == TurnDirection.Left) ? 0 : 1;
+            // int faceCondition = (_start_face_direction == FaceDirection.Front) ? 0 : 1;
+            // code += faceCondition * 2 + turnCondition + 1;
             Debug.Log("Trigger: " + code);
             session.settings.SetValue("triggerCode", code);
             // front left  = 1
@@ -282,7 +239,7 @@ namespace PBL.Experiments
             
             yield return RunStage(WaitToStart);  // preparation + jitter 
             
-            yield return RunStage(Turn);  // Turn  
+            yield return RunStage(Presentation);  // present stimuli  
 
             yield return RunStage(Report);  // answer
 
@@ -414,78 +371,83 @@ namespace PBL.Experiments
             yield return new WaitForSeconds(session.CurrentTrial.settings.GetFloat("ITI"));
         }
 
-        IEnumerator Turn()
+        IEnumerator Presentation()
         {
-            fixationRotator.Reset(_turnDirection);
-
-            float elapsed = 0f;
-            bool triggerSent = false;
             
-            float halfwayTime = fixationRotator.TurnTime / 2f;
-            
-            setTrigger(codeMap["turn"]);
-
-            GameObject[] stimuli = InstantiateEncodingStimuli(false);
-
-            while (!fixationRotator.isFinished())
-            {
-                float dt = Time.deltaTime;
-                elapsed += dt;
-                fixationRotator.Step(dt); 
-                _fixationSphere.transform.position = fixationRotator.GetCurrentPosition(
-                    settings.fixationSettings.FixationDepth, _fixationSphere.transform.position, faceDirection);
-
-                if (!triggerSent && elapsed >= halfwayTime)
-                {
-
-                    // Debug.Log(fixationRotator.LogString());
-                    setTrigger(codeMap["halfway_turn"]);
-                    triggerSent = true;
-                    StartCoroutine(ShowEncodingShapesForOneFrame(stimuli));
-                    // pause = true;
-                    // yield return new WaitUntil(() => !pause);
-                }
-
-                yield return null;
-            }
-
-            foreach (GameObject gameObject in stimuli)
-            {
-                Destroy(gameObject);
-            }
-            
-            faceDirection = textControllerWall.ChangeWall(faceDirection, true);
         }
 
-        IEnumerator ShowEncodingShapesForOneFrame(GameObject[] stimuli)
-        {
-            // Debug.Log($"{faceDirection}, {_turnDirection}");
-            // Debug.Log(settings.fixationSettings.fixationSphere.transform.position);
-            for (int i = 0; i != stimuli.Length; ++i)
-            {
-                // Debug.Log($"{faceDirection}, {_turnDirection}");
-                // Debug.Log(settings.shapeSettings.encodingShapePositions[i]);
+        // IEnumerator Turn()
+        // {
+        //     fixationRotator.Reset(_turnDirection);
 
-                Vector3 position = settings.shapeSettings.encodingShapePositions[i]
-                                   + _fixationSphere.transform.position + _shift;
-                GameObject gameObject = stimuli[i];
-                gameObject.transform.position = position;
-                // Debug.Log(position);
+        //     float elapsed = 0f;
+        //     bool triggerSent = false;
 
-                gameObject.SetActive(true);
-            }
-            // pause = true;
-            // yield return new WaitUntil(() => !pause);
+        //     float halfwayTime = fixationRotator.TurnTime / 2f;
 
-            yield return new WaitForEndOfFrame();
+        //     setTrigger(codeMap["turn"]);
+
+        //     GameObject[] stimuli = InstantiateEncodingStimuli(false);
+
+        //     while (!fixationRotator.isFinished())
+        //     {
+        //         float dt = Time.deltaTime;
+        //         elapsed += dt;
+        //         fixationRotator.Step(dt); 
+        //         _fixationSphere.transform.position = fixationRotator.GetCurrentPosition(
+        //             settings.fixationSettings.FixationDepth, _fixationSphere.transform.position, faceDirection);
+
+        //         if (!triggerSent && elapsed >= halfwayTime)
+        //         {
+
+        //             // Debug.Log(fixationRotator.LogString());
+        //             setTrigger(codeMap["halfway_turn"]);
+        //             triggerSent = true;
+        //             StartCoroutine(ShowEncodingShapesForOneFrame(stimuli));
+        //             // pause = true;
+        //             // yield return new WaitUntil(() => !pause);
+        //         }
+
+        //         yield return null;
+        //     }
+
+        //     foreach (GameObject gameObject in stimuli)
+        //     {
+        //         Destroy(gameObject);
+        //     }
+
+        //     faceDirection = textControllerWall.ChangeWall(faceDirection, true);
+        // }
+
+        // IEnumerator ShowEncodingShapesForOneFrame(GameObject[] stimuli)
+        // {
+        //     // Debug.Log($"{faceDirection}, {_turnDirection}");
+        //     // Debug.Log(settings.fixationSettings.fixationSphere.transform.position);
+        //     for (int i = 0; i != stimuli.Length; ++i)
+        //     {
+        //         // Debug.Log($"{faceDirection}, {_turnDirection}");
+        //         // Debug.Log(settings.shapeSettings.encodingShapePositions[i]);
+
+        //         Vector3 position = settings.shapeSettings.encodingShapePositions[i]
+        //                            + _fixationSphere.transform.position + _shift;
+        //         GameObject gameObject = stimuli[i];
+        //         gameObject.transform.position = position;
+        //         // Debug.Log(position);
+
+        //         gameObject.SetActive(true);
+        //     }
+        //     // pause = true;
+        //     // yield return new WaitUntil(() => !pause);
+
+        //     yield return new WaitForEndOfFrame();
             
-            foreach (GameObject gameObject in stimuli)
-            {
-                gameObject.SetActive(false);
-            }
-            setTrigger(codeMap["remove_shapes"]);
+        //     foreach (GameObject gameObject in stimuli)
+        //     {
+        //         gameObject.SetActive(false);
+        //     }
+        //     setTrigger(codeMap["remove_shapes"]);
 
-        }
+        // }
 
 
         IEnumerator Report()
@@ -498,7 +460,7 @@ namespace PBL.Experiments
 
             _fixationSphere.SetActive(false);
 
-            this.reportingStimuli = InstantiateReportStimuli();
+            // this.reportingStimuli = InstantiateReportStimuli();
 
 
 
@@ -511,14 +473,15 @@ namespace PBL.Experiments
 
             if (!_randomSimulationDebug)
             {
-                yield return new WaitUntil(() => reportedIndex == settings.expectedResponses + 1);
+                // yield return new WaitUntil(() => reportedIndex == settings.expectedResponses + 1);
+                // Add logic to determine when the report is over 
             }
             else
             {
-                SimulateReporting();
+                SimulateReporting(); // If you want to simulate, add logic of selecting or reporting or whatever
             }
 
-            ReportHook();
+            ReportHook();  // If you want to create experiment variants, add new logic to this method
 
             if (this.reportingStimuli == null)
             {
@@ -544,25 +507,26 @@ namespace PBL.Experiments
 
         protected virtual void SimulateReporting()
         {
-            foreach (Color color in settings.shapeSettings.shapeColours)
-            {
-                List<GameObject> coloredObjs = reportingStimuli.Values.Where(obj =>
-                {
-                    Renderer renderer = obj.GetComponent<Renderer>();
-                    return renderer != null && renderer.material.color == color;
-                }).ToList();
-                GameObject randomReportedObj = coloredObjs[UnityEngine.Random.Range(0, coloredObjs.Count)];
-                ReportShapeSelected(randomReportedObj, false);
-            }
+            // foreach (Color color in settings.shapeSettings.shapeColours)
+            // {
+            //     List<GameObject> coloredObjs = reportingStimuli.Values.Where(obj =>
+            //     {
+            //         Renderer renderer = obj.GetComponent<Renderer>();
+            //         return renderer != null && renderer.material.color == color;
+            //     }).ToList();
+            //     GameObject randomReportedObj = coloredObjs[UnityEngine.Random.Range(0, coloredObjs.Count)];
+            //     ReportShapeSelected(randomReportedObj, false);
+            // }
         }
 
         IEnumerator Feedback()
         {
 
-            settings.fixationSettings.textMeshPro.text = _n_correct.ToString();
+            // This presents number correct on top of fixation dot but could also display with wall.Write()
+            settings.fixationSettings.textMeshPro.text = _n_correct.ToString(); 
 
-            float feedbackRotation = (faceDirection == FaceDirection.Front) ? 0f : 180f;
-            settings.fixationSettings.textMeshPro.transform.rotation = Quaternion.Euler(new Vector3(0f, feedbackRotation, 0f));
+            // float feedbackRotation = (faceDirection == FaceDirection.Front) ? 0f : 180f;
+            // settings.fixationSettings.textMeshPro.transform.rotation = Quaternion.Euler(new Vector3(0f, feedbackRotation, 0f));
 
             settings.fixationSettings.textMeshPro.enabled = true;
 
@@ -590,148 +554,212 @@ namespace PBL.Experiments
 
         /// Called once per encoding item during instantiation.
         /// Children can override this to capture special codes, adjust data, etc.
-        protected virtual void OnEncodingItemCreated(int i, GameObject[] stimuli)
-        {}
+        // protected virtual void OnEncodingItemCreated(int i, GameObject[] stimuli)
+        // {}
 
-        protected virtual GameObject[] InstantiateEncodingStimuli(bool active)
-        {
+        // protected virtual GameObject[] InstantiateEncodingStimuli(bool active)
+        // {
 
-            GameObject[] stimuli = new GameObject[settings.shapeSettings.count];
-            // Debug.Log($"shapeSettings.count: {settings.shapeSettings.count}");
-            // Debug.Log($"colorPositions.Length: {settings.shapeSettings.colorPositions.Count}");
-            // Debug.Log($"shapeColours.Length: {settings.shapeSettings.shapeColours.Length}");
-            // Debug.Log($"shapePositions.Length: {settings.shapeSettings.shapePositions.Count}");
-            // Debug.Log($"shapeMeshes.Length: {settings.shapeSettings.shapeMeshes.Length}");
-            // Debug.Log($"encodingShapePositions.Length: {settings.shapeSettings.encodingShapePositions.Length}");
+        //     GameObject[] stimuli = new GameObject[settings.shapeSettings.count];
+        //     // Debug.Log($"shapeSettings.count: {settings.shapeSettings.count}");
+        //     // Debug.Log($"colorPositions.Length: {settings.shapeSettings.colorPositions.Count}");
+        //     // Debug.Log($"shapeColours.Length: {settings.shapeSettings.shapeColours.Length}");
+        //     // Debug.Log($"shapePositions.Length: {settings.shapeSettings.shapePositions.Count}");
+        //     // Debug.Log($"shapeMeshes.Length: {settings.shapeSettings.shapeMeshes.Length}");
+        //     // Debug.Log($"encodingShapePositions.Length: {settings.shapeSettings.encodingShapePositions.Length}");
 
-            for (int i = 0; i < settings.shapeSettings.count; i++)
-            {
-                // Debug.Log($"i: {i}, colorIndex: {settings.shapeSettings.colorPositions[i]}, meshIndex: {settings.shapeSettings.shapePositions[i]}");
+        //     for (int i = 0; i < settings.shapeSettings.count; i++)
+        //     {
+        //         // Debug.Log($"i: {i}, colorIndex: {settings.shapeSettings.colorPositions[i]}, meshIndex: {settings.shapeSettings.shapePositions[i]}");
 
-                if (settings.shapeSettings.colorPositions[i] >= settings.shapeSettings.shapeColours.Length)
-                {
-                    Debug.Log($"Invalid color index {settings.shapeSettings.colorPositions[i]} at i={i}");
-                }
+        //         if (settings.shapeSettings.colorPositions[i] >= settings.shapeSettings.shapeColours.Length)
+        //         {
+        //             Debug.Log($"Invalid color index {settings.shapeSettings.colorPositions[i]} at i={i}");
+        //         }
 
-                if (settings.shapeSettings.shapePositions[i] >= settings.shapeSettings.shapeMeshes.Length)
-                {
-                    Debug.Log($"Invalid mesh index {settings.shapeSettings.shapePositions[i]} at i={i}");
-                }
+        //         if (settings.shapeSettings.shapePositions[i] >= settings.shapeSettings.shapeMeshes.Length)
+        //         {
+        //             Debug.Log($"Invalid mesh index {settings.shapeSettings.shapePositions[i]} at i={i}");
+        //         }
 
-                Color color = settings.shapeSettings.shapeColours[settings.shapeSettings.colorPositions[i]];
-                Mesh mesh = settings.shapeSettings.shapeMeshes[settings.shapeSettings.shapePositions[i]];
-                Vector3 rotation = settings.shapeSettings.encodingShapeRotationMap.TryGetValue(mesh.name, out var rot) ? rot : Vector3.zero;
-                Vector3 scale = settings.shapeSettings.shapeScaleMap.TryGetValue(mesh.name, out var scal) ? scal : Vector3.one;
+        //         Color color = settings.shapeSettings.shapeColours[settings.shapeSettings.colorPositions[i]];
+        //         Mesh mesh = settings.shapeSettings.shapeMeshes[settings.shapeSettings.shapePositions[i]];
+        //         Vector3 rotation = settings.shapeSettings.encodingShapeRotationMap.TryGetValue(mesh.name, out var rot) ? rot : Vector3.zero;
+        //         Vector3 scale = settings.shapeSettings.shapeScaleMap.TryGetValue(mesh.name, out var scal) ? scal : Vector3.one;
 
-                // Change to x rotation since we're sideways now
-                // Debug.Log(faceDirection.ToString() + " " + _turnDirection.ToString());
-                // rotation = new Vector3(rotation.z, rotation.y, rotation.x);
-                Vector3 position = settings.shapeSettings.encodingShapePositions[i]
-                                   + _fixationSphere.transform.position;
-                stimuli[i] = InstantiateObjectWithMeshAndColor(settings.shapeSettings.encodingShape,
-                    mesh,
-                    position,
-                    rotation,
-                    color,
-                    active,
-                    scale
-                );
+        //         // Change to x rotation since we're sideways now
+        //         // Debug.Log(faceDirection.ToString() + " " + _turnDirection.ToString());
+        //         // rotation = new Vector3(rotation.z, rotation.y, rotation.x);
+        //         Vector3 position = settings.shapeSettings.encodingShapePositions[i]
+        //                            + _fixationSphere.transform.position;
+        //         stimuli[i] = InstantiateObjectWithMeshAndColor(settings.shapeSettings.encodingShape,
+        //             mesh,
+        //             position,
+        //             rotation,
+        //             color,
+        //             active,
+        //             scale
+        //         );
 
-                OnEncodingItemCreated(i, stimuli);
+        //         OnEncodingItemCreated(i, stimuli);
 
-                Debug.Log($"Encoding object {i} world bounds size: {stimuli[i].GetComponent<Renderer>().bounds.size}, center: {stimuli[i].GetComponent<Renderer>().bounds.center}");
+        //         Debug.Log($"Encoding object {i} world bounds size: {stimuli[i].GetComponent<Renderer>().bounds.size}, center: {stimuli[i].GetComponent<Renderer>().bounds.center}");
 
-            }
+        //     }
 
-            return stimuli;
-        }
+        //     return stimuli;
+        // }
 
+
+        // protected virtual Color SetColor(int i)
+        // {
+        //     Color color = settings.shapeSettings.shapeColours[i];
+        //     return color;
+        // }
+
+
+        // Dictionary<(int, int), GameObject> InstantiateReportStimuli()
+        // {
+        //     Dictionary<(int, int), GameObject> stimuli = new Dictionary<(int, int), GameObject>();
+
+        //     Dictionary<(int, int), int> pairIndex = new Dictionary<(int, int), int>();
+        //     for (int i = 0; i < settings.shapeSettings.count; i++)
+        //     {
+        //         pairIndex[(settings.shapeSettings.colorPositions[i], settings.shapeSettings.shapePositions[i])] = i;
+        //     }
+
+        //     for (int colorRow = 0; colorRow != settings.shapeSettings.count; ++colorRow)
+        //     {
+        //         for (int shapeCol = 0; shapeCol != settings.shapeSettings.count; ++shapeCol)
+        //         {
+        //             int posIndex = colorRow + shapeCol + (colorRow * (settings.shapeSettings.count - 1));
+        //             int color_i = settings.shapeSettings.shapeRows[colorRow];
+        //             int shape_i = settings.shapeSettings.colorCols[shapeCol];
+        //             // Debug.Log($"Shape pos: {posIndex} colorI: {color_i}, shape_i: {shape_i}");
+
+        //             Color color = SetColor(color_i);
+
+        //             Mesh mesh = settings.shapeSettings.shapeMeshes[shape_i];
+        //             Vector3 rotation = settings.shapeSettings.reportingShapeRotationMap.TryGetValue(mesh.name, out var rot) ? rot : Vector3.zero;
+        //             Vector3 position = settings.shapeSettings.reportingShapePositions[posIndex]
+        //                                + _fixationSphere.transform.position;
+        //             Vector3 scale = settings.shapeSettings.shapeScaleMap.TryGetValue(mesh.name, out var scal) ? scal : Vector3.one;
+
+
+        //             GameObject shape = InstantiateObjectWithMeshAndColor(settings.shapeSettings.reportingShape,
+        //                 mesh,
+        //                 position,
+        //                 rotation,
+        //                 color,
+        //                 true,
+        //                 scale * settings.shapeSettings.reportingShapeScale
+        //             ); ;
+
+        //             // Store shapeData object for later processing
+
+        //             // Find position of this color/shape in encoding array
+        //             int colorEncIndex = settings.shapeSettings.colorPositions.IndexOf(color_i);
+        //             int shapeEncIndex = settings.shapeSettings.shapePositions.IndexOf(shape_i);
+        //             int encodingIndex = -1;
+
+        //             // Determine if object is in encoding array
+        //             if (pairIndex.TryGetValue((color_i, shape_i), out int index))
+        //             {
+        //                 encodingIndex = index;
+        //             }
+        //             ResponseShapeMetadata shapeData = new ResponseShapeMetadata(
+        //                 color_i,
+        //                 shape_i,
+        //                 posIndex,
+        //                 colorEncIndex,
+        //                 shapeEncIndex,
+        //                 encodingIndex
+        //             );
+        //             // Debug.Log(shapeData.ColorIndex);
+
+        //             // Add for logging purposes
+        //             _reportedStimuli.Add(shapeData);
+
+        //             // Add shape Data as a component to the shape GameObject
+        //             ResponseShapeMetadataObject metadataObject = shape.AddComponent<ResponseShapeMetadataObject>();
+        //             metadataObject.Data = shapeData;
+
+        //             stimuli[(color_i, shape_i)] = shape;
+
+        //         }
+        //     }
+
+        //     return stimuli;
+
+        // }
+
+        // void InstantiateTarget()
+        // {
+        // }
         
-        protected virtual Color SetColor(int i)
-        {
-            Color color = settings.shapeSettings.shapeColours[i];
-            return color;
-        }
-        
+        //  GameObject InstantiateObjectWithMeshAndColor(GameObject prefab,
+        //      Mesh mesh,
+        //      Vector3 position,
+        //      Vector3 rotation,
+        //      Color color,
+        //      bool active = true,
+        //      Vector3? scale = null
+        //     )
+        //  {
+        //      // scale = Vector3.one;
 
-        Dictionary<(int, int), GameObject> InstantiateReportStimuli()
-        {
-            Dictionary<(int, int), GameObject> stimuli = new Dictionary<(int, int), GameObject>();
+        //     Vector3 localScale = scale ?? Vector3.one;
+
+        //     GameObject gameObject = Instantiate(
+        //          prefab,
+        //          position,
+        //          Quaternion.Euler(rotation),
+        //          this.transform);
             
-            Dictionary<(int, int), int> pairIndex = new Dictionary<(int, int), int>();
-            for (int i = 0; i < settings.shapeSettings.count; i++)
-            {
-                pairIndex[(settings.shapeSettings.colorPositions[i], settings.shapeSettings.shapePositions[i])] = i;
-            }
-            
-            for (int colorRow = 0; colorRow != settings.shapeSettings.count; ++colorRow)
-            {
-                for (int shapeCol = 0; shapeCol != settings.shapeSettings.count; ++shapeCol)
-                {
-                    int posIndex = colorRow + shapeCol + (colorRow * (settings.shapeSettings.count - 1));
-                    int color_i = settings.shapeSettings.shapeRows[colorRow];
-                    int shape_i = settings.shapeSettings.colorCols[shapeCol];
-                    // Debug.Log($"Shape pos: {posIndex} colorI: {color_i}, shape_i: {shape_i}");
+        //      gameObject.GetComponent<MeshFilter>().mesh = mesh;
+        //      gameObject.GetComponent<Renderer>().material.color = color;
+        //      //gameObject.transform.localScale = new Vector3(2f, 2f, 2f);
+        //      gameObject.SetActive(active);
+             
+        //      gameObject.transform.localScale = localScale;
+        //      FitBoxToMesh(gameObject);
+        //      return gameObject;
+        //  }
+         
+        //  public static void FitBoxToMesh(GameObject go)
+        //  {
+        //      var mf  = go.GetComponent<MeshFilter>();
+        //      var boxes = go.GetComponentsInChildren<BoxCollider>(true);
+        //      foreach (var box in boxes)
+        //      {
+        //          if (!mf || !box || mf.sharedMesh == null) return;
 
-                    Color color = SetColor(color_i);
+        //          // Mesh bounds are in the mesh's LOCAL space, perfect for the collider's local size/center
+        //          var mb = mf.sharedMesh.bounds;
+        //          box.center = mb.center;
+        //          box.size = mb.size;
+        //      }
+        //  }
 
-                    Mesh mesh = settings.shapeSettings.shapeMeshes[shape_i];
-                    Vector3 rotation = settings.shapeSettings.reportingShapeRotationMap.TryGetValue(mesh.name, out var rot) ? rot : Vector3.zero;
-                    Vector3 position = settings.shapeSettings.reportingShapePositions[posIndex]
-                                       + _fixationSphere.transform.position;
-                    Vector3 scale = settings.shapeSettings.shapeScaleMap.TryGetValue(mesh.name, out var scal) ? scal : Vector3.one;
 
+        //  GameObject InstantiateObject(GameObject prefab,
+        //      Vector3 position,
+        //      Vector3 rotation,
+        //      string location)
+        //  {
 
-                    GameObject shape = InstantiateObjectWithMeshAndColor(settings.shapeSettings.reportingShape,
-                        mesh,
-                        position,
-                        rotation,
-                        color,
-                        true,
-                        scale * settings.shapeSettings.reportingShapeScale
-                    ); ;
-                    
-                    // Store shapeData object for later processing
-                    
-                    // Find position of this color/shape in encoding array
-                    int colorEncIndex = settings.shapeSettings.colorPositions.IndexOf(color_i);
-                    int shapeEncIndex = settings.shapeSettings.shapePositions.IndexOf(shape_i);
-                    int encodingIndex = -1;
-                    
-                    // Determine if object is in encoding array
-                    if (pairIndex.TryGetValue((color_i, shape_i), out int index))
-                    {
-                        encodingIndex = index;
-                    }
-                    ResponseShapeMetadata shapeData = new ResponseShapeMetadata(
-                        color_i,
-                        shape_i,
-                        posIndex,
-                        colorEncIndex,
-                        shapeEncIndex,
-                        encodingIndex
-                    );
-                    // Debug.Log(shapeData.ColorIndex);
+        //      //prefab.GetComponent<Stimulus>().session = session;
+        //      //prefab.GetComponent<Stimulus>().location = location;
 
-                    // Add for logging purposes
-                    _reportedStimuli.Add(shapeData);
-                    
-                    // Add shape Data as a component to the shape GameObject
-                    ResponseShapeMetadataObject metadataObject = shape.AddComponent<ResponseShapeMetadataObject>();
-                    metadataObject.Data = shapeData;
-                    
-                    stimuli[(color_i, shape_i)] = shape;
+        //      GameObject gameObject = Instantiate(
+        //          prefab,
+        //          position,
+        //          Quaternion.Euler(rotation),
+        //          this.transform);
+        //      //gameObject.transform.localScale = new Vector3(2f, 2f, 2f);
+        //      return gameObject;
+        //  }
 
-                }
-            }
-
-            return stimuli;
-
-        }
-
-        void InstantiateTarget()
-        {
-        }
         
         /*
          * Logging and cleanup
@@ -742,236 +770,174 @@ namespace PBL.Experiments
             StopAllCoroutines();
         }
 
-        protected virtual string ReportCorrectEnc(int i, bool notReported)
-        {
-            string correct = notReported ? "0" : "1";
-            return correct;
-        }
+        // protected virtual string ReportCorrectEnc(int i, bool notReported)
+        // {
+        //     string correct = notReported ? "0" : "1";
+        //     return correct;
+        // }
 
 
        
-        protected virtual (string, ResponseShapeMetadata, bool) ReportCorrectColor(int i, ResponseShapeMetadata encodingShape)
-        {
-            // Single color specific. Only the specific chosen color can be reported on 
-            ResponseShapeMetadata reportedShape = _reportedStimuli
-                .FirstOrDefault(item => item.ColorIndex == i && item.RT != -1);
-            if (reportedShape == null)
-            {
-                throw new UnityException($"Could not find reported stimuli with color index {i}");
-            }
-            bool notReported = reportedShape == encodingShape;
+        // protected virtual (string, ResponseShapeMetadata, bool) ReportCorrectColor(int i, ResponseShapeMetadata encodingShape)
+        // {
+        //     // Single color specific. Only the specific chosen color can be reported on 
+        //     ResponseShapeMetadata reportedShape = _reportedStimuli
+        //         .FirstOrDefault(item => item.ColorIndex == i && item.RT != -1);
+        //     if (reportedShape == null)
+        //     {
+        //         throw new UnityException($"Could not find reported stimuli with color index {i}");
+        //     }
+        //     bool notReported = reportedShape == encodingShape;
 
-            string correct = notReported ? "0" : "1";
+        //     string correct = notReported ? "0" : "1";
             
-            return (correct, reportedShape, notReported);
-        }
+        //     return (correct, reportedShape, notReported);
+        // }
 
-        protected virtual string ReportCorrectShape(int i, bool notReported)
-        {
-            string correct = notReported ? "0" : "1";
-            return correct;
-        }
+        // protected virtual string ReportCorrectShape(int i, bool notReported)
+        // {
+        //     string correct = notReported ? "0" : "1";
+        //     return correct;
+        // }
 
 
         void LogResults()
         {
             
-            for (int i = 0; i != settings.shapeSettings.count; ++i)
-            {
-                // Get the response stimulus corresponding to this encoding stimulus
-                ResponseShapeMetadata response = _reportedStimuli
-                    .FirstOrDefault(item => item.EncodingIndex == i);
-                if (response == null)
-                {
-                    throw new UnityException($"Could not find reported stimuli with encoding index {i}");
-                }
-                bool notReported = response.RT == -1;
+            // for (int i = 0; i != settings.shapeSettings.count; ++i)
+            // {
+            //     // Get the response stimulus corresponding to this encoding stimulus
+            //     ResponseShapeMetadata response = _reportedStimuli
+            //         .FirstOrDefault(item => item.EncodingIndex == i);
+            //     if (response == null)
+            //     {
+            //         throw new UnityException($"Could not find reported stimuli with encoding index {i}");
+            //     }
+            //     bool notReported = response.RT == -1;
 
-                _uxf.result[$"Enc{i + 1}_rank"] = notReported ? "nan" : response.ReportedIndex.ToString();
-                _uxf.result[$"Enc{i + 1}_correct"] = ReportCorrectEnc(i, notReported);
-                _uxf.result[$"Enc{i + 1}_colour"] = settings.shapeSettings.colorPositions[i];
-                _uxf.result[$"Enc{i + 1}_shape"] = settings.shapeSettings.shapePositions[i];
-                _uxf.result[$"Enc{i + 1}_respLoc"] = response.Loc;
-                _uxf.result[$"Enc{i + 1}_rt"] = notReported ? "nan" : response.RT.ToString();
-            }
+            //     _uxf.result[$"Enc{i + 1}_rank"] = notReported ? "nan" : response.ReportedIndex.ToString();
+            //     _uxf.result[$"Enc{i + 1}_correct"] = ReportCorrectEnc(i, notReported);
+            //     _uxf.result[$"Enc{i + 1}_colour"] = settings.shapeSettings.colorPositions[i];
+            //     _uxf.result[$"Enc{i + 1}_shape"] = settings.shapeSettings.shapePositions[i];
+            //     _uxf.result[$"Enc{i + 1}_respLoc"] = response.Loc;
+            //     _uxf.result[$"Enc{i + 1}_rt"] = notReported ? "nan" : response.RT.ToString();
+            // }
             
-            for (int i = 0; i != settings.shapeSettings.count; ++i)
-            {
-                ResponseShapeMetadata encodingShape = _reportedStimuli
-                    .FirstOrDefault(item => item.ColorIndex == i && item.EncodingIndex != -1);
-                if (encodingShape == null)
-                {
-                    throw new UnityException($"Could not find encoding stimuli with color index {i}");
-                }
+            // for (int i = 0; i != settings.shapeSettings.count; ++i)
+            // {
+            //     ResponseShapeMetadata encodingShape = _reportedStimuli
+            //         .FirstOrDefault(item => item.ColorIndex == i && item.EncodingIndex != -1);
+            //     if (encodingShape == null)
+            //     {
+            //         throw new UnityException($"Could not find encoding stimuli with color index {i}");
+            //     }
 
-                (string correct, ResponseShapeMetadata reportedShape, bool notReported) = ReportCorrectColor(i, encodingShape);
+            //     (string correct, ResponseShapeMetadata reportedShape, bool notReported) = ReportCorrectColor(i, encodingShape);
 
-                _uxf.result[$"Colour{i+1}_correct"] = correct;
-                _uxf.result[$"Colour{i+1}_encLoc"] = encodingShape.EncodingIndex;
-                _uxf.result[$"Colour{i+1}_encShape"] = encodingShape.ShapeIndex;
-                _uxf.result[$"Colour{i+1}_respLoc"] = (reportedShape == null) ? "nan" : reportedShape.Loc.ToString();
-                _uxf.result[$"Colour{i+1}_respShape"] = (reportedShape == null) ? "nan" : reportedShape.ShapeIndex.ToString();
-                _uxf.result[$"Colour{i+1}_respRank"] = (reportedShape == null) ? "nan" : reportedShape.ReportedIndex.ToString();
-                _uxf.result[$"Colour{i+1}_rt"] = (reportedShape == null) ? "nan" : reportedShape.RT.ToString();
-            }
+            //     _uxf.result[$"Colour{i+1}_correct"] = correct;
+            //     _uxf.result[$"Colour{i+1}_encLoc"] = encodingShape.EncodingIndex;
+            //     _uxf.result[$"Colour{i+1}_encShape"] = encodingShape.ShapeIndex;
+            //     _uxf.result[$"Colour{i+1}_respLoc"] = (reportedShape == null) ? "nan" : reportedShape.Loc.ToString();
+            //     _uxf.result[$"Colour{i+1}_respShape"] = (reportedShape == null) ? "nan" : reportedShape.ShapeIndex.ToString();
+            //     _uxf.result[$"Colour{i+1}_respRank"] = (reportedShape == null) ? "nan" : reportedShape.ReportedIndex.ToString();
+            //     _uxf.result[$"Colour{i+1}_rt"] = (reportedShape == null) ? "nan" : reportedShape.RT.ToString();
+            // }
             
-            for (int i = 0; i != settings.shapeSettings.count; ++i)
-            {
-                ResponseShapeMetadata encodingShape = _reportedStimuli
-                    .FirstOrDefault(item => item.ShapeIndex == i && item.EncodingIndex != -1);
-                if (encodingShape == null)
-                {
-                    throw new UnityException($"Could not find encoding stimuli with shape index {i}");
-                }
+            // for (int i = 0; i != settings.shapeSettings.count; ++i)
+            // {
+            //     ResponseShapeMetadata encodingShape = _reportedStimuli
+            //         .FirstOrDefault(item => item.ShapeIndex == i && item.EncodingIndex != -1);
+            //     if (encodingShape == null)
+            //     {
+            //         throw new UnityException($"Could not find encoding stimuli with shape index {i}");
+            //     }
                 
                 
-                ResponseShapeMetadata reportedShape = _reportedStimuli
-                    .FirstOrDefault(item => item.ShapeIndex == i && item.RT != -1);
+            //     ResponseShapeMetadata reportedShape = _reportedStimuli
+            //         .FirstOrDefault(item => item.ShapeIndex == i && item.RT != -1);
 
-                bool notReported = reportedShape != null && reportedShape == encodingShape;
+            //     bool notReported = reportedShape != null && reportedShape == encodingShape;
                 
-                _uxf.result[$"Shape{i+1}_correct"] = ReportCorrectShape(i, notReported);
-                _uxf.result[$"Shape{i+1}_encLoc"] = encodingShape.EncodingIndex;
-                _uxf.result[$"Shape{i+1}_encColour"] = encodingShape.ColorIndex;
+            //     _uxf.result[$"Shape{i+1}_correct"] = ReportCorrectShape(i, notReported);
+            //     _uxf.result[$"Shape{i+1}_encLoc"] = encodingShape.EncodingIndex;
+            //     _uxf.result[$"Shape{i+1}_encColour"] = encodingShape.ColorIndex;
                 
-                _uxf.result[$"Shape{i+1}_respLoc"] = (reportedShape == null) ? "nan" : reportedShape.Loc.ToString();
-                _uxf.result[$"Shape{i+1}_respColour"] = (reportedShape == null) ? "nan" : reportedShape.ColorIndex.ToString();
-                _uxf.result[$"Shape{i+1}_respRank"] = (reportedShape == null) ? "nan" : reportedShape.ReportedIndex.ToString();
-                _uxf.result[$"Shape{i+1}_rt"] = (reportedShape == null) ? "nan" : reportedShape.RT.ToString();
-            }
+            //     _uxf.result[$"Shape{i+1}_respLoc"] = (reportedShape == null) ? "nan" : reportedShape.Loc.ToString();
+            //     _uxf.result[$"Shape{i+1}_respColour"] = (reportedShape == null) ? "nan" : reportedShape.ColorIndex.ToString();
+            //     _uxf.result[$"Shape{i+1}_respRank"] = (reportedShape == null) ? "nan" : reportedShape.ReportedIndex.ToString();
+            //     _uxf.result[$"Shape{i+1}_rt"] = (reportedShape == null) ? "nan" : reportedShape.RT.ToString();
+            // }
             
         }
         
          
-         GameObject InstantiateObjectWithMeshAndColor(GameObject prefab,
-             Mesh mesh,
-             Vector3 position,
-             Vector3 rotation,
-             Color color,
-             bool active = true,
-             Vector3? scale = null
-            )
-         {
-             // scale = Vector3.one;
-
-            Vector3 localScale = scale ?? Vector3.one;
-
-            GameObject gameObject = Instantiate(
-                 prefab,
-                 position,
-                 Quaternion.Euler(rotation),
-                 this.transform);
-            
-             gameObject.GetComponent<MeshFilter>().mesh = mesh;
-             gameObject.GetComponent<Renderer>().material.color = color;
-             //gameObject.transform.localScale = new Vector3(2f, 2f, 2f);
-             gameObject.SetActive(active);
+        
+        //  public void ReportShapeSelected(GameObject selectedShape, bool ignoring)
+        //  {
+        //      // Determine reaction time
+        //      float currentTime = Time.time;
+        //      int reactionTime = (int)((currentTime - responseStartTime) * 1000);
+        //      responseStartTime = currentTime;
              
-             gameObject.transform.localScale = localScale;
-             FitBoxToMesh(gameObject);
-             return gameObject;
-         }
-         
-         public static void FitBoxToMesh(GameObject go)
-         {
-             var mf  = go.GetComponent<MeshFilter>();
-             var boxes = go.GetComponentsInChildren<BoxCollider>(true);
-             foreach (var box in boxes)
-             {
-                 if (!mf || !box || mf.sharedMesh == null) return;
+        //      ResponseShapeMetadata shapeMetadata = selectedShape.GetComponent<ResponseShapeMetadataObject>().Data;
 
-                 // Mesh bounds are in the mesh's LOCAL space, perfect for the collider's local size/center
-                 var mb = mf.sharedMesh.bounds;
-                 box.center = mb.center;
-                 box.size = mb.size;
-             }
-         }
+        //     if (shapeMetadata.Processed)
+        //     {
+        //         // If we have already processed this, don't do it again
+        //         // Unity will try since the ray could hit twice technically
+        //         return;   
+        //     }
 
+        //     if (!ignoring)
+        //     {
+        //         shapeMetadata.Processed = true;
+        //         shapeMetadata.RT = reactionTime;
+        //         shapeMetadata.ReportedIndex = reportedIndex;
+        //         Debug.Log($"encodingIndex = {shapeMetadata.EncodingIndex}");
+        //         Debug.Log($"Adding {shapeMetadata.Correct} to _n_correct = {_n_correct}");
 
-         GameObject InstantiateObject(GameObject prefab,
-             Vector3 position,
-             Vector3 rotation,
-             string location)
-         {
+        //         setTrigger(codeMap["answer_i"] + ((reportedIndex-1) * 100));
 
-             //prefab.GetComponent<Stimulus>().session = session;
-             //prefab.GetComponent<Stimulus>().location = location;
+        //         _n_correct += shapeMetadata.Correct;
 
-             GameObject gameObject = Instantiate(
-                 prefab,
-                 position,
-                 Quaternion.Euler(rotation),
-                 this.transform);
-             //gameObject.transform.localScale = new Vector3(2f, 2f, 2f);
-             return gameObject;
-         }
+        //         // Log everything to the results dictionary
+        //         foreach (KeyValuePair<string, string> kvp in shapeMetadata.ToDictionary(reportedIndex))
+        //         {
+        //             _uxf.result[kvp.Key] = kvp.Value;
+        //             //Debug.Log($"{kvp.Key}: {kvp.Value}");
+        //         }
 
-         public void ReportShapeSelected(GameObject selectedShape, bool ignoring)
-         {
-             // Determine reaction time
-             float currentTime = Time.time;
-             int reactionTime = (int)((currentTime - responseStartTime) * 1000);
-             responseStartTime = currentTime;
+        //         // Update the shape we're reporting on for the next time
+        //         reportedIndex++;
+        //     }
+        //     else
+        //     {
+        //         // Log everything to the results dictionary
+        //         foreach (KeyValuePair<string, string> kvp in shapeMetadata.ToDictionary(reportedIndex))
+        //         {
+        //             _uxf.result[kvp.Key] = "nan";
+        //         }
+        //         reportedIndex++;
+        //     }
              
-             ResponseShapeMetadata shapeMetadata = selectedShape.GetComponent<ResponseShapeMetadataObject>().Data;
-
-            if (shapeMetadata.Processed)
-            {
-                // If we have already processed this, don't do it again
-                // Unity will try since the ray could hit twice technically
-                return;   
-            }
-
-            if (!ignoring)
-            {
-                shapeMetadata.Processed = true;
-                shapeMetadata.RT = reactionTime;
-                shapeMetadata.ReportedIndex = reportedIndex;
-                Debug.Log($"encodingIndex = {shapeMetadata.EncodingIndex}");
-                Debug.Log($"Adding {shapeMetadata.Correct} to _n_correct = {_n_correct}");
-
-                setTrigger(codeMap["answer_i"] + ((reportedIndex-1) * 100));
-
-                _n_correct += shapeMetadata.Correct;
-
-                // Log everything to the results dictionary
-                foreach (KeyValuePair<string, string> kvp in shapeMetadata.ToDictionary(reportedIndex))
-                {
-                    _uxf.result[kvp.Key] = kvp.Value;
-                    //Debug.Log($"{kvp.Key}: {kvp.Value}");
-                }
-
-                // Update the shape we're reporting on for the next time
-                reportedIndex++;
-            }
-            else
-            {
-                // Log everything to the results dictionary
-                foreach (KeyValuePair<string, string> kvp in shapeMetadata.ToDictionary(reportedIndex))
-                {
-                    _uxf.result[kvp.Key] = "nan";
-                }
-                reportedIndex++;
-            }
+        //      Tuple<int, int> shapePair = shapeMetadata.GetShapePair();
+        //      // Debug.Log($"shape pos: {shapeMetadata.}");
              
-             Tuple<int, int> shapePair = shapeMetadata.GetShapePair();
-             // Debug.Log($"shape pos: {shapeMetadata.}");
+        //      // Destroy same colors and shapes
+        //      for (int i = 0; i != settings.shapeSettings.count; ++i)
+        //      {
+        //         if (this.reportingStimuli[(shapePair.Item1, i)] != null)
+        //         {
+        //             //  Debug.Log($"Destroying ({shapePair.Item1}, {i}) and ({i}, {shapePair.Item2})");
+        //             Destroy(this.reportingStimuli[(shapePair.Item1, i)]); // 0,0, 0,1
+        //         }
+        //         if (this.reportingStimuli[(i, shapePair.Item2)] != null)
+        //         {
+        //             Destroy(this.reportingStimuli[(i, shapePair.Item2)]); // 0,0, 1,0
+        //         }
+        //      }
              
-             // Destroy same colors and shapes
-             for (int i = 0; i != settings.shapeSettings.count; ++i)
-             {
-                if (this.reportingStimuli[(shapePair.Item1, i)] != null)
-                {
-                    //  Debug.Log($"Destroying ({shapePair.Item1}, {i}) and ({i}, {shapePair.Item2})");
-                    Destroy(this.reportingStimuli[(shapePair.Item1, i)]); // 0,0, 0,1
-                }
-                if (this.reportingStimuli[(i, shapePair.Item2)] != null)
-                {
-                    Destroy(this.reportingStimuli[(i, shapePair.Item2)]); // 0,0, 1,0
-                }
-             }
-             
-         }
+        //  }
          
     }
 }
